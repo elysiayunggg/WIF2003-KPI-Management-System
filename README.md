@@ -4,7 +4,7 @@
 ### Project Overview
 This project is a web-based Key Performance Indicator (KPI) Management System developed for the WIF2003 Web Programming course.
 
-The system is designed to help organizations manage, assign, track, and evaluate KPIs efficiently. It supports both managers and staff in monitoring performance and ensuring KPI achievement through a centralized platform.
+### The system is designed to help organizations manage, assign, track, and evaluate KPIs efficiently. It supports both managers and staff in monitoring performance and ensuring KPI achievement through a centralized platform.
 ---
 
 ### Objectives
