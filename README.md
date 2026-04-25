@@ -97,9 +97,10 @@ This project is a web-based Key Performance Indicator (KPI) Management System de
 
 
 ### Project Structure 
+```text
 kpi-management-system/
 │
-├── frontend/                  # Your HTML frontend
+├── frontend/                  # HTML frontend
 │   ├── components/            # Reusable UI (navbar, sidebar, modal)
 │   │   ├── navbar.html
 │   │   ├── sidebar.html
@@ -114,7 +115,7 @@ kpi-management-system/
 │   │   ├── assignment.html
 │   │   └── progress.html
 │   │
-│   ├── modules/               # Feature-based JS (VERY IMPORTANT)
+│   ├── modules/               # Feature-based JS
 │   │   ├── auth/
 │   │   │   └── auth.js
 │   │   ├── profile/
@@ -127,6 +128,9 @@ kpi-management-system/
 │   │   │   └── progress.js
 │   │   ├── dashboard/
 │   │   │   └── dashboard.js
+│   │   ├── navbar/
+│   │   │   └── layout.js
+│   │   │   └── sidebar.js
 │   │
 │   ├── services/              # API calls (fetch)
 │   │   └── api.js
@@ -135,7 +139,7 @@ kpi-management-system/
 │   │   └── helpers.js
 │   │
 │   ├── css/
-│   │   └── styles.css
+│   │   └── style.css
 │   │
 │   └── index.html             # (optional landing page)
 │
