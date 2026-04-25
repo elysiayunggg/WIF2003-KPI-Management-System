@@ -94,3 +94,67 @@ This project is a web-based Key Performance Indicator (KPI) Management System de
 - Clean, readable, and well-structured code is required  
 - Proper documentation and testing evidence must be included  
 - Project submission includes source code, report, and system demonstration  
+
+
+### Project Structure 
+kpi-management-system/
+│
+├── frontend/                  # Your HTML frontend
+│   ├── components/            # Reusable UI (navbar, sidebar, modal)
+│   │   ├── navbar.html
+│   │   ├── sidebar.html
+│   │   └── modal.html
+│   │
+│   ├── pages/                 # Full pages (UI)
+│   │   ├── login.html
+│   │   ├── register.html
+│   │   ├── dashboard.html
+│   │   ├── profile.html
+│   │   ├── kpi.html
+│   │   ├── assignment.html
+│   │   └── progress.html
+│   │
+│   ├── modules/               # Feature-based JS (VERY IMPORTANT)
+│   │   ├── auth/
+│   │   │   └── auth.js
+│   │   ├── profile/
+│   │   │   └── profile.js
+│   │   ├── kpi/
+│   │   │   └── kpi.js
+│   │   ├── assignment/
+│   │   │   └── assignment.js
+│   │   ├── progress/
+│   │   │   └── progress.js
+│   │   ├── dashboard/
+│   │   │   └── dashboard.js
+│   │
+│   ├── services/              # API calls (fetch)
+│   │   └── api.js
+│   │
+│   ├── utils/                 # Helper functions
+│   │   └── helpers.js
+│   │
+│   ├── css/
+│   │   └── styles.css
+│   │
+│   └── index.html             # (optional landing page)
+│
+├── backend/
+│   ├── controllers/
+│   ├── models/                # Mongoose models (MongoDB)
+│   ├── routes/
+│   ├── middleware/
+│   ├── config/
+│   │   └── db.js
+│   └── server.js
+│
+├── uploads/                   # Store KPI evidence files
+│
+├── docs/
+│   ├── ERD.png
+│   ├── API_Documentation.md
+│   └── System_Design.md
+│
+├── .env
+├── package.json
+└── README.md
