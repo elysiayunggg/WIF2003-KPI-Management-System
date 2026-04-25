@@ -8,7 +8,7 @@ async function loadComponent(id, file) {
     await loadComponent("sidebar-container", "../components/sidebar.html");
     await loadComponent("navbar-container", "../components/navbar.html");
   
-    const role = localStorage.getItem("role") || "user"; // if null, role ==  user (staff)
+    const role = localStorage.getItem("role") || "manager"; // if null, role ==  user (staff)
     renderSidebar(role);
   }
   
