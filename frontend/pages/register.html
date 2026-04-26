@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register | Trackify KPI</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+
+<body>
+  <div class="auth-page">
+    <div class="auth-left">
+      <h2 class="brand">Trackify KPI</h2>
+
+      <div class="hero-text">
+        <h1>Manage your KPIs<br>with clarity</h1>
+        <p>Monitor KPI progress, manage assignments, and improve team performance in one centralized system.</p>
+      </div>
+    </div>
+
+    <div class="auth-right">
+      <div class="auth-form">
+        <h1>Sign up</h1>
+        <p class="subtitle">Create an account to start tracking and managing your team's KPIs.</p>
+
+        <form id="registerForm" novalidate>
+          <label for="fullName">Full Name</label>
+          <div class="input-icon">
+            <i class="bi bi-person"></i>
+            <input type="text" id="fullName" class="form-control" placeholder="Enter your name" required>
+          </div>
+
+          <label for="registerEmail">Email Address</label>
+          <div class="input-icon">
+            <i class="bi bi-envelope"></i>
+            <input type="email" id="registerEmail" class="form-control" placeholder="Enter your Email" required>
+          </div>
+
+          <label for="registerPassword">Password</label>
+          <div class="input-icon">
+            <i class="bi bi-lock"></i>
+            <input type="password" id="registerPassword" class="form-control password-field" placeholder="Enter your password" required>
+            <i class="bi bi-eye-slash password-toggle" data-target="registerPassword"></i>
+          </div>
+
+          <div class="password-rules">
+            <p id="ruleLength">✕ 8 to 64 characters</p>
+            <p id="ruleUpper">✕ At least 1 uppercase letter</p>
+            <p id="ruleLower">✕ At least 1 lowercase letter</p>
+            <p id="ruleNumber">✕ At least 1 number</p>
+            <p id="ruleSpecial">✕ At least 1 special character</p>
+            <p id="ruleSpace" class="valid">✓ No spaces</p>
+          </div>
+
+          <label for="confirmPassword">Confirm Password</label>
+          <div class="input-icon">
+            <i class="bi bi-lock"></i>
+            <input type="password" id="confirmPassword" class="form-control password-field" placeholder="Enter your password again" required>
+            <i class="bi bi-eye-slash password-toggle" data-target="confirmPassword"></i>
+          </div>
+
+          <label>Role</label>
+          <div class="custom-role-dropdown">
+            <div class="role-display" id="roleDisplay">
+              <div class="role-left">
+                <i class="bi bi-person-vcard role-main-icon"></i>
+                <span id="selectedRole">Select your role</span>
+              </div>
+              <i class="bi bi-chevron-down role-arrow"></i>
+            </div>
+
+            <div class="role-options d-none" id="roleOptions">
+              <div class="role-option" data-value="Manager">
+                <i class="bi bi-briefcase-fill"></i>
+                <span>Manager</span>
+              </div>
+
+              <div class="role-option" data-value="Staff">
+                <i class="bi bi-person"></i>
+                <span>Staff</span>
+              </div>
+            </div>
+          </div>
+
+          <input type="hidden" id="role" required>
+
+          <div class="terms-row">
+            <input type="checkbox" id="terms" required>
+            <label for="terms">
+              I agree to our Terms of Service and Privacy Policy
+            </label>
+          </div>
+
+          <button type="submit" class="btn auth-btn mt-4">Register →</button>
+
+          <div class="divider">
+            <span>or continue with</span>
+          </div>
+
+          <button type="button" class="btn google-btn">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="google">
+            Google
+          </button>
+
+
+
+
+          <p class="switch-link">
+            Already have an account? <a href="login.html">Log in here</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="./auth.js"></script>
+</body>
+</html>
