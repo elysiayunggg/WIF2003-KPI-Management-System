@@ -1,0 +1,23 @@
+/* Verification Card Styles */
+.verification-card {
+  background-color: #fff;
+  border: 1px solid #e0e3e8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.verification-card:hover {
+  border-color: #4e5e82;
+  background-color: #f0f7ff;
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.1);
+}
+
+.verification-card.approve-card.selected {
+  border-color: #198754;
+  background-color: #d1e7dd;
+}
+
+.verification-card.reject-card.selected {
+  border-color: #dc3545;
+  background-color: #f8d7da;
+}

@@ -1,0 +1,100 @@
+<section class="p-4">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">KPI Assignment and Verification</li>
+      <li class="breadcrumb-item active" aria-current="page">Assign KPI</li>
+    </ol>
+  </nav>
+
+  <!-- Title and Description -->
+  <div class="mb-4">
+    <h1 class="fw-bold mb-2">Assign Staff</h1>
+    <p class="text-muted">
+      Create new owner assignment for <span class="fw-semibold text-dark">Sales Growth Rate</span> to track target
+      achievement and ensure accountability.
+    </p>
+  </div>
+
+  <!-- Two Column Layout -->
+  <div class="row g-4">
+
+    <!-- Left Column (70%) - Primary Owner -->
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body p-4">
+
+          <!-- Header with Status -->
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h5 class="fw-bold mb-1">Primary Owner</h5>
+              <p class="text-muted small mb-0">The individual responsible for this KPI's target achievement.</p>
+            </div>
+            <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-3" style="background-color: #e7f3ff;">
+              <i class="bi bi-clock-history text-primary fs-5"></i>
+              <span class="text-primary fw-medium">Pending</span>
+            </div>
+          </div>
+
+          <!-- Search Bar -->
+          <div class="mb-4">
+            <div class="search-wrapper w-100">
+              <i class="bi bi-search"></i>
+              <input type="text" class="form-control search-box"
+                placeholder="Filter Staff by name, role or department..." style="width: 100%;" />
+            </div>
+          </div>
+
+          <!-- Staff List -->
+          <div class="staff-list" id="staffList">
+            <!-- cards injected by assignment.js -->
+          </div>
+
+          <div class="d-flex justify-content-center mt-3">
+            <button type="button" class="btn btn-secondary highLightButton m-1">Update Assignment</button>
+            <button type="button" class="btn btn-light m-1">Discard</button>        
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column (30%) - Stakeholders -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body p-4 stakeholder">
+
+          <div class="mb-4">
+            <div class="d-flex align-items-left gap-2 mb-1">
+              <i class="bi bi-person-plus-fill fs-5"></i>
+              <h5 class="fw-bold mb-1">Stakeholders</h5>
+            </div>
+            <p class="text-muted small mb-3">Invite collaborators to view or contribute to this KPI's tracking.</p>
+
+            <div class="stakeholder-list d-flex flex-wrap gap-2" id="stakeholderList">
+              <!-- badges injected by assignment.js -->
+            </div>
+
+          </div>
+
+          <div>
+            <h6 class="fw-bold mb-3">Notification Preference</h6>
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="notifyChange" checked>
+              <label class="form-check-label" for="notifyChange">
+                Notify stakeholders of this change
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="requireAck" checked>
+              <label class="form-check-label" for="requireAck">
+                Require acknowledgement
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>

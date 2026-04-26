@@ -164,11 +164,11 @@ body {
 
 /* Profile Image */
 .profile-img {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid white;
+  font-size: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0px;
 }
 
 /* Typography */
@@ -181,4 +181,18 @@ p { font-size: 13px; }
   .sidebar { width: 220px; }
   .main-content { margin-left: 220px; }
   .search-box { width: 300px; }
+}
+
+/* Page Content Fade Transition */
+#page-content {
+  transition: opacity 0.15s ease-in-out;
+}
+
+/* Submission Card Styles */
+.submission-card {
+  transition: all 0.2s ease;
+}
+
+.submission-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }

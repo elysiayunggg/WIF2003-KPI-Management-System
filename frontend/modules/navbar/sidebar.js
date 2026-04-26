@@ -1,6 +1,20 @@
+// Maps page names to their view fragment files.
+// All paths are relative to pages/shell.html where this script is loaded from.
+// When adding a new page, add its entry here — no other file needs to change.
 const pageRoutes = {
-  "Assign KPI":"../pages/assignment.html",
-  //Add other navigation filelinks here
+  "Dashboard": "../views/dashboard.html",
+  "Report": "../views/report.html",
+  "KPI Management": "../views/kpi.html",
+  "Create KPI": "../views/create-kpi.html",
+  "Update KPI": "../views/update-kpi.html",
+  "View KPI List": "../views/kpi-list.html",
+  "KPI Assignment": "../views/assignment.html",
+  "Assign KPI": "../views/assignment.html",
+  "Review Submission": "../views/review.html",
+  "KPI Progress": "../views/progress.html",
+  "Update KPI Progress": "../views/update-progress.html",
+  "Notifications": "../views/notifications.html",
+  "Profile": "../views/profile.html",
 };
 
 function renderSidebar(role) {
@@ -70,31 +84,36 @@ function renderSidebar(role) {
     `;
   }
 
+  // After injecting nav links, mark the correct one as active
   setActiveLink();
 }
 
+// Reads which page is active from localStorage and applies the active class.
+// Using localStorage instead of the URL filename means this works correctly
+// even when multiple nav links point to the same view file.
 function setActiveLink() {
-  // Get just the filename of the current page e.g. "assignment.html"
-  const currentFile = window.location.pathname.split("/").pop();
+  const activePage = localStorage.getItem("activePage");
+
+  // Clear all existing active states first
+  document.querySelectorAll("#sidebarMenu .nav-link").forEach(link => {
+    link.classList.remove("active");
+  });
+
+  if (!activePage) return;
 
   document.querySelectorAll("#sidebarMenu .nav-link").forEach(link => {
     const onclickAttr = link.getAttribute("onclick");
     if (!onclickAttr) return;
 
-    // Extract the page name string from onclick="changePage(event, 'Page Name')"
+    // Extract the page name from onclick="changePage(event, 'Page Name')"
     const match = onclickAttr.match(/changePage\(event,\s*'([^']+)'\)/);
     if (!match) return;
 
-    const pageName = match[1];
-    const route = pageRoutes[pageName];
-    if (!route) return;
-
-    // Compare the route's filename to the current page's filename
-    const routeFile = route.split("/").pop();
-    if (routeFile === currentFile) {
+    if (match[1] === activePage) {
       link.classList.add("active");
 
-      // If this link is inside a nav-group, also activate the section title
+      // If this link is inside a nav-group, also mark the section title active
+      // so the sub-menu stays expanded (the CSS :has(.active) rule handles the rest)
       const parentNavGroup = link.closest(".nav-group");
       if (parentNavGroup) {
         const sectionTitle = parentNavGroup.querySelector(".nav-section-title");
@@ -104,15 +123,65 @@ function setActiveLink() {
   });
 }
 
-function changePage(event, pageName) {
+// Fetches the view fragment and swaps only the #page-content div.
+// The sidebar and topbar are untouched — they never reload.
+async function changePage(event, pageName) {
   event.preventDefault();
 
   const destination = pageRoutes[pageName];
-
   if (!destination) {
     console.warn(`No route defined for: "${pageName}"`);
     return;
   }
 
-  window.location.href = destination;
+  // Save active page before swapping so setActiveLink() can read it
+  localStorage.setItem("activePage", pageName);
+  setActiveLink();
+
+  const content = document.getElementById("page-content");
+
+  // Fade out
+  content.style.opacity = "0";
+
+  try {
+    const res = await fetch(destination);
+    if (!res.ok) {
+      throw new Error(`Failed to load: ${destination} (${res.status})`);
+    }
+    const html = await res.text();
+
+    // Wait for the fade-out transition to finish, then swap and fade in
+    setTimeout(() => {
+      content.innerHTML = html;
+      content.style.opacity = "1";
+      
+      // Ensure initFn also runs when clicking navlinks 
+      const initFn = pageInits[pageName];
+      if (typeof initFn === "function") {
+        initFn();
+      }
+
+    }, 150); // must match the transition duration in style.css
+
+  } catch (err) {
+    console.error(err);
+    setTimeout(() => {
+      content.innerHTML = `
+        <section class="p-4">
+          <div class="alert alert-warning">
+            This page hasn't been built yet.
+          </div>
+        </section>`;
+      content.style.opacity = "1";
+    }, 150);
+  }
 }
+
+// Maps page names to their initialisation functions.
+// When a view needs JS to run after it loads, add an entry here.
+// The function must be defined in a script loaded by shell.html.
+const pageInits = {
+  "Assign KPI": initAssignmentView,
+  "KPI Assignment": initAssignmentView,
+  "Review Submission": initReviewView
+};

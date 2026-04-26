@@ -1,0 +1,110 @@
+<section class="p-4">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">KPI Assignment & Verification</li>
+      <li class="breadcrumb-item active" aria-current="page">Review Submission</li>
+    </ol>
+  </nav>
+
+  <!-- Title and Description -->
+  <div class="mb-4">
+    <h1 class="fw-bold mb-2">Review Submission</h1>
+    <p class="text-muted">
+      Review and approve KPI evidence submissions from staff members.
+    </p>
+  </div>
+
+  <!-- Two Column Layout -->
+  <div class="row g-4">
+
+    <!-- Left Column (70%) -->
+    <div class="col-lg-8">
+
+      <!-- KPI Overview -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4" id="kpiOverview">
+          <!-- Content rendered by review.js -->
+        </div>
+      </div>
+
+      <!-- Submission Details -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4" id="submissionDetails">
+          <!-- Content rendered by review.js -->
+        </div>
+      </div>
+
+      <!-- Evidence Attachments -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4" id="evidenceAttachments">
+          <!-- Content rendered by review.js -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column (30%) -->
+    <div class="col-lg-4">
+
+      <!-- Progress and Staff Cards -->
+      <div class="mb-4">
+        <!-- Progress Percentage Card -->
+        <div class="card border-0 shadow-sm mb-3">
+          <div class="card-body p-4" id="progressCard">
+            <!-- Content rendered by review.js -->
+          </div>
+        </div>
+
+        <!-- Assigned Staff Card -->
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-4" id="staffCard">
+            <!-- Content rendered by review.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Verification Actions -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3">Verification Actions</h5>
+
+          <label class="fw-semibold small mb-2">Verification Decision</label>
+          <div class="row g-3 mb-4">
+            <div class="col-6">
+              <div class="verification-card approve-card p-3 rounded-3 text-center"
+                onclick="selectVerification('approve')">
+                <i class="bi bi-check-circle-fill text-success fs-2 d-block mb-2"></i>
+                <strong class="d-block">Approve</strong>
+                <small class="text-muted">Accept submission</small>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="verification-card reject-card p-3 rounded-3 text-center"
+                onclick="selectVerification('reject')">
+                <i class="bi bi-x-circle-fill text-danger fs-2 d-block mb-2"></i>
+                <strong class="d-block">Reject</strong>
+                <small class="text-muted">Request changes</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Reviewer Comments</label>
+            <textarea class="form-control" rows="3" placeholder="Add comments for the staff member..."></textarea>
+          </div>
+
+          <div class="text-center mt-3">
+            <button type="button" class="btn btn-secondary highLightButton m-1">Save Changes</button>
+            <button type="button" class="btn btn-light m-1">Cancel Review</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
