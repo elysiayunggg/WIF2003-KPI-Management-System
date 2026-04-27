@@ -3,6 +3,7 @@
 // When adding a new page, add its entry here — no other file needs to change.
 const pageRoutes = {
   "Dashboard": "../views/dashboard.html",
+  "Staff Dashboard": "../views/staff-dashboard.html",
   "Report": "../views/report.html",
   "KPI Management": "../views/kpi.html",
   "Create KPI": "../views/create-kpi.html",
@@ -62,7 +63,7 @@ function renderSidebar(role) {
     `;
   } else {
     menu.innerHTML = `
-      <a href="#" class="nav-link" onclick="changePage(event, 'Dashboard')">
+      <a href="#" class="nav-link" onclick="changePage(event, 'Staff Dashboard')">
         <i class="bi bi-grid"></i> Dashboard
       </a>
 
@@ -183,5 +184,6 @@ async function changePage(event, pageName) {
 const pageInits = {
   "Assign KPI": initAssignmentView,
   "KPI Assignment": initAssignmentView,
-  "Review Submission": initReviewView
+  "Review Submission": initReviewView,
+  "Staff Dashboard": initStaffDashboardView
 };

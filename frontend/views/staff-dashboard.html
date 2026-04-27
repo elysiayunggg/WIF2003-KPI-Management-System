@@ -1,0 +1,212 @@
+<section class="p-4">
+
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">KPI Dashboard</li>
+      </ol>
+    </nav>
+  
+    <div class="mb-4">
+      <h1 class="fw-bold mb-2">Staff Dashboard</h1>
+      <p class="text-muted">Performance monitoring and task oversight</p>
+    </div>
+  
+    <div class="alert-banner mb-4">
+      <span class="material-symbols-outlined text-error">warning</span>
+      <div class="alert-content">
+        <strong>Upcoming Deadline:</strong>
+        <span>Q3 Operational Audit is due in 48 hours. Please ensure all evidence is uploaded.</span>
+      </div>
+      <button class="alert-link">Take Action</button>
+    </div>
+  
+    <div class="stats-grid mb-4">
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="icon-box bg-blue"><span class="material-symbols-outlined">assignment</span></div>
+          <span class="label">+2.4%</span>
+        </div>
+        <p class="stat-label">Assigned KPIs</p>
+        <h3 class="stat-number">24</h3>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="icon-box bg-gray"><span class="material-symbols-outlined">pending</span></div>
+          <span class="label">Stable</span>
+        </div>
+        <p class="stat-label">In Progress</p>
+        <h3 class="stat-number">08</h3>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="icon-box bg-yellow"><span class="material-symbols-outlined">visibility</span></div>
+          <span class="label text-yellow">Action Req.</span>
+        </div>
+        <p class="stat-label">Awaiting Review</p>
+        <h3 class="stat-number">05</h3>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="icon-box bg-green"><span class="material-symbols-outlined">check_circle</span></div>
+          <span class="label text-green">88% Target</span>
+        </div>
+        <p class="stat-label">Completed</p>
+        <h3 class="stat-number">12</h3>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="icon-box bg-red"><span class="material-symbols-outlined">error</span></div>
+          <span class="label text-red">High Risk</span>
+        </div>
+        <p class="stat-label">Overdue</p>
+        <h3 class="stat-number">02</h3>
+      </div>
+    </div>
+  
+    <div class="charts-row mb-4">
+      <div class="chart-container main-chart">
+        <div class="chart-header d-flex justify-content-between align-items-center mb-3">
+          <h2 class="m-0">Performance Trends</h2>
+          <select class="chart-select">
+            <option>Last 30 Days</option>
+            <option>Last 7 Days</option>
+            <option>Quarter 1</option>
+            <option>Quarter 2</option>
+            <option>Quarter 3</option>
+            <option>Quarter 4</option>
+          </select>
+        </div>
+        <div class="canvas-wrapper">
+          <canvas id="performanceTrendsChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-container side-chart">
+        <h2>Completion Breakdown</h2>
+        <div class="canvas-wrapper doughnut">
+          <canvas id="completionBreakdownChart"></canvas>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-label"><span class="color-dot dot-completed"></span><span>Completed</span></div> <strong>65%</strong></div>
+          <div class="legend-item"><div class="legend-label"><span class="color-dot dot-pending"></span><span>Pending</span></div> <strong>20%</strong></div>
+          <div class="legend-item"><div class="legend-label"><span class="color-dot dot-overdue"></span><span>Overdue</span></div> <strong>15%</strong></div>
+        </div>
+      </div>
+    </div>
+  
+    <section class="tasks-section">
+      <div class="section-header">
+        <div>
+          <h2>Active Performance Tasks</h2>
+          <p>Track milestones and completion rates.</p>
+        </div>
+        <div class="header-btns">
+          <button class="btn btn-outline">Export CSV</button>
+          <button class="btn btn-primary">Export PDF</button>
+        </div>
+      </div>
+  
+      <!-- Filters -->
+      <div class="filters-bar">
+        <div class="filter-group">
+          <label>STATUS:</label>
+          <select class="filter-select">
+            <option>All Statuses</option>
+            <option>In Progress</option>
+            <option>Awaiting Review</option>
+            <option>Overdue</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>DATE RANGE:</label>
+            <div class="date-inputs">
+              <input type="date" class="filter-select">
+              <span style="color: var(--text-secondary)">-</span>
+              <input type="date" class="filter-select">
+            </div>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>KPI Name</th>
+              <th>Deadline</th>
+              <th>Status</th>
+              <th>Progress</th>
+              <th class="text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <strong>Client Satisfaction Index</strong>
+                <small>Annual feedback aggregation</small>
+              </td>
+              <td>Oct 28, 2023</td>
+              <td><span class="badge badge-blue">In Progress</span></td>
+              <td>
+                <div class="progress-bar">
+                  <div class="progress-fill bg-blue" style="width: 72%"></div>
+                </div>
+              </td>
+              <td class="text-right"><span class="material-symbols-outlined">more_vert</span></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Technical Support Efficiency</strong>
+                <small>Mean time to resolution metrics</small>
+              </td>
+              <td>Oct 22, 2023</td>
+              <td><span class="badge badge-red">Overdue</span></td>
+              <td>
+                <div class="progress-bar">
+                  <div class="progress-fill bg-red" style="width: 45%"></div>
+                </div>
+              </td>
+              <td class="text-right"><span class="material-symbols-outlined">more_vert</span></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Internal Process Audit</strong>
+                <small>Documentation and compliance check</small>
+              </td>
+              <td>Oct 26, 2023</td>
+              <td><span class="badge badge-yellow">Awaiting Review</span></td>
+              <td>
+                <div class="progress-bar">
+                  <div class="progress-fill bg-yellow" style="width: 95%"></div>
+                </div>
+              </td>
+              <td class="text-right"><span class="material-symbols-outlined">more_vert</span></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Revenue Growth Support</strong>
+                <small>Cross-departmental lead tracking</small>
+              </td>
+              <td>Nov 02, 2023</td>
+              <td><span class="badge badge-green">Completed</span></td>
+              <td>
+                <div class="progress-bar">
+                  <div class="progress-fill bg-green" style="width: 100%"></div>
+                </div>
+              </td>
+              <td class="text-right"><span class="material-symbols-outlined">more_vert</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Footer Action -->
+      <div class="table-footer">
+        <button class="btn-view-all">
+          View All Tasks (12)
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+      </div>
+    </section>
+  
+</section>
