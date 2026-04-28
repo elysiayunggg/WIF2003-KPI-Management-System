@@ -13,6 +13,7 @@ const pageRoutes = {
   "Assign KPI": "../views/assignment.html",
   "Review Submission": "../views/review.html",
   "KPI Progress": "../views/progress.html",
+  "KPI Detail": "../views/kpi-detail.html",
   "Update KPI Progress": "../views/update-progress.html",
   "Notifications": "../views/notifications.html",
   "Profile": "../views/profile.html",
@@ -185,5 +186,7 @@ const pageInits = {
   "Assign KPI": initAssignmentView,
   "KPI Assignment": initAssignmentView,
   "Review Submission": initReviewView,
-  "Staff Dashboard": initStaffDashboardView
+  "Staff Dashboard": initStaffDashboardView,
+  "KPI Progress": initProgressView,
+  "KPI Detail": initKPIDetailView
 };

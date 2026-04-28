@@ -1,0 +1,57 @@
+<!-- KPI Card Component Template -->
+<div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 {{customClasses}}">
+    <!-- Header: Status Badge and Action Menu -->
+    <div class="flex justify-between items-start mb-4">
+        <span class="px-3 py-1 rounded-full text-label-caps uppercase {{badgeColorClasses}}">
+            {{statusText}}
+        </span>
+        <div class="relative">
+            <span class="material-symbols-outlined text-outline cursor-pointer kpi-menu-btn hover:bg-slate-100 rounded-full p-1 transition-colors -mr-1" data-icon="more_vert">
+                more_vert
+            </span>
+            <div class="kpi-dropdown-menu hidden absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-20">
+                <a href="#" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">edit</span> Edit KPI
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">share</span> Share
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">history</span> View History
+                </a>
+                <div class="h-px bg-slate-100 my-1"></div>
+                <a href="#" class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">delete</span> Delete
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Title & Description -->
+    <h2 class="font-h2 text-h2 text-on-surface mb-2">{{title}}</h2>
+    <p class="font-body-sm text-body-sm text-on-surface-variant flex-grow">{{description}}</p>
+
+    <!-- Due Date -->
+    <div class="mt-6 flex items-center gap-2 {{dateColorClass}} mb-4">
+        <span class="material-symbols-outlined text-[16px]" data-icon="{{dateIcon}}">
+            {{dateIcon}}
+        </span>
+        <span class="text-body-sm {{dateFontWeight}}">Due: {{dueDate}}</span>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="space-y-2 mb-6">
+        <div class="flex justify-between items-end">
+            <span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Progress</span>
+            <span class="font-stat-number text-h2 {{progressTextColorClass}}">{{progress}}%</span>
+        </div>
+        <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full rounded-full {{progressBarColorClass}}" style="width: {{progress}}%;"></div>
+        </div>
+    </div>
+
+    <!-- Action Button -->
+    <button class="w-full py-2.5 rounded-xl font-semibold transition-all shadow-sm {{buttonColorClasses}} kpi-action-btn">
+        {{buttonText}}
+    </button>
+</div>

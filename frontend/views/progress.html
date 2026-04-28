@@ -1,0 +1,46 @@
+<section class="bg-background text-on-background font-body-md antialiased p-8 transition-all">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item" onclick="loadView(event, 'dashboard')"><a>Staff Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">KPI Progress</li>
+        </ol>
+    </nav>
+
+
+
+    <div class="max-w-7xl mx-auto">
+        <!-- Title Section -->
+        <div class="mb-4">
+            <h1 class="fw-bold mb-2">KPI Progress</h1>
+        </div>
+        <!-- Toolbar -->
+        <div
+            class="flex flex-col sm:flex-row items-center gap-6 mb-10 bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+            <p class="font-body-md text-body-md text-on-surface-variant whitespace-nowrap" style="">My Assigned KPIs
+            </p>
+            <div class="relative flex-grow max-w-lg">
+                <span
+                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]"
+                    data-icon="search" style="">search</span>
+                <input
+                    class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-body-md focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all outline-none"
+                    placeholder="Search KPIs..." type="text" />
+            </div>
+            <div class="flex items-center justify-end gap-2 ml-auto w-full sm:w-auto">
+                <button
+                    class="flex items-center justify-center gap-0 px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors w-full sm:w-auto"
+                    style="">
+                    <span class="material-symbols-outlined text-[18px]" data-icon="filter_list"
+                        style="">filter_list</span>
+                    <span class="text-body-md" style="">Filters</span>
+                </button>
+                <a class="text-primary hover:underline px-4 whitespace-nowrap text-body-md" href="#" style="">View
+                    All</a>
+            </div>
+        </div>
+        <!-- KPI Grid -->
+        <div id="kpi-cards-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+            <!-- Cards will be dynamically injected here by progress-card.js -->
+        </div>
+    </div>
+</section>
