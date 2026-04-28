@@ -8,6 +8,7 @@ async function initLayout() {
   // Inject sidebar and topbar once — they stay for the entire session
   await loadComponent("sidebar-container", "../components/sidebar.html");
   await loadComponent("navbar-container", "../components/navbar.html");
+  if (typeof syncNavbarAvatar === "function") syncNavbarAvatar();
 
   const role = localStorage.getItem("role") || "manager";
   renderSidebar(role);

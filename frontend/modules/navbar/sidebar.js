@@ -183,5 +183,6 @@ async function changePage(event, pageName) {
 const pageInits = {
   "Assign KPI": initAssignmentView,
   "KPI Assignment": initAssignmentView,
-  "Review Submission": initReviewView
+  "Review Submission": initReviewView,
+  "Profile": initProfileView
 };
