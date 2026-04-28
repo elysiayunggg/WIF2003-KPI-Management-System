@@ -1,0 +1,262 @@
+<section class="p-4">
+
+  <h1 class="staff-main-title">Staff Dashboard</h1>
+  <p class="staff-subtitle">Track your assigned KPIs, progress, and upcoming deadlines</p>
+
+  <!-- ALERT (cannot click yet) --> 
+  <div class="staff-alert-box mt-3">
+    <div class="staff-alert-left">
+      <i class="bi bi-exclamation-triangle"></i>
+      <span>
+        <strong>Upcoming Deadline:</strong>
+        You have a KPI task due on <strong>Oct 24, 2026</strong>. Please ensure evidence is uploaded.
+      </span>
+    </div>
+
+    <i class="bi bi-chevron-right staff-alert-arrow"></i>
+  </div>
+
+  <!-- SUMMARY CARDS -->
+  <div class="summary-cards mt-4">
+
+  <div class="summary-card">
+    <div class="summary-card-top">
+      <div class="summary-icon summary-neutral">
+        <i class="bi bi-grid"></i>
+      </div>
+      <span class="summary-badge badge-neutral">TOTAL</span>
+    </div>
+    <p class="summary-label">TOTAL KPIS</p>
+    <h3 class="summary-number">24</h3>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-card-top">
+      <div class="summary-icon summary-green">
+        <i class="bi bi-hourglass-split"></i>
+      </div>
+      <span class="summary-badge badge-green">ACTIVE</span>
+    </div>
+    <p class="summary-label">IN PROGRESS</p>
+    <h3 class="summary-number">8</h3>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-card-top">
+      <div class="summary-icon summary-yellow">
+        <i class="bi bi-file-earmark-check"></i>
+      </div>
+      <span class="summary-badge badge-yellow">REVIEW</span>
+    </div>
+    <p class="summary-label">AWAITING REVIEW</p>
+    <h3 class="summary-number">5</h3>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-card-top">
+      <div class="summary-icon summary-blue">
+        <i class="bi bi-check-circle"></i>
+      </div>
+      <span class="summary-badge badge-blue">DONE</span>
+    </div>
+    <p class="summary-label">COMPLETED</p>
+    <h3 class="summary-number">12</h3>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-card-top">
+      <div class="summary-icon summary-red">
+        <i class="bi bi-exclamation-triangle"></i>
+      </div>
+      <span class="summary-badge badge-red">ALERT</span>
+    </div>
+    <p class="summary-label">OVERDUE</p>
+    <h3 class="summary-number">2</h3>
+  </div>
+
+</div>
+
+
+
+<!-- STAFF CHARTS ROW -->
+<div class="staff-charts-row mt-4 mb-4">
+
+  <!-- PERFORMANCE TRENDS -->
+  <div class="staff-chart-card staff-performance-card">
+    <div class="staff-chart-header">
+
+      <div class="d-flex align-items-center gap-2">
+        <h3>Performance Trends</h3>
+
+        <div class="dropdown-wrapper trend-filter-wrapper">
+          <button class="custom-filter-btn staff-trend-btn" onclick="toggleStaffDropdown(event, 'trendDropdown')">
+            <span id="selectedTrend">Last 7 Days</span>
+            <i class="bi bi-chevron-down dropdown-icon"></i>
+          </button>
+
+          <div class="custom-dropdown" id="trendDropdown">
+            <button onclick="selectTrend('7', 'Last 7 Days')">Last 7 Days</button>
+            <button onclick="selectTrend('30', 'Last 30 Days')">Last 30 Days</button>
+            <button onclick="selectTrend('90', 'Last 90 Days')">Last 90 Days</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="staff-chart-legend">
+        <span><span class="legend-dot actual-dot"></span> Actual</span>
+        <span><span class="legend-dot target-dot"></span> Target</span>
+      </div>
+
+    </div>
+
+    <div class="staff-line-chart-wrapper">
+      <canvas id="staffPerformanceTrendsChart"></canvas>
+    </div>
+  </div>
+
+  <!-- COMPLETION BREAKDOWN -->
+  <div class="staff-chart-card staff-breakdown-card">
+    <h3>Completion Breakdown</h3>
+
+    <div class="staff-doughnut-wrapper">
+      <canvas id="staffCompletionBreakdownChart"></canvas>
+    </div>
+
+    <div class="staff-breakdown-legend">
+      <div>
+        <span><span class="legend-dot completed-dot"></span> Completed</span>
+        <strong>50%</strong>
+      </div>
+
+      <div>
+        <span><span class="legend-dot progress-dot"></span> In Progress</span>
+        <strong>33%</strong>
+      </div>
+
+      <div>
+        <span><span class="legend-dot pending-dot"></span> Awaiting Review</span>
+        <strong>13%</strong>
+      </div>
+
+      <div>
+        <span><span class="legend-dot overdue-dot"></span> Overdue</span>
+        <strong>4%</strong>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+  <!-- SECTION TITLE -->
+  <div class="mb-3 mt-4">
+    <h5 class="staff-table-title mb-1">Active Performance Tasks</h5>
+    <p class="staff-table-subtitle mb-0">
+      Manage and track your assigned KPIs for this period
+    </p>
+  </div>
+
+  <!-- FILTER + EXPORT -->
+  <div class="filter-row report-filter-row mt-4 mb-4">
+
+    <div class="filter-item">
+      <label>STATUS:</label>
+      <div class="dropdown-wrapper">
+        <button class="custom-filter-btn" onclick="toggleStaffDropdown(event, 'staffStatusDropdown')">
+          <span id="staffSelectedStatus">All Status</span>
+          <i class="bi bi-chevron-down dropdown-icon"></i>
+        </button>
+
+        <div class="custom-dropdown" id="staffStatusDropdown">
+          <button onclick="selectStaffDropdownOption('staffSelectedStatus', 'staffStatusDropdown', 'All Status')">All Status</button>
+          <button onclick="selectStaffDropdownOption('staffSelectedStatus', 'staffStatusDropdown', 'In Progress')">In Progress</button>
+          <button onclick="selectStaffDropdownOption('staffSelectedStatus', 'staffStatusDropdown', 'Awaiting Review')">Awaiting Review</button>
+          <button onclick="selectStaffDropdownOption('staffSelectedStatus', 'staffStatusDropdown', 'Completed')">Completed</button>
+          <button onclick="selectStaffDropdownOption('staffSelectedStatus', 'staffStatusDropdown', 'Overdue')">Overdue</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-item date-filter-wrapper">
+      <label>DATE RANGE:</label>
+      <div class="dropdown-wrapper">
+        <button class="custom-filter-btn date-range-btn d-flex align-items-center" onclick="toggleStaffCalendar(event)">
+          <span class="filter-text d-flex align-items-center">
+            <i class="bi bi-calendar-event me-1"></i>
+            <span id="staffSelectedDateRange">Select Date Range</span>
+          </span>
+
+          <i class="bi bi-x-circle clear-staff-date-icon d-none ms-2" onclick="clearStaffDateFilter(event)"></i>
+
+          <i class="bi bi-chevron-down dropdown-icon ms-2"></i>
+        </button>
+
+        <div class="calendar-dropdown" id="staffCalendarDropdown">
+          <div class="calendar-header">
+            <button onclick="staffPrevMonth()" class="calendar-arrow">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+
+            <h5 id="staffCalendarMonth">April 2026</h5>
+
+            <button onclick="staffNextMonth()" class="calendar-arrow">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+
+          <div class="calendar-weekdays">
+            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+          </div>
+
+          <div class="calendar-days" id="staffCalendarDays"></div>
+
+          <div class="calendar-actions">
+            <button class="btn btn-light btn-sm" onclick="cancelStaffCalendar()">Cancel</button>
+            <button class="btn btn-primary btn-sm" onclick="chooseStaffDate()">Choose Date</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="report-export-actions ms-auto">
+      <button class="report-export-pdf" onclick="exportStaffPDF()">
+        <i class="bi bi-filetype-pdf"></i>
+        <span>Export PDF</span>
+      </button>
+
+      <button class="report-export-csv" onclick="exportStaffCSV()">
+        <i class="bi bi-filetype-csv"></i>
+        <span>Export CSV</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- TASK TABLE -->
+  <div class="report-table-card">
+    <div class="table-responsive">
+      <table class="table table-borderless align-middle mb-0">
+        <thead>
+          <tr>
+            <th>KPI NAME</th>
+            <th>TARGET VALUE</th>
+            <th>PROGRESS</th>
+            <th>STATUS</th>
+            <th>DEADLINE</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+
+        <tbody id="staffTaskTableBody"></tbody>
+      </table>
+  </div>
+
+  <div class="report-view-all">
+    <button onclick="viewAllStaffTasks()">
+      Show More <i class="bi bi-chevron-down"></i>
+    </button>
+  </div>
+
+</div>
+
+
+</section>

@@ -1,0 +1,275 @@
+<section class="p-4">
+
+  <!-- MAIN TITLE -->
+  <h1 id="mainHeading">Dashboard</h1>
+  
+
+  <!-- OVERVIEW SECTION -->
+  <div class="mt-4">
+    <h2 class="overview-title">Overview</h2>
+    <p class="overview-subtext">
+      Real-time metrics and KPI achievement tracking
+    </p>
+  </div>
+
+  <!-- FILTER SECTION -->
+  <div class="filter-row mt-3 mb-4">
+
+    <!-- STATUS FILTER -->
+    <div class="filter-item">
+      <label>STATUS:</label>
+      <div class="dropdown-wrapper">
+        <button class="custom-filter-btn" onclick="toggleDropdown(event, 'statusDropdown')">
+          <span id="selectedStatus">All Status</span>
+          <i class="bi bi-chevron-down dropdown-icon"></i>
+        </button>
+
+        <div class="custom-dropdown" id="statusDropdown">
+          <button onclick="selectDropdownOption('selectedStatus', 'statusDropdown', 'All Status')">All Status</button>
+          <button onclick="selectDropdownOption('selectedStatus', 'statusDropdown', 'In Progress')">In Progress</button>
+          <button onclick="selectDropdownOption('selectedStatus', 'statusDropdown', 'Pending Verification')">Pending Verification</button>
+          <button onclick="selectDropdownOption('selectedStatus', 'statusDropdown', 'Completed')">Completed</button>
+          <button onclick="selectDropdownOption('selectedStatus', 'statusDropdown', 'Overdue')">Overdue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEPARTMENT FILTER -->
+    <div class="filter-item">
+      <label>DEPARTMENT:</label>
+      <div class="dropdown-wrapper">
+        <button class="custom-filter-btn" onclick="toggleDropdown(event, 'departmentDropdown')">
+          <span id="selectedDepartment">All Departments</span>
+          <i class="bi bi-chevron-down dropdown-icon"></i>
+        </button>
+
+        <div class="custom-dropdown" id="departmentDropdown">
+          <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'All Departments')">All Departments</button>
+          <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'Backend & Infrastructure')">Backend & Infrastructure</button>
+          <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'Frontend & UX')">Frontend & UX</button>
+          <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'Operations & Growth')">Operations & Growth</button>
+          <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'Quality Assurance')">Quality Assurance</button>
+          <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'Security')">Security</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAFF FILTER -->
+    <div class="filter-item">
+      <label>STAFF:</label>
+      <div class="dropdown-wrapper">
+        <button class="custom-filter-btn" onclick="toggleDropdown(event, 'staffDropdown')">
+          <span id="selectedStaff">All Members</span>
+          <i class="bi bi-chevron-down dropdown-icon"></i>
+        </button>
+
+        <div class="custom-dropdown" id="staffDropdown">
+          <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', 'All Members')">All Members</button>
+          <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', 'Ali Ahmad')">Ali Ahmad</button>
+          <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', 'John Tan')">John Tan</button>
+          <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', 'Sarah Chen')">Sarah Chen</button>
+          <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', 'Marcus Low')">Marcus Low</button>
+          <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', 'Priya Nair')">Priya Nair</button>
+          <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', 'Daniel Wong')">Daniel Wong</button>
+          <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', 'Nadia Lee')">Nadia Lee</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATE RANGE FILTER -->
+    <div class="filter-item date-filter-wrapper">
+      <label>DATE RANGE:</label>
+      <div class="dropdown-wrapper">
+        <button class="custom-filter-btn date-range-btn d-flex align-items-center" onclick="toggleCalendar(event)">
+          <span class="filter-text d-flex align-items-center">
+            <i class="bi bi-calendar-event me-1"></i>
+            <span id="selectedDateRange">Select Date Range</span>
+          </span>
+
+          <!-- Clear icon (NEW) -->
+          <i class="bi bi-x-circle clear-date-icon d-none ms-2" onclick="clearDashboardDateFilter(event)"></i>
+
+          <!-- Dropdown arrow -->
+          <i class="bi bi-chevron-down dropdown-icon ms-2"></i>
+        </button>
+
+        <div class="calendar-dropdown" id="calendarDropdown">
+          <div class="calendar-header">
+            <button onclick="prevMonth()" class="calendar-arrow">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+
+            <h5 id="calendarMonth">April 2026</h5>
+
+            <button onclick="nextMonth()" class="calendar-arrow">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+
+          <div class="calendar-weekdays">
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+            <span>Sun</span>
+          </div>
+
+          <div class="calendar-days" id="calendarDays"></div>
+
+          <div class="calendar-actions">
+            <button class="btn btn-light btn-sm" onclick="cancelCalendar()">Cancel</button>
+            <button class="btn btn-primary btn-sm" onclick="chooseDate()">Choose Date</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<!-- SUMMARY CARDS -->
+<div class="summary-cards mt-4">
+
+  <div class="summary-card">
+    <div class="summary-card-top">
+      <div class="summary-icon summary-neutral">
+        <i class="bi bi-grid"></i>
+      </div>
+      <span class="summary-badge badge-neutral">TOTAL</span>
+    </div>
+    <p class="summary-label">TOTAL KPIS</p>
+    <h3 class="summary-number" id="managerTotalKpis">0</h3>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-card-top">
+      <div class="summary-icon summary-green">
+        <i class="bi bi-hourglass-split"></i>
+      </div>
+      <span class="summary-badge badge-green">ACTIVE</span>
+    </div>
+    <p class="summary-label">IN PROGRESS</p>
+    <h3 class="summary-number" id="managerInProgressKpis">0</h3>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-card-top">
+      <div class="summary-icon summary-yellow">
+        <i class="bi bi-file-earmark-check"></i>
+      </div>
+      <span class="summary-badge badge-yellow">REVIEW</span>
+    </div>
+    <p class="summary-label">PENDING VERIFICATION</p>
+    <h3 class="summary-number" id="managerPendingKpis">0</h3>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-card-top">
+      <div class="summary-icon summary-blue">
+        <i class="bi bi-check-circle"></i>
+      </div>
+      <span class="summary-badge badge-blue">DONE</span>
+    </div>
+    <p class="summary-label">COMPLETED</p>
+    <h3 class="summary-number" id="managerCompletedKpis">0</h3>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-card-top">
+      <div class="summary-icon summary-red">
+        <i class="bi bi-exclamation-triangle"></i>
+      </div>
+      <span class="summary-badge badge-red">ALERT</span>
+    </div>
+    <p class="summary-label">OVERDUE</p>
+    <h3 class="summary-number" id="managerOverdueKpis">0</h3>
+  </div>
+
+</div>
+
+<!-- PERFORMANCE + KPI DISTRIBUTION ROW -->
+<div class="dashboard-insight-row mt-4">
+
+  <!-- PERFORMANCE SUMMARY -->
+  <div class="performance-summary-card">
+    <h3 class="performance-summary-title">PERFORMANCE SUMMARY</h3>
+
+    <div class="performance-score-block">
+      <p class="performance-label">AVERAGE KPI SCORE</p>
+
+      <div class="performance-score-row">
+        <h2 class="performance-score" id="managerAverageScore">0%</h2>
+        <span class="performance-change">
+          <i class="bi bi-arrow-up"></i> +2.4%
+        </span>
+      </div>
+    </div>
+
+    <div class="performance-staff-list">
+      <div class="performance-staff-item">
+        <div>
+          <p class="performance-label mb-1">TOP PERFORMING STAFF</p>
+          <h4 id="managerTopStaff">-</h4>
+        </div>
+        <i class="bi bi-trophy-fill performance-icon"></i>
+      </div>
+
+      <div class="performance-staff-item">
+        <div>
+          <p class="performance-label mb-1">LOWEST PERFORMANCE</p>
+          <h4 id="managerLowestStaff">-</h4>
+        </div>
+        <i class="bi bi-exclamation-lg performance-icon text-danger"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI DISTRIBUTION -->
+  <div class="kpi-distribution-card">
+    <h3 class="kpi-distribution-title">KPI DISTRIBUTION (%)</h3>
+
+    <div class="kpi-distribution-content d-flex align-items-center justify-content-center gap-5">
+      <div class="kpi-pie-chart">
+        <canvas id="managerKpiDistributionChart"></canvas>
+      </div>
+
+      <div class="kpi-distribution-side">
+        <div class="kpi-efficiency-box">
+          <h2 id="overallEfficiency">89%</h2>
+          <p>OVERALL EFFICIENCY</p>
+        </div>
+
+        <div class="kpi-legend" id="kpiPieLegend"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- KPI TREND -->
+<div class="kpi-trend-card mt-4">
+
+  <div class="kpi-trend-header">
+    <div>
+      <h3>KPI Trend</h3>
+
+      <div class="kpi-trend-legend">
+        <div>
+          <span class="legend-box actual"></span> ACTUAL
+        </div>
+        <div>
+          <span class="legend-box target"></span> TARGET
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Chart -->
+  <div class="kpi-chart">
+      <canvas id="managerKpiTrendChart"></canvas>
+    </div>
+
+</div>
+
+</section>

@@ -1,0 +1,196 @@
+<section class="p-4">
+
+  <!-- REPORT TITLE -->
+  <h1 class="report-main-title">Report</h1>
+  <p class="report-subtitle">Comprehensive KPI tracking and employee performance summary</p>
+
+  <!-- SEARCH BAR -->
+  <div class="report-search-wrapper mb-3">
+    <i class="bi bi-search"></i>
+    <input type="text" class="form-control report-search-input" placeholder="Search..." id="reportSearchInput">
+  </div>
+
+  <!-- FILTER + EXPORT SECTION -->
+  <div class="filter-row report-filter-row mb-4">
+
+    <!-- STATUS FILTER -->
+    <div class="filter-item">
+      <label>STATUS:</label>
+      <div class="dropdown-wrapper">
+        <button class="custom-filter-btn" onclick="toggleReportDropdown(event, 'reportStatusDropdown')">
+          <span id="reportSelectedStatus">All Status</span>
+          <i class="bi bi-chevron-down dropdown-icon"></i>
+        </button>
+
+        <div class="custom-dropdown" id="reportStatusDropdown">
+          <button onclick="selectReportDropdownOption('reportSelectedStatus', 'reportStatusDropdown', 'All Status')">All Status</button>
+          <button onclick="selectReportDropdownOption('reportSelectedStatus', 'reportStatusDropdown', 'In Progress')">In Progress</button>
+          <button onclick="selectReportDropdownOption('reportSelectedStatus', 'reportStatusDropdown', 'Pending Verification')">Pending Verification</button>
+          <button onclick="selectReportDropdownOption('reportSelectedStatus', 'reportStatusDropdown', 'Completed')">Completed</button>
+          <button onclick="selectReportDropdownOption('reportSelectedStatus', 'reportStatusDropdown', 'Overdue')">Overdue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAFF FILTER -->
+    <div class="filter-item">
+      <label>STAFF:</label>
+      <div class="dropdown-wrapper">
+        <button class="custom-filter-btn" onclick="toggleReportDropdown(event, 'reportStaffDropdown')">
+          <span id="reportSelectedStaff">All Members</span>
+          <i class="bi bi-chevron-down dropdown-icon"></i>
+        </button>
+
+        <div class="custom-dropdown" id="reportStaffDropdown">
+          <button onclick="selectReportDropdownOption('reportSelectedStaff', 'reportStaffDropdown', 'All Members')">All Members</button>
+          <button onclick="selectReportDropdownOption('reportSelectedStaff', 'reportStaffDropdown', 'Ali Ahmad')">Ali Ahmad</button>
+          <button onclick="selectReportDropdownOption('reportSelectedStaff', 'reportStaffDropdown', 'John Tan')">John Tan</button>
+          <button onclick="selectReportDropdownOption('reportSelectedStaff', 'reportStaffDropdown', 'Sarah Chen')">Sarah Chen</button>
+          <button onclick="selectReportDropdownOption('reportSelectedStaff', 'reportStaffDropdown', 'Marcus Low')">Marcus Low</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATE RANGE FILTER -->
+    <div class="filter-item date-filter-wrapper">
+      <label>DATE RANGE:</label>
+      <div class="dropdown-wrapper">
+        <button class="custom-filter-btn date-range-btn d-flex align-items-center" onclick="toggleReportCalendar(event)">
+          <span class="filter-text d-flex align-items-center">
+            <i class="bi bi-calendar-event me-1"></i>
+            <span id="reportSelectedDateRange">Select Date Range</span>
+          </span>
+
+          <i class="bi bi-x-circle clear-report-date-icon d-none ms-2" onclick="clearReportDateFilter(event)"></i>
+
+          <i class="bi bi-chevron-down dropdown-icon ms-2"></i>
+        </button>
+
+        <div class="calendar-dropdown" id="reportCalendarDropdown">
+          <div class="calendar-header">
+            <button onclick="reportPrevMonth()" class="calendar-arrow">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+
+            <h5 id="reportCalendarMonth">April 2026</h5>
+
+            <button onclick="reportNextMonth()" class="calendar-arrow">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+
+          <div class="calendar-weekdays">
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+            <span>Sun</span>
+          </div>
+
+          <div class="calendar-days" id="reportCalendarDays"></div>
+
+          <div class="calendar-actions">
+            <button class="btn btn-light btn-sm" onclick="cancelReportCalendar()">Cancel</button>
+            <button class="btn btn-primary btn-sm" onclick="chooseReportDate()">Choose Date</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPORT BUTTONS -->
+    <div class="report-export-actions ms-auto">
+      <button class="report-export-pdf" onclick="exportReportPDF()">
+        <i class="bi bi-filetype-pdf"></i>
+        <span>Export PDF</span>
+      </button>
+
+      <button class="report-export-csv" onclick="exportReportCSV()">
+        <i class="bi bi-filetype-csv"></i>
+        <span>Export CSV</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- KPI TABLE -->
+  <div class="report-table-card">
+    <div class="table-responsive">
+      <table class="table table-borderless align-middle mb-0">
+        <thead>
+          <tr>
+            <th>KPI Name</th>
+            <th>Target Value</th>
+            <th>Assign To</th>
+            <th>Progress</th>
+            <th>Status</th>
+            <th>Deadline</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+
+        <tbody id="reportTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="report-view-all">
+      <button onclick="viewAllReportTasks()">
+        Show More <i class="bi bi-chevron-down"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- BOTTOM SUMMARY CARDS -->
+  <div class="row g-4 mt-4">
+
+    <div class="col-md-4">
+      <div class="report-bottom-card">
+        <p>Completion Rate</p>
+        <div class="d-flex align-items-baseline gap-2">
+          <h3 id="reportCompletionRate">0%</h3>
+          <span class="positive-change">+2.4% vs last mo</span>
+        </div>
+        <div class="report-progress">
+          <div style="width: 84.2%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="report-bottom-card active-task-card">
+        <p>Active Tasks</p>
+        <div class="d-flex align-items-baseline gap-2">
+          <h3 id="reportActiveTasks">0</h3>
+          <span>On Track</span>
+        </div>
+
+        <div class="task-bars">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div class="warning"></div>
+          <div class="empty"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="report-bottom-card">
+        <p>Upcoming Deadlines</p>
+
+        <div class="deadline-item">
+          <span>Security Audit</span>
+          <small>May 02</small>
+        </div>
+
+        <div class="deadline-item">
+          <span>Q2 Forecast</span>
+          <small>May 05</small>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
