@@ -9,6 +9,8 @@ async function initLayout() {
   await loadComponent("sidebar-container", "../components/sidebar.html");
   await loadComponent("navbar-container", "../components/navbar.html");
 
+  initNotificationModule();
+
   const role = localStorage.getItem("role") || "manager";
   renderSidebar(role);
 

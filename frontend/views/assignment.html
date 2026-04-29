@@ -1,12 +1,15 @@
 <section class="p-4">
 
   <!-- Breadcrumb -->
-  <nav aria-label="breadcrumb" class="mb-3">
+  <nav style="--bs-breadcrumb-divider: '>';">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item">KPI Assignment and Verification</li>
+      <li class="breadcrumb-item" onclick="changePage(event, 'KPI Assignment & Verification')">
+        <a href="#">KPI Assignment and Verification</a>
+      </li>
       <li class="breadcrumb-item active" aria-current="page">Assign KPI</li>
     </ol>
   </nav>
+
 
   <!-- Title and Description -->
   <div class="mb-4">
@@ -53,7 +56,7 @@
 
           <div class="d-flex justify-content-center mt-3">
             <button type="button" class="btn btn-secondary highLightButton m-1">Update Assignment</button>
-            <button type="button" class="btn btn-light m-1">Discard</button>        
+            <button type="button" class="btn btn-light m-1">Discard</button>
           </div>
         </div>
       </div>
@@ -74,19 +77,25 @@
             <div class="stakeholder-list d-flex flex-wrap gap-2" id="stakeholderList">
               <!-- badges injected by assignment.js -->
             </div>
+            <div class="stakeholder-badge add-new-badge align-items-center gap-2 px-3 py-2 rounded-3 mt-2"
+              onclick="openAddStakeholderModal()">
+              <i class="bi bi-plus-circle"></i>
+              <span class="fw-medium small">Add New</span>
+            </div>
+
 
           </div>
 
           <div>
             <h6 class="fw-bold mb-3">Notification Preference</h6>
             <div class="form-check mb-3">
-              <input class="form-check-input" type="checkbox" id="notifyChange" checked>
+              <input class="form-check-input" type="checkbox" id="notifyChange" style="cursor: pointer;" unchecked>
               <label class="form-check-label" for="notifyChange">
                 Notify stakeholders of this change
               </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="requireAck" checked>
+              <input class="form-check-input" type="checkbox" id="requireAck" style="cursor: pointer;" unchecked>
               <label class="form-check-label" for="requireAck">
                 Require acknowledgement
               </label>

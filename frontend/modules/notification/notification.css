@@ -1,0 +1,238 @@
+/* Notification Bell Button */
+.notification-btn {
+  position: relative;
+  border: none;
+  background: transparent;
+  color: #6c757d;
+  font-size: 20px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px; 
+  height: 38px;
+  padding: 0;   
+  cursor: pointer;
+}
+
+.notification-btn:hover {
+  background-color: rgba(78, 94, 130, 0.1);
+}
+
+.notification-btn.active {
+  background-color: rgba(78, 94, 130, 0.2);
+}
+
+.notification-btn i {
+  transform: translateX(0.5px);
+}
+
+/* Notification Bell Red Unread Badge*/
+#unreadBadge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  background-color: #dc3545;
+  border-radius: 50%;
+}
+
+/* Notification Overlay */
+.notification-overlay {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 360px;
+  max-height: 420px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid #e0e3e8;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-overlay.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Notification Header */
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #fafbfc;
+}
+
+.notification-header h6 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.mark-all-read {
+  background: none;
+  border: none;
+  color: #4e5e82;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.mark-all-read:hover {
+  text-decoration: underline;
+}
+
+/* Notification List */
+.notification-list {
+  flex: 1;             
+  min-height: 0;      
+  padding: 8px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.notification-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 3px;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+  background: #c1c7d0;
+  border-radius: 3px;
+}
+
+.notification-list::-webkit-scrollbar-thumb:hover {
+  background: #a0a8b0;
+}
+
+/* Notification Item */
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.notification-item:hover {
+  background-color: #f5f8ff;
+}
+
+.notification-item.read {
+  background-color: transparent;
+}
+
+.notification-item.unread {
+  background-color: #f0f7ff;
+}
+
+/* Notification Icon */
+.notification-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f4f8;
+  border-radius: 50%;
+}
+
+/* Notification Content */
+.notification-content {
+  min-width: 0;
+}
+
+.notification-title {
+  font-size: 13px;
+  color: #1a1a1a;
+  line-height: 1.4;
+}
+
+.notification-message {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.notification-time {
+  font-size: 11px;
+  color: #999;
+  flex-shrink: 0;
+}
+
+/* Unread Dot Indicator */
+.unread-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  background-color: #4e5e82;
+  border-radius: 50%;
+  margin-top: 4px;
+}
+
+/* Empty State */
+.notification-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+.notification-empty i {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.notification-empty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Notification Footer */
+.notification-footer {
+  padding: 12px 20px;
+  border-top: 1px solid #f0f0f0;
+  text-align: center;
+}
+
+.notification-footer a {
+  color: #4e5e82;
+  font-size: 13px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.notification-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Wrapper for positioning */
+.notification-wrapper {
+  position: relative;
+  display: inline-block;
+}

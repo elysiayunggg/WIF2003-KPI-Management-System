@@ -8,7 +8,7 @@ const pageRoutes = {
   "Create KPI": "../views/create-kpi.html",
   "Update KPI": "../views/update-kpi.html",
   "View KPI List": "../views/kpi-list.html",
-  "KPI Assignment": "../views/assignment.html",
+  "KPI Assignment & Verification": "../views/assignment_verification.html",
   "Assign KPI": "../views/assignment.html",
   "Review Submission": "../views/review.html",
   "KPI Progress": "../views/progress.html",
@@ -45,14 +45,8 @@ function renderSidebar(role) {
       </div>
 
       <div class="nav-group">
-        <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment')">
+        <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment & Verification')">
           <i class="bi bi-check2-square"></i> KPI Assignment & Verification
-        </a>
-        <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Assign KPI')">
-          <i class="bi bi-clipboard-plus"></i> Assign KPI
-        </a>
-        <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Review Submission')">
-          <i class="bi bi-eye"></i> Review Submission
         </a>
       </div>
 
@@ -183,5 +177,6 @@ async function changePage(event, pageName) {
 const pageInits = {
   "Assign KPI": initAssignmentView,
   "KPI Assignment": initAssignmentView,
-  "Review Submission": initReviewView
+  "Review Submission": initReviewView,
+  "KPI Assignment & Verification": initAssignmentVerificationView
 };
