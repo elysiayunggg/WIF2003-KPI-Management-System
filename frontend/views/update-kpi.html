@@ -1,0 +1,176 @@
+<section class="p-4 update-kpi">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">KPI Management</li>
+      <li class="breadcrumb-item active">Update KPI</li>
+    </ol>
+  </nav>
+
+ <!-- Header -->
+  <div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+      <h1 class="fw-bold">Update Strategic KPI</h1>
+      <p class="text-muted">
+        Modify the parameters, targets, and deadlines for the existing performance indicator.
+      </p>
+    </div>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary" onclick="changePage(event, 'KPI Management')">Discard</button>
+      <button id="updateKpiBtn" class="btn create-btn">Update KPI</button>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- LEFT SECTION -->
+    <div class="col-lg-8">
+
+      <!-- General Information -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+
+          <h5 class="fw-semibold mb-3">
+            <i class="bi bi-pencil-square me-2"></i> General Information
+          </h5>
+
+          <div class="mb-3">
+            <label class="form-label">KPI Name</label>
+            <input id="kpiName" type="text" class="form-control"
+              value="Quarterly Revenue Growth">
+          </div>
+
+          <div>
+            <label class="form-label">Description</label>
+            <textarea id="kpiDesc" class="form-control" rows="4">
+This KPI tracks the gross revenue increase across all enterprise software service lines, focusing on SaaS recurring revenue and implementation consulting fees.
+            </textarea>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Target Metrics -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+
+          <h5 class="fw-semibold mb-3">
+            <i class="bi bi-bullseye me-2"></i> Target Metrics
+          </h5>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Target Value</label>
+              <input id="kpiTarget" type="text" class="form-control" value="$ 2.4M">
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Measurement Unit</label>
+              <select id="kpiUnit" class="form-select">
+                <option selected>Currency (RM)</option>
+                <option>Percentage (%)</option>
+                <option>Time (Hours)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- STATUS -->
+          <label class="form-label mt-2">Current Status</label>
+          <div class="d-flex gap-2 flex-wrap">
+
+            <button class="status-btn pending" data-status="PENDING">Pending</button>
+
+            <button class="status-btn progress active" data-status="INPROGRESS">
+              In Progress
+            </button>
+
+            <button class="status-btn completed" data-status="COMPLETED">
+              Completed
+            </button>
+
+            <button class="status-btn overdue" data-status="OVERDUE">
+              Overdue
+            </button>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT SECTION -->
+    <div class="col-lg-4">
+
+      <!-- Timeline -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+
+          <h6 class="fw-semibold mb-3">Timeline</h6>
+
+          <small class="text-muted fw-semibold">TARGET DEADLINE</small>
+          <input id="kpiDeadline" type="date" class="form-control mt-2 mb-3" value="2024-12-31">
+
+          <small class="text-muted fw-semibold">REVIEW FREQUENCY</small>
+<div class="d-flex gap-2 mt-2">
+  <button id="biWeeklyBtn" class="toggle-btn active">Bi-Weekly</button>
+  <button id="monthlyBtn" class="toggle-btn">Monthly</button>
+</div>
+
+        </div>
+      </div>
+
+      <!-- Assigned Staff -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-semibold mb-0">Assigned Staff</h6>
+            <small class="text-primary">Manage Staff</small>
+          </div>
+
+          <div class="person-card d-flex align-items-center gap-3 p-2 rounded selected">
+            <img src="https://i.pravatar.cc/40" class="rounded-circle">
+            <div>
+              <strong>Sarah Jenkins</strong><br>
+              <small class="text-muted">Product Growth Lead • Marketing</small>
+            </div>
+          </div>
+
+          <div class="border border-dashed rounded text-center mt-3 p-2 text-muted">
+            Add Stakeholders
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Progress Card -->
+      <div class="card border-0 shadow-sm text-white" style="background:#4e5e82;">
+        <div class="card-body p-4">
+
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <small>Current Progress</small>
+            <span class="badge bg-light text-dark">ON TRACK</span>
+          </div>
+
+          <h5>$2.15M / $2.4M</h5>
+          <h3 class="fw-bold text-warning">89%</h3>
+
+          <div class="progress mt-2" style="height:6px;">
+            <div class="progress-bar bg-white" style="width:89%"></div>
+          </div>
+
+          <small class="opacity-75 mt-2 d-block">
+            Data synchronized from Enterprise CRM 2 hours ago.
+          </small>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
