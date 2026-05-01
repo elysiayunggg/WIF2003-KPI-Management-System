@@ -1,0 +1,76 @@
+/* Custom CSS for Submit Evidence Module */
+#submit-evidence-root .drop-shadow-soft {
+    box-shadow: 0px 4px 6px -1px rgba(0,0,0,0.05);
+  }
+  
+  #submit-evidence-root input:focus, 
+  #submit-evidence-root textarea:focus {
+    outline: none;
+    border-color: #4E5E82;
+    box-shadow: 0 0 0 3px rgba(78, 94, 130, 0.1);
+  }
+  
+  #submit-evidence-root .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  /* Ensure all Material Symbols in this module default to the brand color #4E5E82 */
+#submit-evidence-root .material-symbols-outlined {
+    color: #4E5E82;
+    font-weight: normal; /* Keep icons unbolded */
+}
+
+/* Exception for the warning icon which should stay semantic (amber) */
+#submit-evidence-root .text-amber-600 {
+    color: #d97706 !important; 
+}
+
+/* Exception for the delete button on hover */
+#submit-evidence-root .remove-btn:hover .material-symbols-outlined {
+    color: #dc2626 !important;
+}
+
+/* Custom Round Slider Styling */
+.round-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    background: #ededf8;
+    outline: none;
+    opacity: 0.8;
+    transition: opacity .2s;
+}
+
+.round-slider:hover {
+    opacity: 1;
+}
+
+/* Webkit (Chrome, Safari, Opera, Edge) */
+.round-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%; /* Makes it round */
+    background: #4E5E82; /* Primary Brand Color */
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+/* Mozilla Firefox */
+.round-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #4E5E82;
+    cursor: pointer;
+    border: 2px solid #ffffff;
+}
+
+/* Global Icon and Text color consistency */
+#submit-evidence-root .material-symbols-outlined {
+    color: #4E5E82 !important;
+    font-weight: normal;
+}

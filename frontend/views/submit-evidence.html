@@ -1,0 +1,89 @@
+<section class="p-4" id="submit-evidence-root">
+    <div class="max-w-5xl mx-auto">
+      <nav aria-label="breadcrumb" class="mb-3">
+          <ol class="breadcrumb">
+              <li class="breadcrumb-item" onclick="changePage(event, 'Staff Dashboard')"><a href="#">Staff Dashboard</a></li>
+              <li class="breadcrumb-item" onclick="changePage(event, 'KPI Progress')"><a href="#">KPI Progress</a></li>
+              <li class="breadcrumb-item" onclick="changePage(event, 'KPI Detail')"><a href="#">KPI Detail</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Submit Evidence</li>
+          </ol>
+      </nav>
+  
+      <div class="mb-10">
+        <h1 class="font-h1 text-h1 text-on-surface mb-2 font-normal" id="page-title">Submit Evidence</h1>
+        <p class="font-body-md text-on-surface-variant max-w-2xl font-normal" id="page-desc">
+          Securely upload documents, metrics, and supporting files for KPI verification.
+        </p>
+      </div>
+  
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 space-y-8">
+          <div class="bg-white rounded-xl drop-shadow-soft border border-outline-variant/30 overflow-hidden">
+            <div class="p-8 space-y-8">
+              <section>
+                <div class="flex items-center gap-2 mb-6">
+                  <span class="material-symbols-outlined text-primary">description</span>
+                  <h2 class="font-h2 text-h2 text-on-surface font-normal">Submission Details</h2>
+                </div>
+                <div class="space-y-6">
+                  <div>
+                    <label class="block font-label-caps text-label-caps text-secondary mb-2 font-normal">SUBMISSION TITLE</label>
+                    <input id="evidence-title" class="w-full bg-background border border-outline-variant rounded-lg px-4 py-3 font-body-md text-on-surface transition-all font-normal" placeholder="e.g., Q3 Operational Efficiency Report" type="text"/>
+                  </div>
+                  <div>
+                    <label class="block font-label-caps text-label-caps text-secondary mb-2 font-normal">DESCRIPTION / CONTEXT</label>
+                    <textarea id="evidence-desc" class="w-full bg-background border border-outline-variant rounded-lg px-4 py-3 font-body-md text-on-surface transition-all font-normal" placeholder="Provide detailed context for the uploaded evidence..." rows="4"></textarea>
+                  </div>
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <label class="font-label-caps text-label-caps text-secondary font-normal">INDICATE TASK PROGRESS (%)</label>
+                      <span class="font-stat-number text-h2 text-primary font-normal" id="progress-val">0%</span>
+                    </div>
+                    <div class="slider-container">
+                      <input type="range" min="0" max="100" value="0" class="round-slider" id="progress-slider">
+                    </div>
+                  </div>
+                </div>
+              </section>
+  
+              <section id="upload-section">
+                <div class="flex items-center gap-2 mb-6">
+                  <span class="material-symbols-outlined text-primary">cloud_upload</span>
+                  <h2 class="font-h2 text-h2 text-on-surface font-normal">File Upload</h2>
+                </div>
+                <div class="border-2 border-dashed border-outline-variant rounded-xl p-12 text-center flex flex-col items-center justify-center bg-surface-container-low/30 hover:bg-surface-container-low transition-colors cursor-pointer group" id="drop-zone">
+                  <div class="w-16 h-16 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform" style="background-color: rgba(78, 94, 130, 0.1);">
+                    <span class="material-symbols-outlined text-primary text-[32px]">upload_file</span>
+                  </div>
+                  <p class="font-body-lg text-on-surface font-normal mb-1">Click to upload or drag and drop</p>
+                  <input type="file" id="file-input" hidden multiple>
+                </div>
+              </section>
+  
+              <div class="flex items-center gap-4 pt-4" id="action-buttons">
+                <button class="btn kpi-btn-primary w-40 font-normal" id="submit-btn">Submit Evidence</button>
+                <button class="btn kpi-btn-secondary w-40 font-normal" onclick="changePage(event, 'KPI Detail')">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <aside class="space-y-6">
+          <div class="bg-white p-6 rounded-xl drop-shadow-soft border border-outline-variant/30 h-full">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="font-h2 text-h2 text-on-surface font-normal">Staged Files</h2>
+              <span class="text-primary font-label-caps text-[10px] px-2 py-1 rounded-full" id="file-count-badge" style="background-color: rgba(78, 94, 130, 0.1);">0 FILES</span>
+            </div>
+            <div class="space-y-4" id="staged-files-list"></div>
+            <div class="mt-8 p-4 bg-amber-50 rounded-lg border border-amber-200 flex gap-3">
+              <span class="material-symbols-outlined text-amber-600">warning</span>
+              <div class="font-body-sm text-amber-700">
+                <p class="font-normal">Awaiting review</p>
+                <p>Files will be verified by a supervisor after submission.</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>

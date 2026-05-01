@@ -3,20 +3,23 @@
 // When adding a new page, add its entry here — no other file needs to change.
 const pageRoutes = {
   "Dashboard": "../views/dashboard.html",
-  "Staff Dashboard": "../views/staff-dashboard.html",
+  "Staff Dashboard": "../views/staff-dashboard.html",    // staff
   "Report": "../views/report.html",
   "KPI Management": "../views/kpi.html",
   "Create KPI": "../views/create-kpi.html",
   "Update KPI": "../views/update-kpi.html",
-  "View KPI List": "../views/kpi-list.html",
+  "View KPI List": "../views/kpi-list.html",             // staff
   "KPI Assignment": "../views/assignment.html",
   "Assign KPI": "../views/assignment.html",
   "Review Submission": "../views/review.html",
-  "KPI Progress": "../views/progress.html",
-  "KPI Detail": "../views/kpi-detail.html",
-  "Update KPI Progress": "../views/update-progress.html",
+  "KPI Progress": "../views/progress.html",              // staff
+  "KPI Detail": "../views/kpi-detail.html",              // staff
+  "Submit Evidence": "../views/submit-evidence.html",    // staff
+  "View Evidence": "../views/submit-evidence.html",      // staff
+  "Edit Evidence": "../views/submit-evidence.html",      // staff
+  // "Update KPI Progress": "../views/update-progress.html",
   "Notifications": "../views/notifications.html",
-  "Profile": "../views/profile.html",
+  "Profile": "../views/profile.html"
 };
 
 function renderSidebar(role) {
@@ -188,5 +191,8 @@ const pageInits = {
   "Review Submission": initReviewView,
   "Staff Dashboard": initStaffDashboardView,
   "KPI Progress": initProgressView,
-  "KPI Detail": initKPIDetailView
+  "KPI Detail": initKPIDetailView,
+  "Submit Evidence": initSubmitEvidenceView,
+  "View Evidence": initSubmitEvidenceView,
+  "Edit Evidence": initSubmitEvidenceView
 };

@@ -1,0 +1,453 @@
+.kpi-detail-view {
+    background-color: #f8fafc;
+    min-height: 100%;
+    color: #191b23;
+}
+
+.kpi-detail-view .material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+    vertical-align: middle;
+    font-size: 20px;
+}
+
+.kpi-container {
+    max-width: 1280px;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.kpi-detail-view .breadcrumb {
+    font-size: 0.78rem;
+}
+
+.kpi-detail-view .breadcrumb-item,
+.kpi-detail-view .breadcrumb-item a {
+    color: #6b7280;
+}
+
+.kpi-detail-view .breadcrumb-item.active {
+    color: #1f2937;
+}
+
+.kpi-page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.kpi-card {
+    background: #fff;
+    border: 1px solid #d8dde8;
+    border-radius: 0.85rem;
+    box-shadow: 0 2px 10px rgba(17, 24, 39, 0.06);
+    padding: 1.5rem;
+}
+
+.kpi-section-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+}
+
+.kpi-subtext {
+    color: #54647a;
+    max-width: 720px;
+}
+
+.kpi-label {
+    text-transform: uppercase;
+    color: #54647a;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.kpi-progress-value {
+    color: #4e5e82;
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+.kpi-target-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.kpi-main-progress {
+    height: 0.5rem;
+    background-color: #e6eaf2;
+}
+
+.kpi-main-progress .progress-bar {
+    background-color: #4e5e82;
+}
+
+.kpi-btn-primary {
+    background-color: #4e5e82;
+    color: #fff;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.kpi-btn-primary:hover {
+    background-color: #3f4d6d;
+    color: #fff;
+}
+
+.kpi-btn-secondary {
+    background: #e9ecf4;
+    color: #505f76;
+    border: 1px solid #d8dde8;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.kpi-status-btn {
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+}
+
+.kpi-status-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(17, 24, 39, 0.12);
+    filter: brightness(0.98);
+}
+
+.status-in-progress {
+    background: #d0e1fb;
+    color: #54647a;
+}
+
+.status-completed {
+    background: #d1fae5;
+    color: #047857;
+}
+
+.status-delayed {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.status-on-hold {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+/* Hide quarters by default except active section. */
+.kpi-detail-view .quarter-content {
+    display: none;
+    border-top: 1px solid #e4e7ee;
+    padding-top: 1rem;
+}
+
+.kpi-detail-view .quarter-content.active {
+    display: block;
+}
+
+/* Status dropdown visibility states. */
+.kpi-detail-view .kpi-status-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    min-width: 160px;
+    z-index: 20;
+}
+
+.kpi-detail-view .kpi-status-menu.is-open {
+    display: block;
+}
+
+.kpi-status-menu .dropdown-item {
+    border-radius: 0.45rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #334155;
+    transition: background-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+.kpi-status-menu .dropdown-item:hover {
+    background-color: #eef2f8;
+    color: #1f2937;
+    transform: translateX(2px);
+}
+
+.kpi-quarter-group .q-btn {
+    background: #eef2f8;
+    color: #505f76;
+    border: 1px solid #d8dde8;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.35rem 0.9rem;
+}
+
+.kpi-quarter-group .q-btn.kpi-quarter-active {
+    background: #ffffff;
+    color: #4e5e82;
+    box-shadow: 0 1px 4px rgba(17, 24, 39, 0.1);
+}
+
+.kpi-avatar-lg {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.kpi-stakeholders {
+    display: flex;
+    align-items: center;
+}
+
+.kpi-avatar-sm,
+.kpi-avatar-more {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    margin-left: -8px;
+}
+
+.kpi-avatar-sm:first-child {
+    margin-left: 0;
+}
+
+.kpi-avatar-more {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #d0e1fb;
+    color: #374151;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.kpi-table thead th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+}
+
+.kpi-table td {
+    color: #334155;
+    font-size: 0.92rem;
+}
+
+.kpi-detail-view .badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.kpi-detail-view .badge-red {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.kpi-detail-view .badge-yellow {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.kpi-detail-view .badge-green {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.kpi-milestone-header {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 1rem;
+    color: #54647a;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.kpi-milestone-row {
+    display: grid;
+    grid-template-columns: 1.5fr 3fr;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.kpi-milestone-name {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 0.92rem;
+}
+
+.kpi-track {
+    background: rgba(78, 94, 130, 0.18);
+    border-radius: 999px;
+    height: 0.7rem;
+}
+
+.kpi-fill,
+.kpi-fill-pending {
+    background: #4e5e82;
+    border-radius: 999px;
+    height: 100%;
+}
+
+.kpi-fill-pending {
+    background: #e5e7eb;
+}
+
+.kpi-initials {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #dbeafe;
+    color: #1d4ed8;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.kpi-link-btn {
+    color: #4e5e82;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.kpi-link-btn:hover {
+    text-decoration: underline;
+}
+
+.kpi-timeline {
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.kpi-timeline::before {
+    content: "";
+    position: absolute;
+    left: 0.35rem;
+    top: 0.25rem;
+    bottom: 0.25rem;
+    width: 1px;
+    background: #d1d5db;
+}
+
+.kpi-timeline-item {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.kpi-timeline-item p {
+    margin-bottom: 0.15rem;
+    font-size: 0.92rem;
+    color: #1f2937;
+}
+
+.kpi-dot {
+    position: absolute;
+    left: -1.5rem;
+    top: 0.35rem;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: #9ca3af;
+    box-shadow: 0 0 0 4px #fff;
+}
+
+.kpi-dot-primary {
+    background: #4e5e82;
+}
+
+.kpi-dot-success {
+    background: #10b981;
+}
+
+.kpi-btn-outline {
+    border: 1px solid rgba(78, 94, 130, 0.3);
+    color: #4e5e82;
+    font-weight: 600;
+}
+
+.kpi-actions-btn {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.kpi-actions-btn .material-symbols-outlined {
+    font-size: 18px;
+    color: #6b7280;
+}
+
+.kpi-actions-menu {
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+    padding: 0.4rem;
+    min-width: 9rem;
+}
+
+.kpi-actions-menu .dropdown-item {
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.55rem;
+}
+
+.kpi-actions-menu .dropdown-item:hover {
+    background-color: #f8fafc;
+    color: #0f172a;
+}
+
+.kpi-actions-menu .dropdown-item .material-symbols-outlined {
+    font-size: 17px;
+}
+
+@media (max-width: 992px) {
+    .kpi-container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .kpi-card {
+        padding: 1rem;
+    }
+
+    .kpi-page-title {
+        font-size: 1.45rem;
+    }
+
+    .kpi-milestone-header {
+        display: none;
+    }
+
+    .kpi-milestone-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+}
