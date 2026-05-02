@@ -22,6 +22,25 @@ const pageRoutes = {
   "Profile": "../views/profile.html"
 };
 
+// Maps page names to their view fragment files.
+// All paths are relative to pages/shell.html where this script is loaded from.
+// When adding a new page, add its entry here — no other file needs to change.
+const pageRoutes = {
+  "Dashboard": "../views/manager-dashboard.html",
+  "Report": "../views/report.html",
+  "KPI Management": "../views/kpi.html",
+  "Create KPI": "../views/create-kpi.html",
+  "Update KPI": "../views/update-kpi.html",
+  "View KPI List": "../views/kpi-list.html",
+  "KPI Assignment": "../views/assignment.html",
+  "Assign KPI": "../views/assignment.html",
+  "Review Submission": "../views/review.html",
+  "KPI Progress": "../views/progress.html",
+  "Update KPI Progress": "../views/update-progress.html",
+  "Notifications": "../views/notifications.html",
+  "Profile": "../views/profile.html",
+};
+
 function renderSidebar(role) {
   const menu = document.getElementById("sidebarMenu");
 
@@ -50,8 +69,14 @@ function renderSidebar(role) {
       </div>
 
       <div class="nav-group">
-        <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment & Verification')">
+        <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment')">
           <i class="bi bi-check2-square"></i> KPI Assignment & Verification
+        </a>
+        <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Assign KPI')">
+          <i class="bi bi-clipboard-plus"></i> Assign KPI
+        </a>
+        <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Review Submission')">
+          <i class="bi bi-eye"></i> Review Submission
         </a>
       </div>
 
@@ -61,7 +86,7 @@ function renderSidebar(role) {
     `;
   } else {
     menu.innerHTML = `
-      <a href="#" class="nav-link" onclick="changePage(event, 'Staff Dashboard')">
+      <a href="#" class="nav-link" onclick="changePage(event, 'Dashboard')">
         <i class="bi bi-grid"></i> Dashboard
       </a>
 
@@ -127,10 +152,15 @@ function setActiveLink() {
 async function changePage(event, pageName) {
   event.preventDefault();
 
-  const destination = pageRoutes[pageName];
-  if (!destination) {
-    console.warn(`No route defined for: "${pageName}"`);
-    return;
+  let destination = pageRoutes[pageName];
+
+  // Special handling for Dashboard
+  if (pageName === "Dashboard") {
+    const role = localStorage.getItem("role") || "manager";
+
+    destination = role === "staff"
+      ? "../views/staff-dashboard.html"
+      : "../views/manager-dashboard.html";
   }
 
   // Save active page before swapping so setActiveLink() can read it
@@ -180,19 +210,41 @@ async function changePage(event, pageName) {
 // When a view needs JS to run after it loads, add an entry here.
 // The function must be defined in a script loaded by shell.html.
 const pageInits = {
-  "Assign KPI": initAssignmentView,
-  "KPI Assignment": initAssignmentView,
-  "Review Submission": initReviewView,
-  "KPI Assignment & Verification": initAssignmentVerificationView,
-  "Staff Dashboard": initStaffDashboardView,
-  "KPI Progress": initProgressView,
-  "KPI Detail": initKPIDetailView,
-  "Submit Evidence": initSubmitEvidenceView,
-  "View Evidence": initSubmitEvidenceView,
-  "Edit Evidence": initSubmitEvidenceView,
-  "KPI Management": initKpiView,
-  "Update KPI": initUpdateKpiView,
-  "Create KPI": initCreateKpiView,
-  "Delete KPI": initDeleteKpi,
-  "View KPI List": initKpiListView
+  "Dashboard": function () {
+    const role = localStorage.getItem("role") || "manager";
+
+    if (role === "staff") {
+      if (typeof initStaffDashboardView === "function") {
+        initStaffDashboardView();
+      }
+    } else {
+      if (typeof initDashboardView === "function") {
+        initDashboardView();
+      }
+    }
+  },
+
+  "Report": function () {
+    if (typeof initReportView === "function") {
+      initReportView();
+    }
+  },
+
+  "Assign KPI": function () {
+    if (typeof initAssignmentView === "function") {
+      initAssignmentView();
+    }
+  },
+
+  "KPI Assignment": function () {
+    if (typeof initAssignmentView === "function") {
+      initAssignmentView();
+    }
+  },
+
+  "Review Submission": function () {
+    if (typeof initReviewView === "function") {
+      initReviewView();
+    }
+  }
 };
