@@ -16,14 +16,29 @@
                 <span class="progress-toolbar__label text-nowrap">My Assigned KPIs</span>
                 <div class="position-relative flex-grow-1">
                     <span class="material-symbols-outlined progress-search-icon">search</span>
-                    <input type="text" class="form-control progress-search-input" placeholder="Search KPIs..." />
+                    <input type="text" id="progress-search-input" class="form-control progress-search-input" placeholder="Search KPIs..." autocomplete="off" />
                 </div>
                 <div class="d-flex align-items-center gap-2 ms-sm-auto">
-                    <button type="button" class="btn progress-filter-btn">
-                        <span class="material-symbols-outlined">filter_list</span>
+                    <button type="button" class="btn progress-filter-btn" id="progress-filter-toggle" data-bs-toggle="collapse" data-bs-target="#progress-status-filters" aria-expanded="false" aria-controls="progress-status-filters">
+                        <span class="material-symbols-outlined" aria-hidden="true">filter_list</span>
                         <span>Filters</span>
                     </button>
-                    <a href="#" class="kpi-link-btn text-nowrap">View All</a>
+                    <a href="#" class="kpi-link-btn text-nowrap" id="progress-view-all-link">View All</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="collapse mb-4" id="progress-status-filters">
+            <div class="card border-0 shadow-sm progress-filter-panel">
+                <div class="card-body py-3 px-3 px-sm-4">
+                    <label class="form-label progress-filter-label mb-2">Filter by status</label>
+                    <div class="d-flex gap-2 flex-wrap align-items-center">
+                        <button type="button" class="status-btn all active" data-filter="all">All</button>
+                        <button type="button" class="status-btn pending" data-filter="pending">Pending</button>
+                        <button type="button" class="status-btn progress" data-filter="inprogress">In Progress</button>
+                        <button type="button" class="status-btn completed" data-filter="completed">Completed</button>
+                        <button type="button" class="status-btn overdue" data-filter="overdue">Overdue</button>
+                    </div>
                 </div>
             </div>
         </div>

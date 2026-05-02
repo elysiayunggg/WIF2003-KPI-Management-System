@@ -89,6 +89,69 @@
     font-size: 18px;
 }
 
+/* --- Status filters (same visual language as update-kpi status buttons) -- */
+
+.progress-filter-panel {
+    border-radius: 0.85rem;
+    background-color: #ffffff;
+}
+
+.progress-filter-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #343a40;
+}
+
+.progress-filter-panel .status-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    min-height: 44px;
+    min-width: 8rem;
+    padding: 0 1rem;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 14px;
+    white-space: nowrap;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.progress-filter-panel .status-btn.all {
+    background: #f1f3f5;
+    color: #495057;
+}
+
+.progress-filter-panel .status-btn.completed {
+    background: #d0fae4;
+    color: #17b681;
+}
+
+.progress-filter-panel .status-btn.progress {
+    background: #dbe9ff;
+    color: #0a6ffd;
+}
+
+.progress-filter-panel .status-btn.overdue {
+    background: #fee1e2;
+    color: #db2728;
+}
+
+.progress-filter-panel .status-btn.pending {
+    background: #fff4c7;
+    color: #d87e15;
+}
+
+.progress-filter-panel .status-btn.active {
+    outline: 2px solid #4e5e82;
+    outline-offset: 1px;
+}
+
+.progress-filter-panel .status-btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+}
+
 /* --- Cards ------------------------------------------------------------- */
 
 .progress-card {

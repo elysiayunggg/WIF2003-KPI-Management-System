@@ -212,6 +212,10 @@ const pageInits = {
     }
   },
 
+  "Submit Evidence": initSubmitEvidenceView,
+  "View Evidence": initSubmitEvidenceView,
+  "Edit Evidence": initSubmitEvidenceView,
+
   "Report": function () {
     if (typeof initReportView === "function") {
       initReportView();

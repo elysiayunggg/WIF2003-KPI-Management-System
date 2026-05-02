@@ -78,10 +78,31 @@ function setupViewEvidenceMode(root) {
     root.querySelector('#page-title').textContent = "View Evidence";
     root.querySelector('#page-desc').textContent = "This evidence is under review. Fields are read-only.";
 
+    // Hide action buttons and upload section fully in view mode, not just display: none
     const actionButtons = root.querySelector('#action-buttons');
     const uploadSection = root.querySelector('#upload-section');
-    if (actionButtons) actionButtons.style.display = 'none';
-    if (uploadSection) uploadSection.style.display = 'none';
+    if (actionButtons) {
+        // Only keep the cancel button visible in view mode; hide others
+        [...actionButtons.children].forEach(child => {
+            if (child.classList.contains('evidence-cancel-btn')) {
+                child.style.display = '';
+                child.style.visibility = '';
+                child.style.pointerEvents = '';
+                child.removeAttribute('aria-hidden');
+            } else {
+                child.style.display = 'none';
+                child.style.visibility = 'hidden';
+                child.style.pointerEvents = 'none';
+                child.setAttribute('aria-hidden', 'true');
+            }
+        });
+    }
+    if (uploadSection) {
+        uploadSection.style.display = 'none';
+        uploadSection.style.visibility = 'hidden';
+        uploadSection.style.pointerEvents = 'none';
+        uploadSection.setAttribute('aria-hidden', 'true');
+    }
 
     root.querySelectorAll('input, textarea').forEach(el => {
         el.disabled = true;
