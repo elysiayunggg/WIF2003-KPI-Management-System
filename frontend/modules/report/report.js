@@ -1,7 +1,7 @@
 function initReportView() {
   initReportCalendar();
   renderReportTable();
-  updateReportSummary(kpiData);
+  updateReportSummary(window.kpiData);
 }
 
 let reportCurrentMonth = 3;
@@ -15,7 +15,7 @@ let reportSelectedStaff = "All Members";
 let reportSelectedStartDate = null;
 let reportSelectedEndDate = null;
 
-const reportRows = kpiData;
+const reportRows = window.kpiData;
 
 function renderReportTable() {
   const tableBody = document.getElementById("reportTableBody");
