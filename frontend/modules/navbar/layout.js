@@ -13,9 +13,6 @@ async function loadComponent(id, file) {
   const res = await fetch(file);
   const data = await res.text();
   document.getElementById(id).innerHTML = data;
-  const res = await fetch(file);
-  const data = await res.text();
-  document.getElementById(id).innerHTML = data;
 }
 
 // Main function to initialize the application layout
