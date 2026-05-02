@@ -15,8 +15,8 @@ async function initLayout() {
   renderSidebar(role);
 
   // Load whichever page was last active, or default to Dashboard on first visit
-  const activePage = localStorage.getItem("activePage") || "Assign KPI";
-  const destination = pageRoutes[activePage] || pageRoutes["Assign KPI"];
+  const activePage = localStorage.getItem("activePage") || "KPI Assignment and Verification";
+  const destination = pageRoutes[activePage] || pageRoutes["KPI Assignment and Verification"];
 
   try {
     const res = await fetch(destination);
