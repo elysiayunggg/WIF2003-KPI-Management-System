@@ -167,6 +167,11 @@
     display: block;
 }
 
+/* Above milestone cards and table dropdowns */
+.kpi-detail-view .kpi-status-dropdown {
+    z-index: 30;
+}
+
 .kpi-status-menu .dropdown-item {
     border-radius: 0.45rem;
     font-size: 0.82rem;

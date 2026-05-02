@@ -10,7 +10,8 @@ function closeKPIDetailStatusDropdown(root) {
     if (menu) menu.classList.remove("is-open");
 }
 
-function toggleKPIDetailStatusDropdown(root) {
+function toggleKPIDetailStatusDropdown(root, event) {
+    if (event) event.stopPropagation();
     if (!root) return;
     const menu = root.querySelector("#status-dropdown-menu");
     if (menu) menu.classList.toggle("is-open");
@@ -54,7 +55,7 @@ function switchKPIDetailQuarter(root, quarter) {
 function bindKPIDetailEvents(root) {
     const statusBtn = root.querySelector("#status-dropdown-btn");
     if (statusBtn) {
-        statusBtn.addEventListener("click", () => toggleKPIDetailStatusDropdown(root));
+        statusBtn.addEventListener("click", (e) => toggleKPIDetailStatusDropdown(root, e));
     }
 
     root.querySelectorAll("[data-status-label]").forEach((option) => {
@@ -103,6 +104,9 @@ function ensureKPIDetailOutsideClickHandler() {
 function initKPIDetailView() {
     const root = getKPIDetailRoot();
     if (!root) return;
+
+    if (root.dataset.kpiDetailInit === "1") return;
+    root.dataset.kpiDetailInit = "1";
 
     bindKPIDetailEvents(root);
     ensureKPIDetailOutsideClickHandler();

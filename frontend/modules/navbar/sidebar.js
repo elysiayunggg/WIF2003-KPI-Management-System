@@ -5,7 +5,7 @@ const pageRoutes = {
   "Dashboard": "../views/dashboard.html",
   "Staff Dashboard": "../views/staff-dashboard.html",    // staff
   "Report": "../views/report.html",
-  "KPI Management": "../views/kpi.html",
+  "KPI Management": "../views/kpi-management.html",
   "Create KPI": "../views/create-kpi.html",
   "Update KPI": "../views/update-kpi.html",
   "View KPI List": "../views/kpi-list.html",             // staff
@@ -208,6 +208,12 @@ const pageInits = {
   "KPI Progress": function () {
     if (typeof initProgressView === "function") {
       initProgressView();
+    }
+  },
+
+  "KPI Detail": function () {
+    if (typeof initKPIDetailView === "function") {
+      initKPIDetailView();
     }
   },
 

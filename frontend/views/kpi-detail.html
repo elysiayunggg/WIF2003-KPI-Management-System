@@ -13,7 +13,7 @@
                 <h1 class="kpi-page-title mb-0">KPI Detail</h1>
             </div>
             <div class="d-flex align-items-center flex-wrap gap-2">
-                <div class="position-relative">
+                <div class="position-relative kpi-status-dropdown">
                     <button class="btn kpi-status-btn status-in-progress" id="status-dropdown-btn" type="button">
                         <span id="current-status-text">In Progress</span>
                         <span class="material-symbols-outlined ms-1">expand_more</span>
@@ -169,14 +169,14 @@
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end kpi-actions-menu">
                                                 <li>
-                                                    <a class="dropdown-item" href="#" onclick="changePage(event, 'View Evidence')">
+                                                    <button type="button" class="dropdown-item" onclick="changePage(event, 'View Evidence')">
                                                         <span class="material-symbols-outlined">visibility</span>View
-                                                    </a>
+                                                    </button>
                                                 </li>
                                                 <li>
-                                                    <a class="dropdown-item" href="#" onclick="changePage(event, 'Edit Evidence')">
+                                                    <button type="button" class="dropdown-item" onclick="changePage(event, 'Edit Evidence')">
                                                         <span class="material-symbols-outlined">edit</span>Edit
-                                                    </a>
+                                                    </button>
                                                 </li>
                                             </ul>
                                         </div>
@@ -192,8 +192,16 @@
                                                 <span class="material-symbols-outlined">more_vert</span>
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end kpi-actions-menu">
-                                                <li><a class="dropdown-item" href="#"><span class="material-symbols-outlined">visibility</span>View</a></li>
-                                                <li><a class="dropdown-item" href="#"><span class="material-symbols-outlined">edit</span>Edit</a></li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item" onclick="changePage(event, 'View Evidence')">
+                                                        <span class="material-symbols-outlined">visibility</span>View
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item" onclick="changePage(event, 'Edit Evidence')">
+                                                        <span class="material-symbols-outlined">edit</span>Edit
+                                                    </button>
+                                                </li>
                                             </ul>
                                         </div>
                                     </td>
@@ -209,14 +217,14 @@
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end kpi-actions-menu">
                                                 <li>
-                                                    <a class="dropdown-item" href="#" onclick="changePage(event, 'View Evidence')">
+                                                    <button type="button" class="dropdown-item" onclick="changePage(event, 'View Evidence')">
                                                         <span class="material-symbols-outlined">visibility</span>View
-                                                    </a>
+                                                    </button>
                                                 </li>
                                                 <li>
-                                                    <a class="dropdown-item" href="#" onclick="changePage(event, 'Edit Evidence')">
+                                                    <button type="button" class="dropdown-item" onclick="changePage(event, 'Edit Evidence')">
                                                         <span class="material-symbols-outlined">edit</span>Edit
-                                                    </a>
+                                                    </button>
                                                 </li>
                                             </ul>
                                         </div>
@@ -285,7 +293,7 @@
                             </div>
                         </div>
                     </div>
-                    <button class="btn w-100 mt-3 kpi-btn-outline">View Full History</button>
+                    <!-- <button class="btn w-100 mt-3 kpi-btn-outline">View Full History</button> -->
                 </aside>
             </div>
         </div>
