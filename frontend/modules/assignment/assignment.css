@@ -1,40 +1,36 @@
-/* Person Card
-   Default state: white background, light grey border, no tick visible.
-   Hover: blue border tint, tick fades in as a preview.
-   Selected: blue border solid, blue-tinted background, tick fully visible.
-   Only one card can be selected at a time — handled by selectPerson() in assignment.js. */
-.person-card {
+/* Person Card Styles */
+.staff-card {
     background-color: #ffffff;
     border: 1px solid #e0e3e8;
     cursor: pointer;
     transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.person-card:hover {
+.staff-card:hover {
     border-color: #4e5e82;
     background-color: #f8fbff;
     box-shadow: 0 2px 8px rgba(13, 110, 253, 0.08);
 }
 
-.person-card.selected {
+.staff-card.selected {
     border-color: #4e5e82;
     background-color: #f0f7ff;
     box-shadow: 0 2px 8px rgba(13, 110, 253, 0.15);
 }
 
 /* Tick icon — hidden by default, visible only on hover (preview) or when selected */
-.person-card .selected-indicator .tick {
+.staff-card .selected-indicator .tick {
     opacity: 0;
     transition: opacity 0.2s ease;
     color: #4e5e82 !important;
 }
 
-.person-card:hover .selected-indicator .tick {
+.staff-card:hover .selected-indicator .tick {
     opacity: 0.5;
     color: #4e5e82 !important;
 }
 
-.person-card.selected .selected-indicator .tick {
+.staff-card.selected .selected-indicator .tick {
     opacity: 1;
     color: #4e5e82 !important;
 }
@@ -46,14 +42,33 @@
 }
 
 .stakeholder-badge:hover {
-    background-color: #e2e6ea !important;
+    background-color: #d3dbe4 !important;
+}
+
+/* Add New Stakeholder Badge - distinct dashed border style */
+.add-new-badge {
+    background-color: #d3dbe4 !important;
+    border: 2px dashed #c1c7d0;
+}
+
+.add-new-badge:hover {
+    border-color: #4e5e82 !important;
 }
 
 .stakeholder {
     background-color: #e1e9ee !important;
 }
 
-/*Assignment Button*/
+/*Update Assignment Button*/
 .highLightButton {
     background-color: #4e5e82;
+}
+
+.highLightButton:hover{
+    background-color: #374b7a;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #878e96;
+  border-color: #c1c7d0;
 }

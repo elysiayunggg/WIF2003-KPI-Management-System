@@ -143,25 +143,6 @@ body {
   color: #6c757d;
 }
 
-/* Notification Button */
-.notification-btn {
-  position: relative;
-  border: none;
-  background: transparent;
-  color: #6c757d;
-  font-size: 20px;
-}
-
-.notification-dot {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 8px;
-  height: 8px;
-  background-color: #dc3545;
-  border-radius: 50%;
-}
-
 /* Profile Image */
 .profile-img {
   font-size: 26px;
@@ -195,4 +176,14 @@ p { font-size: 13px; }
 
 .submission-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.breadcrumb a {
+  color: #2a3439;        
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+  color:#2a3439;         
 }
