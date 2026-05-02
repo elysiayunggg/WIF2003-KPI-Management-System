@@ -184,6 +184,7 @@ async function changePage(event, pageName) {
 // When a view needs JS to run after it loads, add an entry here.
 // The function must be defined in a script loaded by shell.html.
 const pageInits = {
+    
   "Profile": initProfileView,
   "Dashboard": function () {
     const role = localStorage.getItem("role") || "manager";
@@ -246,8 +247,8 @@ const pageInits = {
   },
 
   "KPI Assignment & Verification": function () {
-    if (typeof initAssignmentView === "function") {
-      initAssignmentView();
+    if (typeof initAssignmentVerificationView === "function") {
+      initAssignmentVerificationView();
     }
   },
 

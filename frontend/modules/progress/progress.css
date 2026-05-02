@@ -152,6 +152,31 @@
     opacity: 0.92;
 }
 
+/* Priority filters (aligned with KPI detail priority pills) */
+
+.progress-filter-panel .status-btn.priority-all {
+    background: #f1f3f5;
+    color: #495057;
+}
+
+.progress-filter-panel .status-btn.priority-high {
+    background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
+    color: #991b1b;
+    border: 1px solid #f87171;
+}
+
+.progress-filter-panel .status-btn.priority-medium {
+    background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+    color: #92400e;
+    border: 1px solid #fbbf24;
+}
+
+.progress-filter-panel .status-btn.priority-low {
+    background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%);
+    color: #065f46;
+    border: 1px solid #34d399;
+}
+
 /* --- Cards ------------------------------------------------------------- */
 
 .progress-card {
