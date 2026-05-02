@@ -18,7 +18,7 @@ const pageRoutes = {
   "View Evidence": "../views/submit-evidence.html",      // staff
   "Edit Evidence": "../views/submit-evidence.html",      // staff
   // "Update KPI Progress": "../views/update-progress.html",
-  "Notifications": "../views/notification.html",
+  "Notifications": "../views/notifications.html",
   "Profile": "../views/profile.html"
 };
 
@@ -50,7 +50,7 @@ function renderSidebar(role) {
       </div>
 
       <div class="nav-group">
-        <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment & Verification')">
+        <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment')">
           <i class="bi bi-check2-square"></i> KPI Assignment & Verification
         </a>
         <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Assign KPI')">
@@ -228,12 +228,5 @@ const pageInits = {
     if (typeof initReviewView === "function") {
       initReviewView();
     }
-  },
-
-  "KPI Assignment & Verification": function () {
-    if (typeof initAssignmentVerificationView === "function") {
-      initAssignmentVerificationView();
-    }
   }
-
 };
