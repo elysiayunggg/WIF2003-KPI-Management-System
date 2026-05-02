@@ -41,9 +41,6 @@ function renderSidebar(role) {
         <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Create KPI')">
           <i class="bi bi-plus-circle"></i> Create KPI
         </a>
-        <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Update KPI')">
-          <i class="bi bi-arrow-repeat"></i> Update KPI
-        </a>
         <a href="#" class="nav-link ms-3" onclick="changePage(event, 'View KPI List')">
           <i class="bi bi-list-ul"></i> View KPI List
         </a>
@@ -74,9 +71,6 @@ function renderSidebar(role) {
       <div class="nav-group">
         <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Progress')">
           <i class="bi bi-bar-chart"></i> KPI Progress
-        </a>
-        <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Update KPI Progress')">
-          <i class="bi bi-arrow-repeat"></i> Update KPI Progress
         </a>
         <a href="#" class="nav-link ms-3" onclick="changePage(event, 'View KPI List')">
           <i class="bi bi-list-ul"></i> View KPI List
@@ -212,9 +206,27 @@ const pageInits = {
     }
   },
 
+  "KPI Management": function () {
+    if (typeof initKpiView === "function") {
+      initKpiView();
+    }
+  },
+
+  "View KPI List": function () {
+    if (typeof initKpiListView === "function") {
+      initKpiListView();
+    }
+  },
+
   "Assign KPI": function () {
     if (typeof initAssignmentView === "function") {
       initAssignmentView();
+    }
+  },
+  
+  "Update KPI": function () {
+    if (typeof initUpdateKpiView === "function") {
+      initUpdateKpiView();
     }
   },
 

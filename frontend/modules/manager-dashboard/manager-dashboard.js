@@ -252,15 +252,6 @@ function selectDropdownOption(selectedTextId, dropdownId, value) {
   closeAllDashboardDropdowns();
 }
 
-function getFilteredManagerData() {
-  return kpiData.filter(item => {
-    return (
-      selectedDashboardDepartment === "All Departments" ||
-      item.department === selectedDashboardDepartment
-    );
-  });
-}
-
 function closeAllDashboardDropdowns() {
   document.querySelectorAll(".custom-dropdown, .calendar-dropdown").forEach(dropdown => {
     dropdown.classList.remove("show");
@@ -284,11 +275,11 @@ let selectedDashboardStartDate = null;
 let selectedDashboardEndDate = null;
 
 function initManagerDashboardView() {
-  renderManagerDashboard(kpiData);
+  renderManagerDashboard(window.kpiData);
 }
 
 function getFilteredManagerData() {
-  return kpiData.filter(item => {
+  return window.kpiData.filter(item => {
     const matchStatus =
       selectedDashboardStatus === "All Status" ||
       item.status === selectedDashboardStatus;
@@ -348,6 +339,13 @@ function updateManagerSummaryCards(data) {
 }
 
 function updateManagerPerformanceSummary(data) {
+  if (!data || data.length === 0) {
+    document.getElementById("managerAverageScore").textContent = "0%";
+    document.getElementById("managerTopStaff").textContent = "-";
+    document.getElementById("managerLowestStaff").textContent = "-";
+    return;
+  }
+
   const average = Math.round(data.reduce((sum, item) => sum + item.progress, 0) / data.length);
   document.getElementById("managerAverageScore").textContent = `${average}%`;
 
@@ -378,7 +376,10 @@ function renderManagerDistributionChart(data) {
   const inProgress = countByStatus(data, "In Progress");
   const overdue = countByStatus(data, "Overdue");
 
-  const average = Math.round(data.reduce((sum, item) => sum + item.progress, 0) / data.length);
+  const average = data.length
+    ? Math.round(data.reduce((sum, item) => sum + item.progress, 0) / data.length)
+    : 0;
+
   document.getElementById("overallEfficiency").textContent = `${average}%`;
 
   document.getElementById("kpiPieLegend").innerHTML = `
