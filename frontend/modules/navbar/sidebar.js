@@ -17,7 +17,6 @@ const pageRoutes = {
   "Submit Evidence": "../views/submit-evidence.html",    // staff
   "View Evidence": "../views/submit-evidence.html",      // staff
   "Edit Evidence": "../views/submit-evidence.html",      // staff
-  // "Update KPI Progress": "../views/update-progress.html",
   "Notifications": "../views/notifications.html",
   "Profile": "../views/profile.html"
 };
