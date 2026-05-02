@@ -23,7 +23,8 @@ function updateKPIDetailStatus(root, label, statusClass) {
     const textSpan = root.querySelector("#current-status-text");
     if (!btn || !textSpan) return;
 
-    btn.className = `btn kpi-status-btn ${statusClass}`;
+    const cls = statusClass && statusClass.trim() ? statusClass.trim() : "status-in-progress";
+    btn.className = `btn kpi-status-btn ${cls}`;
     textSpan.textContent = label;
     closeKPIDetailStatusDropdown(root);
 }

@@ -206,6 +206,12 @@ const pageInits = {
     }
   },
 
+  "KPI Progress": function () {
+    if (typeof initProgressView === "function") {
+      initProgressView();
+    }
+  },
+
   "Report": function () {
     if (typeof initReportView === "function") {
       initReportView();
@@ -218,7 +224,7 @@ const pageInits = {
     }
   },
 
-  "KPI Assignment": function () {
+  "KPI Assignment & Verification": function () {
     if (typeof initAssignmentView === "function") {
       initAssignmentView();
     }
