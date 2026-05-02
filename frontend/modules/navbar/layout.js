@@ -24,6 +24,7 @@ async function initLayout() {
   // Step 1: Load sidebar and navbar once (persistent UI)
   await loadComponent("sidebar-container", "../components/sidebar.html");
   await loadComponent("navbar-container", "../components/navbar.html");
+  if (typeof syncNavbarAvatar === "function") syncNavbarAvatar();
 
   // Step 2: Get user role (default to manager if not set)
   const role = localStorage.getItem("role") || "manager";

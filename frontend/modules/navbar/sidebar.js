@@ -22,25 +22,6 @@ const pageRoutes = {
   "Profile": "../views/profile.html"
 };
 
-// Maps page names to their view fragment files.
-// All paths are relative to pages/shell.html where this script is loaded from.
-// When adding a new page, add its entry here — no other file needs to change.
-const pageRoutes = {
-  "Dashboard": "../views/manager-dashboard.html",
-  "Report": "../views/report.html",
-  "KPI Management": "../views/kpi.html",
-  "Create KPI": "../views/create-kpi.html",
-  "Update KPI": "../views/update-kpi.html",
-  "View KPI List": "../views/kpi-list.html",
-  "KPI Assignment": "../views/assignment.html",
-  "Assign KPI": "../views/assignment.html",
-  "Review Submission": "../views/review.html",
-  "KPI Progress": "../views/progress.html",
-  "Update KPI Progress": "../views/update-progress.html",
-  "Notifications": "../views/notifications.html",
-  "Profile": "../views/profile.html",
-};
-
 function renderSidebar(role) {
   const menu = document.getElementById("sidebarMenu");
 
@@ -210,6 +191,7 @@ async function changePage(event, pageName) {
 // When a view needs JS to run after it loads, add an entry here.
 // The function must be defined in a script loaded by shell.html.
 const pageInits = {
+  "Profile": initProfileView,
   "Dashboard": function () {
     const role = localStorage.getItem("role") || "manager";
 
