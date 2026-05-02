@@ -51,6 +51,52 @@
     letter-spacing: -0.01em;
 }
 
+/* Priority pills (High / Medium / Low) */
+.kpi-priority-pill {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.75rem;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    line-height: 1;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.kpi-priority-pill--high {
+    background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
+    color: #991b1b;
+    border-color: #f87171;
+}
+
+.kpi-priority-pill--medium {
+    background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+    color: #92400e;
+    border-color: #fbbf24;
+}
+
+.kpi-priority-pill--low {
+    background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%);
+    color: #065f46;
+    border-color: #34d399;
+}
+
+.kpi-detail-view .kpi-priority-pill--high {
+    box-shadow: 0 0 0 1px rgba(185, 28, 28, 0.15), 0 2px 8px rgba(185, 28, 28, 0.12);
+}
+
+.kpi-detail-view .kpi-priority-pill--medium {
+    box-shadow: 0 0 0 1px rgba(180, 83, 9, 0.12), 0 2px 8px rgba(180, 83, 9, 0.1);
+}
+
+.kpi-detail-view .kpi-priority-pill--low {
+    box-shadow: 0 0 0 1px rgba(4, 120, 87, 0.12), 0 2px 8px rgba(4, 120, 87, 0.08);
+}
+
 .kpi-subtext {
     color: #54647a;
     max-width: 720px;
@@ -114,6 +160,11 @@
     text-transform: uppercase;
     letter-spacing: 0.04em;
     transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+    border: none;
+}
+
+.kpi-status-btn .material-symbols-outlined {
+    color: currentColor;
 }
 
 .kpi-status-btn:hover {
@@ -122,9 +173,10 @@
     filter: brightness(0.98);
 }
 
+/* Status pill colors aligned with KPI Progress cards (.progress-card__badge) */
 .status-in-progress {
-    background: #d0e1fb;
-    color: #54647a;
+    background: #dbeafe;
+    color: #1d4ed8;
 }
 
 .status-completed {
@@ -138,8 +190,8 @@
 }
 
 .status-on-hold {
-    background: #e5e7eb;
-    color: #4b5563;
+    background: #fef3c7;
+    color: #d97706;
 }
 
 /* Hide quarters by default except active section. */
