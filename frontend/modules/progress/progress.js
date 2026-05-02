@@ -1,99 +1,14 @@
-window.tailwind = window.tailwind || {};
-window.tailwind.config = {
-    darkMode: "class",
-    corePlugins: {
-        preflight: false
-    },
-    theme: {
-        extend: {
-            "colors": {
-                "surface-container-high": "#e7e7f2",
-                "primary-fixed-dim": "#b2c5ff",
-                "on-tertiary-fixed": "#380d00",
-                "secondary": "#505f76",
-                "outline-variant": "#c3c6d6",
-                "on-error-container": "#93000a",
-                "surface-tint": "#0056d2",
-                "on-primary-container": "#ccd8ff",
-                "surface-bright": "#faf8ff",
-                "error": "#ba1a1a",
-                "on-primary-fixed-variant": "#0040a1",
-                "on-secondary-container": "#54647a",
-                "secondary-fixed": "#d3e4fe",
-                "surface-container-low": "#f2f3fe",
-                "surface": "#faf8ff",
-                "primary": "#0040a1",
-                "tertiary": "#822800",
-                "on-primary": "#ffffff",
-                "tertiary-fixed-dim": "#ffb59b",
-                "tertiary-fixed": "#ffdbcf",
-                "surface-container": "#ededf8",
-                "inverse-on-surface": "#f0f0fb",
-                "primary-fixed": "#dae2ff",
-                "on-secondary-fixed": "#0b1c30",
-                "on-tertiary-container": "#ffcebd",
-                "on-secondary": "#ffffff",
-                "secondary-fixed-dim": "#b7c8e1",
-                "on-secondary-fixed-variant": "#38485d",
-                "on-tertiary-fixed-variant": "#812800",
-                "secondary-container": "#d0e1fb",
-                "surface-dim": "#d9d9e4",
-                "inverse-surface": "#2e3038",
-                "surface-container-lowest": "#ffffff",
-                "on-surface": "#191b23",
-                "on-background": "#191b23",
-                "inverse-primary": "#b2c5ff",
-                "error-container": "#ffdad6",
-                "background": "#F8FAFC",
-                "on-surface-variant": "#424654",
-                "surface-container-highest": "#e1e2ec",
-                "surface-variant": "#e1e2ec",
-                "on-tertiary": "#ffffff",
-                "on-primary-fixed": "#001847",
-                "outline": "#737785",
-                "on-error": "#ffffff",
-                "tertiary-container": "#a93802",
-                "primary-container": "#0056d2"
-            },
-            "borderRadius": {
-                "DEFAULT": "0.25rem",
-                "lg": "0.5rem",
-                "xl": "0.75rem",
-                "full": "9999px"
-            },
-            "spacing": {
-                "xl": "3rem",
-                "lg": "2rem",
-                "xxs": "0.25rem",
-                "xs": "0.5rem",
-                "sm": "1rem",
-                "card-gap": "1.5rem",
-                "md": "1.5rem",
-                "container-padding": "2rem"
-            },
-            "fontFamily": {
-                "h2": ["Inter"],
-                "body-md": ["Inter"],
-                "body-sm": ["Inter"],
-                "label-caps": ["Inter"],
-                "h1": ["Inter"],
-                "body-lg": ["Inter"],
-                "stat-number": ["Inter"]
-            },
-            "fontSize": {
-                "h2": ["18px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
-                "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
-                "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
-                "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
-                "h1": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-                "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-                "stat-number": ["32px", { "lineHeight": "40px", "fontWeight": "700" }]
-            }
-        }
-    }
+/** Matches update-kpi status keys: pending → not-started + review, inprogress, completed, overdue */
+const PROGRESS_FILTER_TO_STYLES = {
+    all: null,
+    pending: ["not-started", "review"],
+    inprogress: ["in-progress"],
+    completed: ["completed"],
+    overdue: ["overdue"]
 };
 
-let progressMenuGlobalListenerAttached = false;
+let progressCurrentFilter = "all";
+let progressSearchQuery = "";
 
 const mockKpiData = [
     {
@@ -158,8 +73,76 @@ const mockKpiData = [
     }
 ];
 
+function getFilteredProgressData() {
+    let list = mockKpiData.slice();
+    const styles = PROGRESS_FILTER_TO_STYLES[progressCurrentFilter];
+    if (styles && styles.length) {
+        list = list.filter((item) => styles.includes(item.styleType));
+    }
+    const q = progressSearchQuery.trim().toLowerCase();
+    if (q) {
+        list = list.filter(
+            (item) =>
+                (item.title && item.title.toLowerCase().includes(q)) ||
+                (item.description && item.description.toLowerCase().includes(q)) ||
+                (item.statusText && item.statusText.toLowerCase().includes(q))
+        );
+    }
+    return list;
+}
+
+function renderProgressCards() {
+    ProgressCardComponent.renderCards("kpi-cards-container", getFilteredProgressData());
+}
+
 function initProgressView() {
     console.log("Progress view loaded.");
-    // Use the reusable component to render the KPI cards and attach listeners
-    ProgressCardComponent.renderCards('kpi-cards-container', mockKpiData);
+    renderProgressCards();
+
+    const root = document.querySelector(".progress-view");
+    if (!root) return;
+
+    const searchInput = document.getElementById("progress-search-input");
+    if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+            progressSearchQuery = e.target.value || "";
+            renderProgressCards();
+        });
+    }
+
+    const filterPanel = document.getElementById("progress-status-filters");
+    root.querySelectorAll(".progress-filter-panel [data-filter]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const key = btn.getAttribute("data-filter");
+            if (!key) return;
+            progressCurrentFilter = key;
+            root.querySelectorAll(".progress-filter-panel [data-filter]").forEach((b) =>
+                b.classList.toggle("active", b.getAttribute("data-filter") === key)
+            );
+            renderProgressCards();
+        });
+    });
+
+    const viewAllLink = document.getElementById("progress-view-all-link");
+    if (viewAllLink && filterPanel) {
+        viewAllLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            progressCurrentFilter = "all";
+            progressSearchQuery = "";
+            if (searchInput) searchInput.value = "";
+            root.querySelectorAll(".progress-filter-panel [data-filter]").forEach((b) =>
+                b.classList.toggle("active", b.getAttribute("data-filter") === "all")
+            );
+            if (typeof bootstrap !== "undefined" && bootstrap.Collapse) {
+                const inst = bootstrap.Collapse.getOrCreateInstance(filterPanel, { toggle: false });
+                inst.hide();
+            }
+            const toggleBtn = document.getElementById("progress-filter-toggle");
+            if (toggleBtn) {
+                toggleBtn.setAttribute("aria-expanded", "false");
+                toggleBtn.classList.add("collapsed");
+            }
+            renderProgressCards();
+        });
+    }
 }
