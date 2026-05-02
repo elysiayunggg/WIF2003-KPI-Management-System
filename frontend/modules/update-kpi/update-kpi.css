@@ -1,0 +1,183 @@
+
+.update-kpi {
+    padding: 15px;
+}
+
+.update-kpi .kpi-header {
+    margin-bottom: 8px; 
+}
+
+.update-kpi .kpi-header h2 {
+    margin-bottom: 6px;
+}
+.update-kpi .kpi-header p {
+    color: #6c757d;
+    margin-bottom: 0px;
+}
+
+
+.update-kpi .card {
+    border-radius: 16px;
+}
+
+.update-kpi .kpi-grid{
+    margin-top: 6px;
+}
+
+.update-kpi .kpi-left .kpi-card:first-child{
+    margin-top: 4px;
+}
+
+.update-kpi.kpi-card{
+    margin-bottom: 12px;
+}
+/* Primary (Update KPI) */
+.update-kpi .create-btn {
+    background-color: #4e5e82 !important;
+    color: #fff !important;
+    border-radius: 10px;
+    padding: 10px 18px;
+    border: none;
+    box-shadow: 0 4px 10px rgba(78, 94, 130, 0.2);
+}
+
+.update-kpi .create-btn:hover {
+    background-color: #3f4e6b !important;
+}
+
+/* Discard */
+.update-kpi .btn-outline-secondary {
+    border-radius: 10px;
+}
+
+
+
+.update-kpi .form-control,
+.update-kpi .form-select {
+    background-color: #eef2f5 !important;
+    border: none !important;
+    border-radius: 10px;
+    padding: 12px;
+    color: #333;
+}
+
+/* Placeholder */
+.update-kpi input::placeholder,
+.update-kpi textarea::placeholder {
+    color: #9aa3af;
+}
+
+
+
+.update-kpi .status-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none !important;
+    height: 44px;
+    min-width: 140px;
+
+    padding: 0 16px;
+    border-radius: 10px;
+
+    font-weight: 500;
+    font-size: 14px;
+
+    white-space: nowrap;
+}
+
+.update-kpi .status-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+/* Individual colors */
+.update-kpi .status-btn.completed {
+    background: #d0fae4;
+    color: #17b681;
+}
+
+.update-kpi .status-btn.progress {
+    background: #dbe9ff;
+    color: #0a6ffd;
+}
+
+.update-kpi .status-btn.overdue {
+    background: #fee1e2;
+    color: #db2728;
+}
+
+.update-kpi .status-btn.pending {
+    background: #fff4c7;
+    color: #d87e15;
+}
+
+.update-kpi .status-btn.unassigned {
+    background: #f1f3f5;
+    color: #dc3545;
+}
+
+/* Active state */
+.update-kpi .status-btn.active {
+    outline: 2px solid #4e5e82;
+}
+
+/* Hover */
+.update-kpi .status-btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
+}
+
+
+
+.update-kpi .toggle-btn {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: none;
+    background: #eef2f5;
+    transition: 0.2s;
+}
+
+.update-kpi .toggle-btn.active {
+    background: #4e5e82;
+    color: #fff;
+}
+
+
+
+.update-kpi .person-card {
+    cursor: pointer;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+
+.update-kpi .person-card.selected {
+    border: 1px solid #4e5e82;
+    background: #eef4ff;
+}
+
+
+
+.update-kpi .border-dashed {
+    border-style: dashed !important;
+    border-color: #cbd5e1 !important;
+    cursor: pointer;
+}
+
+
+
+.update-kpi .progress {
+    border-radius: 10px;
+    background: rgba(255,255,255,0.2);
+}
+
+.update-kpi .progress-bar {
+    border-radius: 10px;
+}
+.update-kpi label {
+    font-weight: 600;
+    font-size: 16px;
+    color: #343a40;
+    margin-bottom: 4px;
+    display: block;
+}

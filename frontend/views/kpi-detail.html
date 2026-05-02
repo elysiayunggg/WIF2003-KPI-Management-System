@@ -1,0 +1,293 @@
+<section class="kpi-detail-view py-4 py-lg-5">
+    <div class="container-fluid kpi-container">
+        <header class="d-flex flex-column flex-lg-row align-items-lg-end justify-content-between gap-3 mb-4">
+            <div>
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item" onclick="changePage(event, 'Staff Dashboard')"><a>Staff Dashboard</a></li>
+                        <li class="breadcrumb-item" onclick="loadView(event, 'progress')"><a>KPI Progress</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">KPI Detail</li>
+                    </ol>
+                </nav>
+
+                <h1 class="kpi-page-title mb-0">KPI Detail</h1>
+            </div>
+            <div class="d-flex align-items-center flex-wrap gap-2">
+                <div class="position-relative">
+                    <button class="btn kpi-status-btn status-in-progress" id="status-dropdown-btn" type="button">
+                        <span id="current-status-text">In Progress</span>
+                        <span class="material-symbols-outlined ms-1">expand_more</span>
+                    </button>
+                    <div class="kpi-status-menu card shadow border-0 p-1" id="status-dropdown-menu">
+                        <button class="dropdown-item" type="button" data-status-label="In Progress" data-status-class="status-in-progress">In Progress</button>
+                        <button class="dropdown-item" type="button" data-status-label="Completed" data-status-class="status-completed">Completed</button>
+                        <button class="dropdown-item" type="button" data-status-label="Delayed" data-status-class="status-delayed">Delayed</button>
+                        <button class="dropdown-item" type="button" data-status-label="On Hold" data-status-class="status-on-hold">On Hold</button>
+                    </div>
+                </div>
+                <button class="btn kpi-btn-secondary"><span class="material-symbols-outlined">file_download</span>Export CSV</button>
+                <button class="btn kpi-btn-primary"><span class="material-symbols-outlined">description</span>Export PDF</button>
+            </div>
+        </header>
+
+        <div class="row g-4 mb-4">
+            <div class="col-12 col-xl-8">
+                <section class="kpi-card h-100">
+                    <h2 class="kpi-section-title">Customer Retention Rate (Q3)</h2>
+                    <p class="kpi-subtext">Focusing on high-value accounts and subscription renewal optimization through personalized outreach and value-added feature deployment.</p>
+                    <div class="d-flex justify-content-between align-items-end mt-4">
+                        <div>
+                            <div class="kpi-label">Current Progress</div>
+                            <div class="kpi-progress-value">65%</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="kpi-label">Target</div>
+                            <div class="kpi-target-value">90%</div>
+                        </div>
+                    </div>
+                    <div class="progress mt-3 kpi-main-progress">
+                        <div class="progress-bar" style="width: 65%"></div>
+                    </div>
+                </section>
+            </div>
+            <div class="col-12 col-xl-4">
+                <aside class="kpi-card h-100">
+                    <div class="mb-4">
+                        <div class="kpi-label">Deadline</div>
+                        <div class="kpi-meta-line"><span class="material-symbols-outlined me-1">calendar_today</span>Sept 30, 2024</div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="kpi-label">Primary Owner</div>
+                        <div class="d-flex align-items-center gap-2 mt-2">
+                            <img class="kpi-avatar-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-0p7Gnkh8WJegOfbFQ6rdwyOAGQaMt5IBEV_t_PMp8aE3n-h_0MKLAOICnUf0Cw1oXX1MuV-WtgPBNxT5AB4GZc9sb2Cc_ZEcd6BNMLMwV23wGPwmJ9MFSxj54_jBmrG5CBb1d4vxPtjrcwGcT9cEyptW8uGbBwsGXT8z7jMBxG3idC1kRuV1uPpvLzjIXNf0j6aeUQ7nCDewqOLCpCtJhRuTZkaUZn-awSdfCFXcZo2NHCTFUjjiZOxEiHrKnzAr1VNvnM0GLBpy" alt="Owner">
+                            <div>
+                                <div class="fw-semibold">Marcus Thorne</div>
+                                <small class="text-muted">Senior Product Lead</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="kpi-label">Stakeholders</div>
+                        <div class="kpi-stakeholders mt-2">
+                            <img class="kpi-avatar-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCh1BPUnjsKL-tv4ndeZ1fDfPP6wtahdxJ0rEekWgs4-c3xSLYydzos99tnGc_KAjE6kjb1E6-bP6G4FD4r0PGdFprEyXiDIhncqPVG2Hbuy5W0BAgH4HghKQ7b4Kyb81zxhZ_3onINysW94cHBQRUShw2bf-yhG-MFkgsvAorn_uHLuWeer6JvYO3Kzcdl5Xg1v4nhBwGxDpCLLkdwj82wxgcvcCK7z_M0Lv-OALl5whkxT-qzLmBM83WyS7zxq0Z1_Qmon6pyhIsU" alt="">
+                            <img class="kpi-avatar-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdQe40Pk9ah7B56RKpBLN_cYiJ7_zR1ybAKeVH8CcI6IT0QLlSG7ZCriDLaKXVBX-8jhZMxBSLBLWnthwUI2VoJrlBSLlbucDgEVBPCRk22g3hm_OtzyDXfwJBChQ5vUYriawnfEMCxfeBPE6ULUtpt_M40-mQog2YfxqMlxEDzDia39PrgThzsSQfh4EHKc0LG3qDLJAv2jRDaLef_NoNQG7Xam8GogpeMeHsO90Ww_ETK7k4kAT6ceL4M-Z0Jy3KqCu7OCAMSSRK" alt="">
+                            <img class="kpi-avatar-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlThHl5f0rmZEVXDeRDH8sFhfJ-tfKfgTvbuDDKtG2zWKoGDAeo57eTZ0Uwu3VAFXXUWJi0F-FMOpcAWJ4luxDfV5F0gTsbfvfPwg7DOUsYvaJsxW94HUN0NASFueEJ3tHGXj6a4ksNkzabLBWbGyRT3qi8qnFFFx0bbxozp9zdLtyATMFWbYgzIAQFiPWMHmAVallhD8aLCDpRLH8bWlPC5DkCgYmrZ8CHrUp23Rcx7fJsEFZ8dK9nK44cfzmNDQB6_c1ZnDb81_u" alt="">
+                            <div class="kpi-avatar-more">+4</div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <section class="kpi-card mb-4" id="milestone-section">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                <h2 class="kpi-section-title mb-0">Project Milestones</h2>
+                <div class="btn-group kpi-quarter-group">
+                    <button class="btn q-btn" id="btn-q1" data-quarter="q1" type="button">Q1</button>
+                    <button class="btn q-btn" id="btn-q2" data-quarter="q2" type="button">Q2</button>
+                    <button class="btn q-btn kpi-quarter-active" id="btn-q3" data-quarter="q3" type="button">Q3</button>
+                    <button class="btn q-btn" id="btn-q4" data-quarter="q4" type="button">Q4</button>
+                </div>
+            </div>
+            <div class="quarter-content" id="content-q1">
+                <div class="kpi-milestone-header"><span>Milestone</span><span>January</span><span>February</span><span>March</span></div>
+                <div class="kpi-milestone-row">
+                    <div class="kpi-milestone-name">Initial Research</div>
+                    <div class="kpi-track"><div class="kpi-fill" style="width: 100%"></div></div>
+                </div>
+                <div class="kpi-milestone-row">
+                    <div class="kpi-milestone-name">Stakeholder Mapping</div>
+                    <div class="kpi-track"><div class="kpi-fill" style="width: 48%; margin-left: 20%"></div></div>
+                </div>
+            </div>
+            <div class="quarter-content" id="content-q2">
+                <div class="kpi-milestone-header"><span>Milestone</span><span>April</span><span>May</span><span>June</span></div>
+                <div class="kpi-milestone-row">
+                    <div class="kpi-milestone-name">Development Phase</div>
+                    <div class="kpi-track"><div class="kpi-fill" style="width: 100%"></div></div>
+                </div>
+                <div class="kpi-milestone-row">
+                    <div class="kpi-milestone-name">Beta Testing</div>
+                    <div class="kpi-track"><div class="kpi-fill" style="width: 20%; margin-left: 60%"></div></div>
+                </div>
+            </div>
+            <div class="quarter-content active" id="content-q3">
+                <div class="kpi-milestone-header"><span>Milestone</span><span>July</span><span>August</span><span>September</span></div>
+                <div class="kpi-milestone-row">
+                    <div class="kpi-milestone-name">Regional Assessment</div>
+                    <div class="kpi-track"><div class="kpi-fill" style="width: 30%"></div></div>
+                </div>
+                <div class="kpi-milestone-row">
+                    <div class="kpi-milestone-name">Supplier Onboarding</div>
+                    <div class="kpi-track"><div class="kpi-fill" style="width: 40%; margin-left: 25%"></div></div>
+                </div>
+                <div class="kpi-milestone-row">
+                    <div class="kpi-milestone-name">Retention Pilot Program</div>
+                    <div class="kpi-track"><div class="kpi-fill-pending" style="width: 40%; margin-left: 60%"></div></div>
+                </div>
+            </div>
+            <div class="quarter-content" id="content-q4">
+                <div class="kpi-milestone-header"><span>Milestone</span><span>October</span><span>November</span><span>December</span></div>
+                <div class="kpi-milestone-row">
+                    <div class="kpi-milestone-name">Final Evaluation</div>
+                    <div class="kpi-track"><div class="kpi-fill" style="width: 40%"></div></div>
+                </div>
+                <div class="kpi-milestone-row">
+                    <div class="kpi-milestone-name">System Deployment</div>
+                    <div class="kpi-track"><div class="kpi-fill" style="width: 40%; margin-left: 10%"></div></div>
+                </div>
+                <div class="kpi-milestone-row">
+                    <div class="kpi-milestone-name">Year-End Review</div>
+                    <div class="kpi-track"><div class="kpi-fill-pending" style="width: 30%; margin-left: 70%"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <div class="row g-4">
+            <div class="col-12 col-xl-8">
+                <section class="kpi-card mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="kpi-section-title mb-0">My Evidence</h2>
+                        <button class="btn kpi-btn-primary" onclick="changePage(event, 'Submit Evidence')">
+                            <span class="material-symbols-outlined">add_circle</span>Add Evidence
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle kpi-table mb-0">
+                            <thead>
+                                <tr><th>File Name</th><th>Date Uploaded</th><th>Status</th><th class="text-end">Actions</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Q3_Retention_Strategy.pdf</td>
+                                    <td>Aug 12, 2024</td>
+                                    <td><span class="badge badge-green">Verified</span></td>
+                                    <td class="text-end">
+                                        <div class="dropdown d-inline-block text-start">
+                                            <button class="btn btn-sm btn-light kpi-actions-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <span class="material-symbols-outlined">more_vert</span>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end kpi-actions-menu">
+                                                <li>
+                                                    <a class="dropdown-item" href="#" onclick="changePage(event, 'View Evidence')">
+                                                        <span class="material-symbols-outlined">visibility</span>View
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="#" onclick="changePage(event, 'Edit Evidence')">
+                                                        <span class="material-symbols-outlined">edit</span>Edit
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Survey_Results_V2.xlsx</td>
+                                    <td>Aug 15, 2024</td>
+                                    <td><span class="badge badge-yellow">Awaiting Review</span></td>
+                                    <td class="text-end">
+                                        <div class="dropdown d-inline-block text-start">
+                                            <button class="btn btn-sm btn-light kpi-actions-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <span class="material-symbols-outlined">more_vert</span>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end kpi-actions-menu">
+                                                <li><a class="dropdown-item" href="#"><span class="material-symbols-outlined">visibility</span>View</a></li>
+                                                <li><a class="dropdown-item" href="#"><span class="material-symbols-outlined">edit</span>Edit</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Competitive_Analysis_Draft.docx</td>
+                                    <td>Aug 20, 2024</td>
+                                    <td><span class="badge badge-red">Rejected</span></td>
+                                    <td class="text-end">
+                                        <div class="dropdown d-inline-block text-start">
+                                            <button class="btn btn-sm btn-light kpi-actions-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <span class="material-symbols-outlined">more_vert</span>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end kpi-actions-menu">
+                                                <li>
+                                                    <a class="dropdown-item" href="#" onclick="changePage(event, 'View Evidence')">
+                                                        <span class="material-symbols-outlined">visibility</span>View
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="#" onclick="changePage(event, 'Edit Evidence')">
+                                                        <span class="material-symbols-outlined">edit</span>Edit
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="kpi-card">
+                    <h2 class="kpi-section-title">Team Evidence</h2>
+                    <div class="table-responsive">
+                        <table class="table align-middle kpi-table mb-0">
+                            <thead>
+                                <tr><th>Submitter</th><th>Document</th><th>Status</th><th class="text-end">Actions</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="kpi-initials">SJ</div>
+                                            <span class="fw-semibold">Sarah Jenkins</span>
+                                        </div>
+                                    </td>
+                                    <td>Regional_Outreach_Data.csv</td>
+                                    <td><span class="badge badge-yellow">Pending</span></td>
+                                    <td class="text-end"><button class="btn btn-link p-0 kpi-link-btn">Update Status</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <aside class="kpi-card">
+                    <h2 class="kpi-section-title">Activity Timeline</h2>
+                    <div class="kpi-timeline">
+                        <div class="kpi-timeline-item">
+                            <div class="kpi-dot kpi-dot-primary"></div>
+                            <div>
+                                <p><strong>Sarah Jenkins</strong> adjusted the target for Q3</p>
+                                <small class="text-muted">2 hours ago</small>
+                            </div>
+                        </div>
+                        <div class="kpi-timeline-item">
+                            <div class="kpi-dot kpi-dot-success"></div>
+                            <div>
+                                <p><strong>Mark R.</strong> approved Evidence: <span class="kpi-link-btn">Strategy_Doc.pdf</span></p>
+                                <small class="text-muted">Yesterday, 4:30 PM</small>
+                            </div>
+                        </div>
+                        <div class="kpi-timeline-item">
+                            <div class="kpi-dot"></div>
+                            <div>
+                                <p><strong>Marcus Thorne</strong> uploaded new evidence</p>
+                                <small class="text-muted">Aug 14, 2024</small>
+                            </div>
+                        </div>
+                        <div class="kpi-timeline-item">
+                            <div class="kpi-dot"></div>
+                            <div>
+                                <p>KPI <strong>Customer Retention Rate</strong> was created</p>
+                                <small class="text-muted">Aug 01, 2024</small>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn w-100 mt-3 kpi-btn-outline">View Full History</button>
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>

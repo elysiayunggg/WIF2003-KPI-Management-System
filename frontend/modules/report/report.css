@@ -1,0 +1,363 @@
+/* =========================================
+   REPORT STYLES
+   ========================================= */
+
+.report-main-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #2a3439;
+  margin-bottom: 4px;
+}
+
+.report-subtitle {
+  font-size: 13px;
+  color: #6c757d;
+  margin-bottom: 24px;
+}
+
+/* Search */
+.report-search-wrapper {
+  position: relative;
+}
+
+.report-search-wrapper i {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+.report-search-input {
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #e1e9ee;
+  padding-left: 42px;
+  font-size: 13px;
+}
+
+/* Filter Row */
+.report-filter-row {
+  justify-content: flex-start;
+}
+
+/* Export Buttons */
+.report-export-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.report-export-pdf,
+.report-export-csv {
+  height: 32px;           /* smaller */
+  border-radius: 8px;
+  font-size: 12px;        /* smaller text */
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;      /* tighter */
+  border: none;
+  cursor: pointer;
+  transition: 0.2s ease;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.report-export-pdf i,
+.report-export-csv i {
+  font-size: 14px;        /* smaller icon */
+}
+
+.report-export-pdf {
+  background-color: #cfdce3;
+  color: #565e74;
+}
+
+.report-export-pdf:hover {
+  background-color: #bccbd3;
+  color: #2a3439;
+}
+
+.report-export-csv {
+  background-color: #565e74;
+  color: #ffffff;
+}
+
+.report-export-csv:hover {
+  background-color: #474f63;
+  color: #ffffff;
+}
+
+/* Table */
+.report-table-card {
+  background-color: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(42, 52, 57, 0.04);
+  overflow: hidden;
+}
+
+.report-table-card thead th {
+  font-size: 11px;
+  font-weight: 800;
+  color: #566166;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  background-color: #f8fafc;
+  padding: 16px 20px;
+}
+
+.report-table-card tbody td {
+  padding: 16px 20px;
+  border-top: 1px solid #f0f4f7;
+  font-size: 13px;
+}
+
+.kpi-name {
+  font-weight: 700;
+  color: #2a3439;
+  margin-bottom: 2px;
+}
+
+.kpi-meta {
+  font-size: 10px;
+  color: #6c757d;
+}
+
+.kpi-target {
+  font-weight: 700;
+  font-size: 13px;
+  color: #2a3439;
+  white-space: nowrap;
+}
+
+.report-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #d3e4fe;
+  color: #005bc4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.report-progress-wrapper {
+  width: 160px;
+}
+
+.report-progress-percent {
+  font-size: 10px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.report-progress-bar {
+  height: 6px;
+  background-color: #e1e9ee;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.report-progress-bar div {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.status-badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.status-progress {
+  background-color: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #dbeafe;
+}
+
+.status-overdue {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fee2e2;
+}
+
+.status-completed {
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #d1fae5;
+}
+
+.status-pending {
+  background-color: #fff7ed;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+}
+
+.report-action-btn {
+  border: none;
+  background: transparent;
+  color: #6c757d;
+  font-size: 18px;
+}
+
+.report-view-all {
+  padding: 16px;
+  border-top: 1px solid #f0f4f7;
+  text-align: center;
+}
+
+.report-view-all button {
+  border: none;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 800;
+  color: #6c757d;
+  text-transform: uppercase;
+}
+
+/* Bottom Cards */
+.report-bottom-card {
+  background-color: #ffffff;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 12px 40px rgba(42, 52, 57, 0.04);
+  min-height: 150px;
+}
+
+.report-bottom-card p {
+  font-size: 10px;
+  font-weight: 800;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+}
+
+.report-bottom-card h3 {
+  font-size: 34px;
+  font-weight: 800;
+  color: #2a3439;
+  margin: 0;
+}
+
+.positive-change {
+  font-size: 10px;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.report-progress {
+  height: 6px;
+  background-color: #e1e9ee;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 16px;
+}
+
+.report-progress div {
+  height: 100%;
+  background-color: #565e74;
+  border-radius: 999px;
+}
+
+.active-task-card {
+  border-left: 4px solid #2a3439;
+}
+
+.task-bars {
+  display: flex;
+  gap: 6px;
+  margin-top: 18px;
+}
+
+.task-bars div {
+  flex: 1;
+  height: 5px;
+  background-color: #10b981;
+  border-radius: 999px;
+}
+
+.task-bars .warning {
+  background-color: #f59e0b;
+}
+
+.task-bars .empty {
+  background-color: #e1e9ee;
+}
+
+.deadline-item {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.deadline-item small {
+  background-color: #f0f4f7;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #566166;
+}
+
+/* Calendar (clear icon) */
+.clear-report-date-icon {
+  font-size: 14px;
+  color: #adb5bd;
+  cursor: pointer;
+}
+
+.clear-report-date-icon:hover {
+  color: #dc3545;
+}
+
+/* Responsive Fix */
+@media (max-width: 992px) {
+  .report-filter-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filter-item {
+    width: 100%;
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .custom-filter-btn {
+    width: 100%;
+  }
+
+  .report-export-actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .report-table-card {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 576px) {
+  .report-export-actions {
+    flex-direction: column;
+  }
+
+  .report-export-pdf,
+  .report-export-csv {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .report-main-title {
+    font-size: 28px;
+  }
+}

@@ -3,18 +3,23 @@
 // When adding a new page, add its entry here — no other file needs to change.
 const pageRoutes = {
   "Dashboard": "../views/dashboard.html",
+  "Staff Dashboard": "../views/staff-dashboard.html",    // staff
   "Report": "../views/report.html",
   "KPI Management": "../views/kpi.html",
   "Create KPI": "../views/create-kpi.html",
   "Update KPI": "../views/update-kpi.html",
-  "View KPI List": "../views/kpi-list.html",
+  "View KPI List": "../views/kpi-list.html",             // staff
   "KPI Assignment & Verification": "../views/assignment_verification.html",
   "Assign KPI": "../views/assignment.html",
   "Review Submission": "../views/review.html",
-  "KPI Progress": "../views/progress.html",
-  "Update KPI Progress": "../views/update-progress.html",
-  "Notifications": "../views/notifications.html",
-  "Profile": "../views/profile.html",
+  "KPI Progress": "../views/progress.html",              // staff
+  "KPI Detail": "../views/kpi-detail.html",              // staff
+  "Submit Evidence": "../views/submit-evidence.html",    // staff
+  "View Evidence": "../views/submit-evidence.html",      // staff
+  "Edit Evidence": "../views/submit-evidence.html",      // staff
+  // "Update KPI Progress": "../views/update-progress.html",
+  "Notifications": "../views/notification.html",
+  "Profile": "../views/profile.html"
 };
 
 function renderSidebar(role) {
@@ -72,7 +77,7 @@ function renderSidebar(role) {
         </a>
       </div>
 
-      <a href="#" class="nav-link mt-3" onclick="changePage(event, 'Notifications')">
+      <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'Notifications')">
         <i class="bi bi-bell"></i> Notifications
       </a>
     `;
@@ -122,10 +127,15 @@ function setActiveLink() {
 async function changePage(event, pageName) {
   event.preventDefault();
 
-  const destination = pageRoutes[pageName];
-  if (!destination) {
-    console.warn(`No route defined for: "${pageName}"`);
-    return;
+  let destination = pageRoutes[pageName];
+
+  // Special handling for Dashboard
+  if (pageName === "Dashboard") {
+    const role = localStorage.getItem("role") || "manager";
+
+    destination = role === "staff"
+      ? "../views/staff-dashboard.html"
+      : "../views/manager-dashboard.html";
   }
 
   // Save active page before swapping so setActiveLink() can read it
@@ -148,7 +158,7 @@ async function changePage(event, pageName) {
     setTimeout(() => {
       content.innerHTML = html;
       content.style.opacity = "1";
-      
+
       // Ensure initFn also runs when clicking navlinks 
       const initFn = pageInits[pageName];
       if (typeof initFn === "function") {
@@ -175,8 +185,58 @@ async function changePage(event, pageName) {
 // When a view needs JS to run after it loads, add an entry here.
 // The function must be defined in a script loaded by shell.html.
 const pageInits = {
-  "Assign KPI": initAssignmentView,
-  "KPI Assignment": initAssignmentView,
-  "Review Submission": initReviewView,
-  "KPI Assignment & Verification": initAssignmentVerificationView
+  "Profile": initProfileView,
+  "Dashboard": function () {
+    const role = localStorage.getItem("role") || "manager";
+
+    if (role === "staff") {
+      if (typeof initStaffDashboardView === "function") {
+        initStaffDashboardView();
+      }
+    } else {
+      if (typeof initDashboardView === "function") {
+        initDashboardView();
+      }
+    }
+  },
+
+  "KPI Progress": function () {
+    if (typeof initProgressView === "function") {
+      initProgressView();
+    }
+  },
+
+  "Submit Evidence": initSubmitEvidenceView,
+  "View Evidence": initSubmitEvidenceView,
+  "Edit Evidence": initSubmitEvidenceView,
+
+  "Report": function () {
+    if (typeof initReportView === "function") {
+      initReportView();
+    }
+  },
+
+  "Assign KPI": function () {
+    if (typeof initAssignmentView === "function") {
+      initAssignmentView();
+    }
+  },
+
+  "KPI Assignment & Verification": function () {
+    if (typeof initAssignmentView === "function") {
+      initAssignmentVerificationView();
+    }
+  },
+
+  "Review Submission": function () {
+    if (typeof initReviewView === "function") {
+      initReviewView();
+    }
+  },
+
+  "Notifications": function () {
+    if (typeof initNotificationPageView === "function") {
+      initNotificationPageView()
+    }
+  }
 };

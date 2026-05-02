@@ -1,0 +1,96 @@
+<section class="submit-evidence-view py-4 py-lg-5" id="submit-evidence-root">
+    <div class="container-fluid kpi-container">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" onclick="changePage(event, 'Staff Dashboard')"><a href="#">Staff Dashboard</a></li>
+                <li class="breadcrumb-item" onclick="changePage(event, 'KPI Progress')"><a href="#">KPI Progress</a></li>
+                <li class="breadcrumb-item" onclick="changePage(event, 'KPI Detail')"><a href="#">KPI Detail</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Submit Evidence</li>
+            </ol>
+        </nav>
+
+        <header class="mb-4">
+            <h1 class="kpi-page-title mb-2" id="page-title">Submit Evidence</h1>
+            <p class="kpi-subtext mb-0" id="page-desc">
+                Securely upload documents, metrics, and supporting files for KPI verification.
+            </p>
+        </header>
+
+        <div class="row g-4">
+            <div class="col-12 col-xl-8">
+                <section class="card kpi-card evidence-card">
+                    <div class="card-body">
+                        <div class="evidence-section-title">
+                            <span class="material-symbols-outlined">description</span>
+                            <h2>Submission Details</h2>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="evidence-title" class="form-label evidence-label">SUBMISSION TITLE</label>
+                            <input id="evidence-title" type="text" class="form-control evidence-input" placeholder="e.g., Q3 Operational Efficiency Report" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="evidence-desc" class="form-label evidence-label">DESCRIPTION / CONTEXT</label>
+                            <textarea id="evidence-desc" rows="4" class="form-control evidence-input" placeholder="Provide detailed context for the uploaded evidence..."></textarea>
+                        </div>
+
+                        <div class="mb-2 d-flex justify-content-between align-items-end">
+                            <span class="evidence-label">INDICATE TASK PROGRESS (%)</span>
+                            <span class="evidence-progress-val" id="progress-val">0%</span>
+                        </div>
+                        <div class="evidence-slider-wrapper mb-4">
+                            <input id="progress-slider" type="range" min="0" max="100" value="0" class="round-slider" />
+                        </div>
+
+                        <hr class="evidence-divider" />
+
+                        <section id="upload-section">
+                            <div class="evidence-section-title">
+                                <span class="material-symbols-outlined">cloud_upload</span>
+                                <h2>File Upload</h2>
+                            </div>
+                            <div class="evidence-dropzone" id="drop-zone">
+                                <div class="evidence-dropzone__icon">
+                                    <span class="material-symbols-outlined">upload_file</span>
+                                </div>
+                                <p class="evidence-dropzone__title mb-1">Click to upload or drag and drop</p>
+                                <p class="evidence-dropzone__hint mb-0">PDF, DOCX, XLSX or images up to 10MB each</p>
+                                <input type="file" id="file-input" hidden multiple />
+                            </div>
+                        </section>
+
+                        <div class="d-flex flex-wrap align-items-center gap-3 pt-4" id="action-buttons">
+                            <button type="button" class="btn kpi-btn-primary evidence-submit-btn" id="submit-btn">Submit Evidence</button>
+                            <button type="button" class="btn kpi-btn-secondary evidence-cancel-btn" onclick="changePage(event, 'KPI Detail')">
+                                <span class="d-block w-100 text-center">Cancel</span>
+                            </button>
+                    
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <aside class="col-12 col-xl-4">
+                <section class="card kpi-card evidence-aside h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="kpi-section-title mb-0">Staged Files</h2>
+                            <span class="evidence-file-badge" id="file-count-badge">0 FILES</span>
+                        </div>
+
+                        <div class="evidence-staged-list" id="staged-files-list"></div>
+
+                        <div class="evidence-warning mt-4">
+                            <span class="material-symbols-outlined evidence-warning__icon">warning</span>
+                            <div class="evidence-warning__body">
+                                <p class="evidence-warning__title mb-1">Awaiting review</p>
+                                <p class="mb-0">Files will be verified by a supervisor after submission.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </div>
+</section>

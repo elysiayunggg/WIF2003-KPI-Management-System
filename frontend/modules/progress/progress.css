@@ -1,0 +1,460 @@
+/* ==========================================================================
+   KPI Progress page (modules/progress)
+   Bootstrap-based styling, no Tailwind.
+   ========================================================================== */
+
+.progress-view {
+    background-color: #f8fafc;
+    color: #191b23;
+    min-height: 100%;
+}
+
+.progress-view .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.progress-view .breadcrumb {
+    font-size: 0.78rem;
+}
+
+.progress-view .breadcrumb-item,
+.progress-view .breadcrumb-item a {
+    color: #6b7280;
+    text-decoration: none;
+}
+
+.progress-view .breadcrumb-item.active {
+    color: #1f2937;
+}
+
+/* --- Toolbar ----------------------------------------------------------- */
+
+.progress-toolbar {
+    border-radius: 0.85rem;
+    background-color: #ffffff;
+}
+
+.progress-toolbar .card-body {
+    padding: 1rem 1.25rem;
+}
+
+.progress-toolbar__label {
+    color: #54647a;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.progress-toolbar .progress-search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #737785;
+    font-size: 20px;
+    pointer-events: none;
+}
+
+.progress-toolbar .progress-search-input {
+    padding-left: 2.5rem;
+    border-color: #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.progress-toolbar .progress-search-input:focus {
+    border-color: #4e5e82;
+    box-shadow: 0 0 0 0.2rem rgba(78, 94, 130, 0.15);
+}
+
+.progress-filter-btn {
+    background: #e9ecf4;
+    color: #505f76;
+    border: 1px solid #d8dde8;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.progress-filter-btn:hover {
+    background: #dde2ec;
+    color: #2a3439;
+}
+
+.progress-filter-btn .material-symbols-outlined {
+    font-size: 18px;
+}
+
+/* --- Status filters (same visual language as update-kpi status buttons) -- */
+
+.progress-filter-panel {
+    border-radius: 0.85rem;
+    background-color: #ffffff;
+}
+
+.progress-filter-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #343a40;
+}
+
+.progress-filter-panel .status-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    min-height: 44px;
+    min-width: 8rem;
+    padding: 0 1rem;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 14px;
+    white-space: nowrap;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.progress-filter-panel .status-btn.all {
+    background: #f1f3f5;
+    color: #495057;
+}
+
+.progress-filter-panel .status-btn.completed {
+    background: #d0fae4;
+    color: #17b681;
+}
+
+.progress-filter-panel .status-btn.progress {
+    background: #dbe9ff;
+    color: #0a6ffd;
+}
+
+.progress-filter-panel .status-btn.overdue {
+    background: #fee1e2;
+    color: #db2728;
+}
+
+.progress-filter-panel .status-btn.pending {
+    background: #fff4c7;
+    color: #d87e15;
+}
+
+.progress-filter-panel .status-btn.active {
+    outline: 2px solid #4e5e82;
+    outline-offset: 1px;
+}
+
+.progress-filter-panel .status-btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+}
+
+/* --- Cards ------------------------------------------------------------- */
+
+.progress-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.progress-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.1);
+}
+
+.progress-card .card-body {
+    padding: 1.5rem;
+}
+
+.progress-card--muted {
+    opacity: 0.85;
+}
+
+/* Header: badge + dropdown */
+
+.progress-card__badge {
+    display: inline-block;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1.4;
+}
+
+.progress-card__menu-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: -0.25rem;
+    transition: background-color 0.15s ease;
+}
+
+.progress-card__menu-btn::after {
+    display: none;
+}
+
+.progress-card__menu-btn:hover,
+.progress-card__menu-btn:focus,
+.progress-card__menu-btn[aria-expanded="true"] {
+    background-color: #f1f5f9;
+    color: #1f2937;
+    box-shadow: none;
+}
+
+.progress-card__menu-btn .material-symbols-outlined {
+    font-size: 20px;
+}
+
+.progress-card__menu {
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+    padding: 0.4rem;
+    min-width: 11rem;
+}
+
+.progress-card__menu .dropdown-item {
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.55rem;
+}
+
+.progress-card__menu .dropdown-item:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
+.progress-card__menu .dropdown-item .material-symbols-outlined {
+    font-size: 18px;
+    color: inherit;
+}
+
+.progress-card__menu-danger {
+    color: #b91c1c !important;
+}
+
+.progress-card__menu-danger:hover {
+    background-color: #fef2f2 !important;
+    color: #991b1b !important;
+}
+
+/* Title / description */
+
+.progress-card__title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.progress-card__desc {
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: #54647a;
+    margin-bottom: 1.25rem;
+}
+
+/* Due date row */
+
+.progress-card__date {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: #54647a;
+    margin-bottom: 1rem;
+}
+
+.progress-card__date .material-symbols-outlined {
+    font-size: 16px;
+}
+
+.progress-card__date--bold {
+    font-weight: 600;
+}
+
+/* Progress bar */
+
+.progress-card__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 0.4rem;
+}
+
+.progress-card__label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #54647a;
+}
+
+.progress-card__percent {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #4e5e82;
+}
+
+.progress-card__bar {
+    height: 0.5rem;
+    background-color: #f1f5f9;
+    border-radius: 999px;
+    margin-bottom: 1.25rem;
+}
+
+.progress-card__bar .progress-bar {
+    background-color: #4e5e82;
+    border-radius: 999px;
+}
+
+/* Action button */
+
+.progress-card__action {
+    width: 100%;
+    padding: 0.625rem 1rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.progress-card__action:focus {
+    box-shadow: 0 0 0 0.2rem rgba(78, 94, 130, 0.2);
+}
+
+/* --- Status modifiers -------------------------------------------------- */
+
+/* In progress (blue) */
+.progress-card--in-progress .progress-card__badge {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+.progress-card--in-progress .progress-card__percent { color: #0040a1; }
+.progress-card--in-progress .progress-card__bar .progress-bar { background-color: #0040a1; }
+.progress-card--in-progress .progress-card__action {
+    background-color: #0040a1;
+    color: #ffffff;
+}
+.progress-card--in-progress .progress-card__action:hover {
+    background-color: #002f7a;
+    color: #ffffff;
+}
+
+/* Overdue (red) */
+.progress-card--overdue .progress-card__badge {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+.progress-card--overdue .progress-card__date { color: #b91c1c; }
+.progress-card--overdue .progress-card__percent { color: #b91c1c; }
+.progress-card--overdue .progress-card__bar .progress-bar { background-color: #ba1a1a; }
+.progress-card--overdue .progress-card__action {
+    background-color: #dc2626;
+    color: #ffffff;
+}
+.progress-card--overdue .progress-card__action:hover {
+    background-color: #b91c1c;
+    color: #ffffff;
+}
+
+/* Awaiting Review (amber) */
+.progress-card--review .progress-card__badge {
+    background: #fef3c7;
+    color: #d97706;
+}
+.progress-card--review .progress-card__percent { color: #d97706; }
+.progress-card--review .progress-card__bar .progress-bar { background-color: #d97706; }
+.progress-card--review .progress-card__action {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+.progress-card--review .progress-card__action:hover {
+    background-color: #fde68a;
+    color: #b45309;
+}
+
+/* Completed (emerald) */
+.progress-card--completed .progress-card__badge {
+    background: #d1fae5;
+    color: #047857;
+}
+.progress-card--completed .progress-card__date { color: #047857; }
+.progress-card--completed .progress-card__percent { color: #047857; }
+.progress-card--completed .progress-card__bar .progress-bar { background-color: #10b981; }
+.progress-card--completed .progress-card__action {
+    background-color: #d1fae5;
+    color: #047857;
+}
+.progress-card--completed .progress-card__action:hover {
+    background-color: #a7f3d0;
+    color: #065f46;
+}
+
+/* Not started (slate) */
+.progress-card--not-started .progress-card__badge {
+    background: #e2e8f0;
+    color: #64748b;
+}
+.progress-card--not-started .progress-card__percent { color: #94a3b8; }
+.progress-card--not-started .progress-card__bar .progress-bar { background-color: #cbd5e1; }
+.progress-card--not-started .progress-card__action {
+    background-color: #e2e8f0;
+    color: #334155;
+}
+.progress-card--not-started .progress-card__action:hover {
+    background-color: #cbd5e1;
+    color: #1e293b;
+}
+
+/* --- Reusable link button --------------------------------------------- */
+
+.progress-view .kpi-link-btn {
+    color: #4e5e82;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.progress-view .kpi-link-btn:hover {
+    text-decoration: underline;
+}
+
+/* --- Responsive -------------------------------------------------------- */
+
+@media (max-width: 575.98px) {
+    .progress-toolbar .card-body {
+        padding: 0.85rem 1rem;
+    }
+
+    .progress-card .card-body {
+        padding: 1.25rem;
+    }
+
+    .progress-card__percent {
+        font-size: 1.5rem;
+    }
+}

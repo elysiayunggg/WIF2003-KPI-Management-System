@@ -143,13 +143,45 @@ body {
   color: #6c757d;
 }
 
-/* Profile Image */
-.profile-img {
-  font-size: 26px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 0px;
+/* Notification Button */
+.notification-btn {
+  position: relative;
+  border: none;
+  background: transparent;
+  color: #6c757d;
+  font-size: 20px;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  background-color: #dc3545;
+  border-radius: 50%;
+}
+
+/* Navbar avatar button */
+.navbar-avatar-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: opacity 0.2s ease;
+}
+
+.navbar-avatar-btn:hover {
+  opacity: 0.8;
+}
+
+.navbar-avatar-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
 }
 
 /* Typography */

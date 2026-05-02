@@ -1,0 +1,114 @@
+.create-kpi input,
+.create-kpi textarea,
+.create-kpi select,
+.create-kpi .form-control,
+.create-kpi .form-select {
+    background-color: #eef1f4;
+    border: 1px solid #dcdfe4;
+    color: #495057;
+}
+
+/* Placeholder */
+.create-kpi input::placeholder,
+.create-kpi textarea::placeholder {
+    color: #adb5bd;
+}
+
+.create-kpi .date-input {
+    background-color: #e9ecef;
+}
+
+.create-kpi .assign-btn {
+    background-color: #4e5e82;
+    color: white;
+    border: none;
+}
+
+.create-kpi .create-btn {
+    background-color: #4e5e82;
+    color: white;
+    border: none;
+    border-radius: 8px;
+}
+
+.create-kpi .create-btn:hover {
+    background-color: #3f4d6b;
+}
+
+.create-kpi .toggle-btn {
+    background-color: #e9ecef;
+    border: none;
+    color: #495057;
+}
+
+.create-kpi .toggle-btn.active {
+    background-color: #6c757d;
+    color: white;
+}
+
+.create-kpi .card {
+    background-color: #ffffff !important;
+    border-radius: 16px;
+    border: 1px solid #e6e9ef;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+}
+
+.create-kpi .smart-card {
+    background: #e9edff !important; /* light blue */
+    border: none;
+}
+
+.create-kpi .smart-icon {
+    background: #dbe4ff;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+/* Card background like Figma */
+.kpi-view .benchmark-card {
+    background-color: #e9eff4; /* soft blue-grey */
+    border-radius: 16px;
+}
+
+/* Title spacing */
+.kpi-view .benchmark-card h5 {
+    font-weight: 600;
+}
+
+/* Bar container */
+.kpi-view .benchmark-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    height: 60px;
+}
+
+.create-kpi .benchmark-bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    height: 80px;
+    gap: 8px;
+}
+
+.create-kpi .benchmark-bars .bar {
+    width: 18%;
+    border-radius: 6px;
+    background-color: #d6dde5;
+}
+
+/* Heights */
+.create-kpi .benchmark-bars .bar:nth-child(1) { height: 20px; }
+.create-kpi .benchmark-bars .bar:nth-child(2) { height: 30px; }
+.create-kpi .benchmark-bars .bar:nth-child(3) { height: 55px; }
+.create-kpi .benchmark-bars .bar:nth-child(4) { height: 25px; }
+.create-kpi .benchmark-bars .bar:nth-child(5) { height: 35px; }
+
+/* Highlight */
+.create-kpi .benchmark-bars .bar.active {
+    background-color: #4e5e82;
+}
+
+.create-kpi .benchmark-bars .bar {
+    transition: height 0.3s ease;
+}

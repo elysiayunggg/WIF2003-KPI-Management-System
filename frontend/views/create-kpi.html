@@ -1,0 +1,158 @@
+<section class="p-4 create-kpi">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">KPI Management</li>
+      <li class="breadcrumb-item active">Add New KPI</li>
+    </ol>
+  </nav>
+
+  <!-- Title -->
+  <div class="mb-4">
+    <h1 class="fw-bold">Add New KPI</h1>
+    <p class="text-muted">
+      Define a new Key Performance Indicator to track departmental success. High-impact metrics should be clear, measurable, and time-bound.
+    </p>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- LEFT FORM -->
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+
+          <!-- KPI Name -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold">KPI Name</label>
+            <input id="kpiName" type="text" class="form-control"
+              placeholder="e.g., Monthly Recurring Revenue Growth">
+          </div>
+
+          <!-- Description -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Description</label>
+            <textarea id="kpiDesc" class="form-control" rows="4"
+              placeholder="Briefly describe the objective..."></textarea>
+          </div>
+
+          <!-- Target + Unit -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Target Value</label>
+              <input id="kpiTarget" type="text" class="form-control" placeholder=" 0.00">
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Measurement Unit</label>
+              <select id="kpiUnit" class="form-select">
+                <option selected>Currency (RM)</option>
+                <option>Percentage (%)</option>
+                <option>Time (Hours)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Deadline + Ownership -->
+          <div class="row g-3 mb-3">
+
+            <!-- Deadline -->
+            <div class="col-md-6">
+              <div class="border rounded-3 p-3">
+                <small class="text-muted fw-semibold">TARGET DEADLINE</small>
+                <input id="kpiDeadline" type="date" class="form-control mt-2 date-input">
+                
+                <small class="text-muted fw-semibold mt-3 d-block">REVIEW FREQUENCY</small>
+                <div class="btn-group w-100 mt-2">
+                  <button id="biWeeklyBtn" type="button" class="btn toggle-btn active">Bi-Weekly</button>
+                  <button id="monthlyBtn" type="button" class="btn toggle-btn">Monthly</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ownership -->
+            <div class="col-md-6">
+              <div class="border rounded-3 p-3 h-100 d-flex flex-column justify-content-between">
+                
+                <div>
+                  <small class="text-muted fw-semibold">OWNERSHIP</small>
+
+                  <button type="button" class="btn assign-btn w-100 mt-2" onclick="changePage(event, 'Assign KPI')">
+                    <i class="bi bi-person-plus"></i> Assign Staff
+                  </button>
+                </div>
+
+                <div class="mt-3 d-flex justify-content-between align-items-center">
+                  <div>
+                    <small class="fw-semibold">Assign Later</small><br>
+                    <small class="text-muted">This KPI will remain unassigned.</small>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input id="assignLaterSwitch" class="form-check-input" type="checkbox">
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Buttons -->
+          <div class="d-flex gap-2 mt-4">
+            <button id="createKpiBtn" type="button" class="btn create-btn px-4">
+              <i class="bi bi-check-circle"></i> Create KPI
+            </button>
+            <button type="button" class="btn btn-outline-secondary">Cancel</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="col-lg-4">
+
+      <!-- SMART Goals -->
+      <div class="card border-0 shadow-sm mb-4 smart-card">
+        <div class="card-body p-4">
+          <i class="bi bi-lightbulb fs-4 smart-icon"></i>
+          <h6 class="fw-bold mt-2">SMART Goals</h6>
+          <p class="text-muted small mb-0">
+            Ensure your KPI is Specific, Measurable, Achievable, Relevant, and Time-bound.
+          </p>
+        </div>
+      </div>
+
+      <!-- Benchmark -->
+    <div class="card benchmark-card border-0 shadow-sm mb-4">
+  <div class="card-body p-4">
+
+    <h5 class="fw-semibold mb-1">Team Benchmark</h5>
+    <p class="text-muted mb-4">Average industry growth for Q3</p>
+
+    <div class="benchmark-bars">
+      <div class="bar light"></div>
+      <div class="bar light"></div>
+      <div class="bar active"></div>
+      <div class="bar light"></div>
+      <div class="bar light"></div>
+    </div>
+
+  </div>
+</div>
+
+      <!-- Preview -->
+      <div class="card border-0 shadow-sm text-white"
+        style="background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);">
+        <div class="card-body p-4">
+          <small class="text-uppercase">Preview</small>
+          <p class="mb-0">Dashboard integration active</p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

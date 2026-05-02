@@ -1,0 +1,291 @@
+/* ================================
+   STAFF DASHBOARD PAGE TITLE
+================================ */
+
+.staff-main-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #2a3439;
+  margin-bottom: 4px;
+}
+
+.staff-subtitle {
+  font-size: 13px;
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+
+/* ================================
+   STAFF ALERT BOX
+================================ */
+
+.staff-alert-box {
+  background-color: #f8c7c7;
+  color: #b91c1c;
+  border-left: 4px solid #b91c1c;
+  border-radius: 0;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 13px;
+  text-decoration: none;
+  transition: 0.2s ease;
+  cursor: pointer;
+}
+
+.staff-alert-box:hover {
+  background-color: #ffacac;
+  color: #991b1b;
+}
+
+.staff-alert-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.staff-alert-left i {
+  font-size: 20px;
+}
+
+.staff-alert-arrow {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+
+/* ================================
+   STAFF CHART SECTION
+================================ */
+
+.staff-charts-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+/* Staff chart cards */
+.staff-chart-card {
+  background-color: #ffffff;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 12px 40px rgba(42, 52, 57, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.staff-performance-card {
+  align-self: stretch;
+  justify-content: space-between;
+
+}
+
+.staff-breakdown-card {
+  justify-content: space-between;
+}
+
+.staff-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.staff-chart-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2a3439;
+  margin: 0;
+}
+
+
+/* ================================
+   PERFORMANCE TREND FILTER
+================================ */
+
+.trend-filter-wrapper {
+  margin-left: 3px;
+}
+
+.staff-trend-btn {
+  height: 30px;
+  min-width: 130px;
+  padding: 4px 10px;
+  font-size: 12px;
+  background-color: #eef3f8;
+  color: #2a3439;
+}
+
+.staff-trend-btn:hover {
+  background-color: #dde6f0;
+}
+
+
+/* ================================
+   CHART LEGENDS
+================================ */
+
+.staff-chart-legend {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #435368;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.actual-dot,
+.completed-dot {
+  background-color: #0056d2;
+}
+
+.target-dot {
+  background-color: #c3c6d6;
+}
+
+.progress-dot {
+  background-color: #10b981;
+}
+
+.pending-dot {
+  background-color: #f59e0b;
+}
+
+.overdue-dot {
+  background-color: #ba1a1a;
+}
+
+
+/* ================================
+   PERFORMANCE LINE CHART
+================================ */
+
+.staff-line-chart-wrapper {
+  height: 340px;
+  position: relative;
+}
+
+.staff-line-chart-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+
+/* ================================
+   COMPLETION BREAKDOWN CHART
+================================ */
+
+.staff-doughnut-wrapper {
+  width: 190px;
+  height: 190px;
+  margin: 20px auto;
+}
+
+.staff-breakdown-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.staff-breakdown-legend div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #435368;
+}
+
+.staff-breakdown-legend strong {
+  color: #000;
+}
+
+
+/* ================================
+   ACTIVE PERFORMANCE TASK TITLE
+================================ */
+
+.staff-table-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2a3439;
+}
+
+.staff-table-subtitle {
+  font-size: 13px;
+  color: #7a8a99;
+}
+
+
+/* ================================
+   VIEW ALL BUTTON
+================================ */
+
+.report-view-all button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.kpi-target {
+  font-weight: 600;
+  font-size: 13px;
+  color: #2a3439;
+}
+/* ================================
+   DATE RANGE (CLEAR BUTTON)
+================================ */
+.clear-staff-date-icon {
+  font-size: 14px;
+  color: #adb5bd;
+  cursor: pointer;
+}
+
+.clear-staff-date-icon:hover {
+  color: #dc3545;
+}
+
+/* ================================
+   RESPONSIVE DESIGN
+================================ */
+
+@media (max-width: 992px) {
+  .staff-charts-row {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .report-filter-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filter-item {
+    width: 100%;
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .custom-filter-btn {
+    width: 100%;
+  }
+
+  .report-export-actions {
+    width: 100%;
+    justify-content: center;
+  }
+}
