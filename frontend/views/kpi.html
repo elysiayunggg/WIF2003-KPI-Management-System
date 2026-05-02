@@ -1,0 +1,147 @@
+<section class="p-4 kpi-view">
+
+  <!-- Title -->
+  <div class="mb-4">
+    <h1 class="fw-bold">KPI Management</h1>
+    <p class="text-muted">
+      Create, assign, and track all your team's key performance indicators.
+    </p>
+  </div>
+
+  <!-- KPI Summary -->
+  <div class="row g-4 mb-5">
+
+  <!-- Total KPI -->
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm p-3 h-100">
+      <div class="d-flex justify-content-between align-items-start">
+        <!-- ICON -->
+        <div class="p-2 bg-primary-subtle rounded text-primary">
+          <i class="bi bi-graph-up"></i>
+        </div>
+
+        <!-- BADGE -->
+        <span class="badge bg-success-subtle text-success">+12%</span>
+      </div>
+
+      <div class="mt-3">
+        <small class="text-muted">Total KPIs</small>
+        <h2 class="fw-bold mb-0" id="totalKPI">0</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completed -->
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm p-3 h-100">
+      <div class="d-flex justify-content-between align-items-start">
+        <div class="p-2 completed-icon rounded">
+          <i class="bi bi-check-circle"></i>
+        </div>
+
+        <span class="badge bg-light text-muted">Stable</span>
+      </div>
+
+      <div class="mt-3">
+        <small class="text-muted">Completed</small>
+        <h2 class="fw-bold mb-0" id="completedKPI">0</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completion Rate -->
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm p-3 h-100 text-white" style="background:#4e5e82;">
+      <small class="opacity-75">Completion Rate</small>
+      <h2 class="fw-bold mb-0 completion-rate-text" id="completionRate">0%</h2>
+
+      <!-- PROGRESS BAR -->
+      <div class="progress mt-3" style="height:6px; background:rgba(255,255,255,0.2);">
+        <div 
+          class="progress-bar bg-white" 
+          id="completionBar" 
+          style="width:0%">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+  <!-- KPI LIST -->
+  <div class="card border-0 shadow-sm">
+
+    <!-- Header -->
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="fw-bold mb-0">KPI List</h5>
+        <small class="text-muted">Manage and track your active KPIs</small>
+      </div>
+
+      <button class="btn highLightButton" onclick="changePage(event, 'Create KPI')">
+        <i class="bi bi-plus"></i> Add New KPI
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>KPI NAME</th>
+            <th>TARGET VALUE</th>
+            <th>ASSIGNED STAFF</th>
+            <th>DEADLINE</th>
+            <th>STATUS</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+
+        <tbody id="kpiTableBody">
+          <!-- injected by kpi.js -->
+        </tbody>
+      </table>
+  
+    </div>
+<div class="d-flex justify-content-between align-items-center pagination-bar">
+
+  <small id="entrySummary" class="text-muted"></small>
+
+  <div class="pagination-container">
+    <button id="prevBtn" class="btn btn-sm btn-light">Previous</button>
+
+    <div id="pageNumbers" class="d-inline-flex mx-2"></div>
+
+    <button id="nextBtn" class="btn btn-sm btn-light">Next</button>
+  </div>
+
+</div>
+
+  </div>
+
+</section>
+
+<!-- Delete KPI Modal -->
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal-container">
+
+    <div class="modal-icon">
+      <i class="bi bi-trash"></i>
+    </div>
+
+    <h2 class="modal-title">Delete KPI?</h2>
+
+    <p class="modal-text">
+      Are you sure you want to delete 
+      <strong id="kpiNameText">Client Retention Rate</strong>? 
+      This action cannot be undone.
+    </p>
+
+    <div class="modal-actions">
+      <button id="cancelDelete" class="btn-cancel">Cancel</button>
+      <button id="confirmDelete" class="btn-delete">Delete</button>
+    </div>
+
+  </div>
+</div>

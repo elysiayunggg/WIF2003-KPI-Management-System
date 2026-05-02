@@ -195,4 +195,9 @@ const pageInits = {
   "Submit Evidence": initSubmitEvidenceView,
   "View Evidence": initSubmitEvidenceView,
   "Edit Evidence": initSubmitEvidenceView
+  "KPI Management": initKpiView,
+  "Update KPI": initUpdateKpiView,
+  "Create KPI": initCreateKpiView,
+  "Delete KPI": initDeleteKpi,
+  "View KPI List": initKpiListView
 };
