@@ -1,4 +1,4 @@
-const kpiData = [
+window.kpiData = [
   { kpi: "System Latency Optimization", department: "Backend & Infrastructure", priority: "High", target: "< 2 hrs", staff: "Ali Ahmad", initials: "AA", progress: 82, status: "In Progress", deadline: "30 Apr, 2026" },
   { kpi: "Database Schema Migration", department: "Backend & Infrastructure", priority: "Medium", target: "100%", staff: "John Tan", initials: "JT", progress: 45, status: "Overdue", deadline: "18 Apr, 2026" },
   { kpi: "Mobile Responsiveness Audit", department: "Frontend & UX", priority: "Medium", target: "100%", staff: "Sarah Chen", initials: "SC", progress: 100, status: "Completed", deadline: "22 Apr, 2026" },
