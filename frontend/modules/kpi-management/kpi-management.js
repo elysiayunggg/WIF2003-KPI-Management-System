@@ -1,110 +1,110 @@
 
 let currentPage = 1;
 const rowsPerPage = 5;
-window.kpiData = [
-  {
-    name: "Quarterly Revenue Growth",
-    description: "Financial performance & scaling",
-    target: "$2.4M",
-    staff: "Sarah Chen",
-    deadline: "Sep 30, 2024",
-    status: "COMPLETED"
-  },
-  {
-    name: "Client Retention Rate",
-    description: "Customer success and loyalty",
-    target: "94%",
-    staff: null,
-    deadline: "Dec 15, 2024",
-    status: "UNASSIGNED"
-  },
-  {
-    name: "Average Response Time",
-    description: "Operational efficiency metrics",
-    target: "< 2hrs",
-    staff: "Elena Lopez",
-    deadline: "Aug 12, 2024",
-    status: "OVERDUE"
-  },
-  {
-    name: "Product Launch Phase 1",
-    description: "Innovation & development pipeline",
-    target: "100%",
-    staff: "David Kim",
-    deadline: "Oct 05, 2024",
-    status: "PENDING"
-  },
-  {
-    name: "Marketing Campaign ROI",
-    description: "Digital marketing effectiveness",
-    target: "200%",
-    staff: "Maria Rodriguez",
-    deadline: "Nov 20, 2024",
-    status: "INPROGRESS"
-  },
- {
-    name: "Customer Acquisition Growth",
-    description: "Increase new user sign-ups across all channels",
-    target: "15,000 users",
-    staff: "Daniel Wong",
-    deadline: "Oct 15, 2024",
-    status: "INPROGRESS"
-  },
-  {
-    name: "Website Conversion Rate",
-    description: "Optimize landing pages to improve conversion",
-    target: "8%",
-    staff: "Aisha Rahman",
-    deadline: "Nov 01, 2024",
-    status: "PENDING"
-  },
-  {
-    name: "Support Ticket Resolution Time",
-    description: "Reduce average response time for customer support",
-    target: "< 1.5 hrs",
-    staff: null,
-    deadline: "Aug 20, 2024",
-    status: "UNASSIGNED"
-  },
-  {
-    name: "Mobile App Engagement Rate",
-    description: "Increase daily active users and session duration",
-    target: "65%",
-    staff: "Jason Lim",
-    deadline: "Sep 10, 2024",
-    status: "OVERDUE"
-  },
-  {
-    name: "Quarterly Profit Margin",
-    description: "Improve profitability across product lines",
-    target: "22%",
-    staff: "Emily Tan",
-    deadline: "Dec 31, 2024",
-    status: "COMPLETED"
-  }
-];
+// window.kpiData = [
+//   {
+//     name: "Quarterly Revenue Growth",
+//     description: "Financial performance & scaling",
+//     target: "$2.4M",
+//     staff: "Sarah Chen",
+//     deadline: "Sep 30, 2024",
+//     status: "COMPLETED"
+//   },
+//   {
+//     name: "Client Retention Rate",
+//     description: "Customer success and loyalty",
+//     target: "94%",
+//     staff: null,
+//     deadline: "Dec 15, 2024",
+//     status: "UNASSIGNED"
+//   },
+//   {
+//     name: "Average Response Time",
+//     description: "Operational efficiency metrics",
+//     target: "< 2hrs",
+//     staff: "Elena Lopez",
+//     deadline: "Aug 12, 2024",
+//     status: "OVERDUE"
+//   },
+//   {
+//     name: "Product Launch Phase 1",
+//     description: "Innovation & development pipeline",
+//     target: "100%",
+//     staff: "David Kim",
+//     deadline: "Oct 05, 2024",
+//     status: "PENDING"
+//   },
+//   {
+//     name: "Marketing Campaign ROI",
+//     description: "Digital marketing effectiveness",
+//     target: "200%",
+//     staff: "Maria Rodriguez",
+//     deadline: "Nov 20, 2024",
+//     status: "INPROGRESS"
+//   },
+//  {
+//     name: "Customer Acquisition Growth",
+//     description: "Increase new user sign-ups across all channels",
+//     target: "15,000 users",
+//     staff: "Daniel Wong",
+//     deadline: "Oct 15, 2024",
+//     status: "INPROGRESS"
+//   },
+//   {
+//     name: "Website Conversion Rate",
+//     description: "Optimize landing pages to improve conversion",
+//     target: "8%",
+//     staff: "Aisha Rahman",
+//     deadline: "Nov 01, 2024",
+//     status: "PENDING"
+//   },
+//   {
+//     name: "Support Ticket Resolution Time",
+//     description: "Reduce average response time for customer support",
+//     target: "< 1.5 hrs",
+//     staff: null,
+//     deadline: "Aug 20, 2024",
+//     status: "UNASSIGNED"
+//   },
+//   {
+//     name: "Mobile App Engagement Rate",
+//     description: "Increase daily active users and session duration",
+//     target: "65%",
+//     staff: "Jason Lim",
+//     deadline: "Sep 10, 2024",
+//     status: "OVERDUE"
+//   },
+//   {
+//     name: "Quarterly Profit Margin",
+//     description: "Improve profitability across product lines",
+//     target: "22%",
+//     staff: "Emily Tan",
+//     deadline: "Dec 31, 2024",
+//     status: "COMPLETED"
+//   }
+// ];
 const kpiData = window.kpiData;
 
 const STATUS_CONFIG = {
   COMPLETED: {
-    label: "COMPLETED",
+    label: "Completed",
     style: "background:#d0fae4; color:#17b681;"
   },
-  INPROGRESS: {
-    label: "IN PROGRESS",
+  "IN PROGRESS": {
+    label: "In Progress",
     style: "background:#dbe9ff; color:#0a6ffd;"
   },
-  OVERDUE: {
-    label: "OVERDUE",
-    style: "background:#fee1e2; color:#db2728;"
-  },
-  PENDING: {
-    label: "PENDING",
+  "PENDING VERIFICATION": {
+    label: "Pending Verification",
     style: "background:#fff4c7; color:#d87e15;"
   },
+  OVERDUE: {
+    label: "Overdue",
+    style: "background:#fee1e2; color:#db2728;"
+  },
   UNASSIGNED: {
-    label: "UNASSIGNED",
-    style: "background:#f1f3f5; color:#dc3545;" 
+    label: "Unassigned",
+    style: "background:#f1f3f5; color:#dc3545;"
   }
 };
 
@@ -140,8 +140,8 @@ function renderKpiRow(kpi, index) {
 
   row.innerHTML = `
     <td>
-      <strong>${kpi.name}</strong><br>
-      <small class="text-muted">${kpi.description}</small>
+      <strong>${kpi.kpi}</strong><br>
+      <small class="text-muted">${kpi.department} • Priority ${kpi.priority}</small>
     </td>
 
     <td class="fw-bold text-primary">${kpi.target}</td>
@@ -167,7 +167,7 @@ function renderKpiRow(kpi, index) {
 }
     </td>
 
-    <td class="${kpi.status === "OVERDUE" ? "text-danger fw-semibold" : ""}">
+    <td class="${kpi.status === "Overdue" ? "text-danger fw-semibold" : ""}">
       ${formatDate(kpi.deadline)}
     </td>
 
@@ -184,7 +184,7 @@ function renderKpiRow(kpi, index) {
 </button>
       <button class="btn btn-sm btn-light text-danger delete-btn"
         data-index="${index}"
-        data-name="${kpi.name}">
+        data-name="${kpi.kpi}">
   <i class="bi bi-trash"></i>
 </button>
     </td>
@@ -221,7 +221,7 @@ function renderPagination() {
 
 function updateSummary() {
   const total = kpiData.length;
-  const completed = kpiData.filter(k => k.status === "COMPLETED").length;
+  const completed = kpiData.filter(k => k.status === "Completed").length;
   const rate = Math.round((completed / total) * 100);
 
   document.getElementById("totalKPI").textContent = total;
