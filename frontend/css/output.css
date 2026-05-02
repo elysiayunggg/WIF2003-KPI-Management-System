@@ -46,7 +46,7 @@
   display: block;
 }
 .flex {
-  display: flex;
+  display: flex
 }
 .grid {
   display: grid;
