@@ -1,0 +1,131 @@
+<section class="p-4">
+
+  <!-- Breadcrumb -->
+  <nav style="--bs-breadcrumb-divider: '>';">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item active" onclick="changePage(event, 'KPI Assignment & Verification')" aria-current="page">
+        <a href="#">KPI Assignment and Verification</a>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Title -->
+  <div class="mb-4">
+    <h1 class="fw-bold mb-2">Assignment Verification</h1>
+    <p class="text-muted">Review and verify staff assignments and KPI verification requests.</p>
+  </div>
+
+  <!-- Verification Queue Section -->
+  <div class="card border-0 shadow-sm mb-4 av-queue-card">
+    <div class="card-body p-4">
+
+      <!-- Header row: title + search + filter side by side -->
+      <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
+        <h5 class="fw-bold mb-0">Verification Queue</h5>
+        <div class="d-flex align-items-center gap-2">
+          <div class="search-wrapper" style="width: 260px;">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control search-box fw-medium" placeholder="Search KPIs..."
+              id="verificationSearch" onkeyup="filterVerificationTable()" style="width: 100%;" />
+          </div>
+          <a href="#" class="av-filter-btn fw-medium">
+            <i class="bi bi-funnel me-1"></i>Filters
+          </a>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle" id="verificationTable">
+          <thead class="table-light">
+            <tr>
+              <th scope="col" style="width: 30%;">KPI Name</th>
+              <th scope="col" style="width: 20%;">Responsible Staff</th>
+              <th scope="col" style="width: 19%;">Submission Time</th>
+              <th scope="col" style="width: 19%;">Status</th>
+              <th scope="col" style="width: 12%;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="verificationTableBody">
+            <!-- Rows injected by assignment_verification.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Footer: count left, prev / page buttons / next right -->
+      <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+        <span class="text-muted small" id="verificationCount">Showing 0 of 0</span>
+        <div class="d-flex align-items-center gap-1">
+          <button class="btn btn-sm av-page-nav" id="verificationPrev" onclick="navigateVerificationPage('prev')"
+            disabled>
+            Previous
+          </button>
+          <div class="d-flex gap-1" id="verificationPageBtns">
+            <!-- Page number buttons injected by renderPageButtons() -->
+          </div>
+          <button class="btn btn-sm av-page-nav" id="verificationNext" onclick="navigateVerificationPage('next')"
+            disabled>
+            Next
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Assignment Queue Section -->
+  <div class="card border-0 shadow-sm av-queue-card">
+    <div class="card-body p-4">
+
+      <!-- Header row: title + search + filter side by side -->
+      <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
+        <h5 class="fw-bold mb-0">Assignment Queue</h5>
+        <div class="d-flex align-items-center gap-2">
+          <div class="search-wrapper" style="width: 260px;">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control search-box" placeholder="Search KPIs..." id="assignmentSearch"
+              onkeyup="filterAssignmentTable()" style="width: 100%;" />
+          </div>
+          <a href="#" class="av-filter-btn fw-medium">
+            <i class="bi bi-funnel me-1"></i>Filters
+          </a>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle" id="assignmentTable">
+          <thead class="table-light">
+            <tr>
+              <th scope="col" style="width: 30%;">KPI Name</th>
+              <th scope="col" style="width: 39%;">Recommended Staff (Lowest Load)</th>
+              <th scope="col" style="width: 19%;">Deadline</th>
+              <th scope="col" style="width: 12%;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="assignmentTableBody">
+            <!-- Rows injected by assignment_verification.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Footer: count left, prev / page buttons / next right -->
+      <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+        <span class="text-muted small" id="assignmentCount">Showing 0 of 0</span>
+        <div class="d-flex align-items-center gap-1">
+          <button class="btn btn-sm av-page-nav" id="assignmentPrev" onclick="navigateAssignmentPage('prev')" disabled>
+            Previous
+          </button>
+          <div class="d-flex gap-1" id="assignmentPageBtns">
+            <!-- Page number buttons injected by renderPageButtons() -->
+          </div>
+          <button class="btn btn-sm av-page-nav" id="assignmentNext" onclick="navigateAssignmentPage('next')" disabled>
+            Next
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>

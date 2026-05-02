@@ -10,6 +10,8 @@ async function initLayout() {
   await loadComponent("navbar-container", "../components/navbar.html");
   if (typeof syncNavbarAvatar === "function") syncNavbarAvatar();
 
+  initNotificationModule();
+
   const role = localStorage.getItem("role") || "manager";
   renderSidebar(role);
 

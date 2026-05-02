@@ -38,7 +38,7 @@ function getFileIcon(fileType) {
 function renderKPIOverview() {
   const container = document.getElementById("kpiOverview");
   if (!container) return;
-
+  container.innerHTML = "";
   container.innerHTML = `
     <div class="d-flex justify-content-between align-items-start mb-3">
       <div>
@@ -75,7 +75,7 @@ function renderKPIOverview() {
 function renderSubmissionDetails() {
   const container = document.getElementById("submissionDetails");
   if (!container) return;
-
+  container.innerHTML = "";
   container.innerHTML = `
     <h5 class="fw-bold mb-3">Submission Details</h5>
 
@@ -106,7 +106,7 @@ function renderSubmissionDetails() {
 function renderEvidenceAttachments() {
   const container = document.getElementById("evidenceAttachments");
   if (!container) return;
-
+  container.innerHTML = "";
   const fileItems = kpiReviewData.evidence.map(file => `
     <div class="file-item d-flex align-items-center justify-content-between p-3 mb-2 rounded-3 border">
       <div class="d-flex align-items-center gap-3">
@@ -134,7 +134,7 @@ function renderEvidenceAttachments() {
 function renderProgressCard() {
   const container = document.getElementById("progressCard");
   if (!container) return;
-
+  container.innerHTML = "";
   // Calculate status badge based on percentage
   let badgeClass = "bg-warning text-dark";
   let badgeText = "Below Target";
@@ -165,15 +165,14 @@ function renderProgressCard() {
 function renderReviewStaffCard() {
   const container = document.getElementById("staffCard");
   if (!container) return;
-
+  container.innerHTML = "";
   container.innerHTML = `
     <h6 class="fw-bold mb-3">Assigned Staff</h6>
     <div class="d-flex align-items-center gap-3">
       <i class="bi bi-person-fill fs-4"></i>
       <div>
         <h6 class="fw-bold mb-0">${kpiReviewData.staff.name}</h6>
-        <p class="text-muted small mb-0">${kpiReviewData.staff.role}</p>
-        <small class="text-muted">${kpiReviewData.staff.department}</small>
+        <p class="text-muted mb-0">${kpiReviewData.staff.role} | ${kpiReviewData.staff.department}</p>
       </div>
     </div>
     <hr class="my-3">

@@ -1,10 +1,16 @@
 function selectPerson(card) {
   // Remove selected class from all person cards
-  document.querySelectorAll(".person-card").forEach(c => {
+  document.querySelectorAll(".staff-card").forEach(c => {
     c.classList.remove("selected");
   });
   // Add selected class to clicked card
   card.classList.add("selected");
+}
+
+// Placeholder for add stakeholder modal - implement based on your modal system
+function openAddStakeholderModal() {
+  console.log("Open add stakeholder modal");
+  // TODO: Implement modal/form to add new stakeholder
 }
 
 // Hardcoded for now — in Phase 2 this gets replaced with a fetch() call to your backend API.
@@ -26,7 +32,7 @@ const stakeholderData = [
 function renderStaffCard(person) {
   const card = document.createElement("div");
   // Sets all the classes the card needs — same as what was hardcoded before
-  card.className = "person-card mb-3 p-3 rounded-3 d-flex align-items-center justify-content-between";
+  card.className = "staff-card mb-3 p-3 rounded-3 d-flex align-items-center justify-content-between";
   card.onclick = function () { selectPerson(this); };
 
   // innerHTML builds the inner structure using the person's data
@@ -35,7 +41,7 @@ function renderStaffCard(person) {
       <i class="bi bi-person-fill"></i>
       <div>
         <h6 class="fw-bold mb-0">${person.name}</h6>
-        <p class="text-muted small mb-0">${person.role} • ${person.department}</p>
+        <p class="text-muted small mb-0">${person.role} | ${person.department}</p>
       </div>
     </div>
     <div class="selected-indicator">
@@ -66,12 +72,14 @@ function initAssignmentView() {
   const stakeholderList = document.getElementById("stakeholderList");
 
   if (staffList) {
+    staffList.innerHTML = ""; 
     staffData.forEach(person => {
       staffList.appendChild(renderStaffCard(person));
     });
   }
 
   if (stakeholderList) {
+    stakeholderList.innerHTML = "";
     stakeholderData.forEach(stakeholder => {
       stakeholderList.appendChild(renderStakeholderBadge(stakeholder));
     });
