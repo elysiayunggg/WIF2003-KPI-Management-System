@@ -67,8 +67,8 @@
         </div>
       </div>
 
-      <!-- Verification Actions -->
-      <div class="card border-0 shadow-sm">
+      <!-- Verification Actions (hidden in read-only “Review Details” mode) -->
+      <div class="card border-0 shadow-sm" id="verificationActionsCard">
         <div class="card-body p-4">
           <h5 class="fw-bold mb-3">Verification Actions</h5>
 
@@ -104,6 +104,11 @@
           </div>
 
         </div>
+      </div>
+
+      <!-- Past decision (shown only when opened via “Review Details” from the queue) -->
+      <div class="card border-0 shadow-sm d-none" id="reviewDecisionCard">
+        <div class="card-body p-4" id="reviewDecisionCardBody"></div>
       </div>
 
     </div>
