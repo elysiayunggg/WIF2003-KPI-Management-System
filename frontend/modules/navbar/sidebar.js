@@ -17,7 +17,8 @@ const pageRoutes = {
   "Submit Evidence": "../views/submit-evidence.html",    // staff
   "View Evidence": "../views/submit-evidence.html",      // staff
   "Edit Evidence": "../views/submit-evidence.html",      // staff
-  "Notifications": "../views/notifications.html",
+  // "Update KPI Progress": "../views/update-progress.html",
+  "Notifications": "../views/notification.html",
   "Profile": "../views/profile.html"
 };
 
@@ -47,13 +48,8 @@ function renderSidebar(role) {
 
       <div class="nav-group">
         <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment & Verification')">
+        <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment & Verification')">
           <i class="bi bi-check2-square"></i> KPI Assignment & Verification
-        </a>
-        <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Assign KPI')">
-          <i class="bi bi-clipboard-plus"></i> Assign KPI
-        </a>
-        <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Review Submission')">
-          <i class="bi bi-eye"></i> Review Submission
         </a>
       </div>
 
@@ -76,7 +72,7 @@ function renderSidebar(role) {
         </a>
       </div>
 
-      <a href="#" class="nav-link mt-3" onclick="changePage(event, 'Notifications')">
+      <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'Notifications')">
         <i class="bi bi-bell"></i> Notifications
       </a>
     `;
@@ -157,7 +153,7 @@ async function changePage(event, pageName) {
     setTimeout(() => {
       content.innerHTML = html;
       content.style.opacity = "1";
-      
+
       // Ensure initFn also runs when clicking navlinks 
       const initFn = pageInits[pageName];
       if (typeof initFn === "function") {
@@ -247,7 +243,7 @@ const pageInits = {
   },
 
   "KPI Assignment & Verification": function () {
-    if (typeof initAssignmentVerificationView === "function") {
+    if (typeof initAssignmentView === "function") {
       initAssignmentVerificationView();
     }
   },
@@ -255,6 +251,12 @@ const pageInits = {
   "Review Submission": function () {
     if (typeof initReviewView === "function") {
       initReviewView();
+    }
+  },
+
+  "Notifications": function () {
+    if (typeof initNotificationPageView === "function") {
+      initNotificationPageView()
     }
   }
 };
