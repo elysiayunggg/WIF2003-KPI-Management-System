@@ -493,10 +493,6 @@ function searchKPI() {
   console.log("Searching KPI...");
 }
 
-function showNotification() {
-  alert("No new notifications");
-}
-
 function logout() {
   localStorage.clear();
   alert("Logged out");
