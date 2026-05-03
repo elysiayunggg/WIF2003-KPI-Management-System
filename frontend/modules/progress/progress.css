@@ -483,3 +483,123 @@
         font-size: 1.5rem;
     }
 }
+
+/* ==========================================================================
+   Dark mode — KPI Progress page (.progress-view uses its own full-page bg)
+   ========================================================================== */
+
+html[data-bs-theme="dark"] .progress-view {
+    background-color: #121418 !important;
+    color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] .progress-view .breadcrumb-item,
+html[data-bs-theme="dark"] .progress-view .breadcrumb-item a {
+    color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] .progress-view .breadcrumb-item.active {
+    color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] .progress-view .kpi-page-title {
+    color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] .progress-toolbar {
+    background-color: #2b3035 !important;
+}
+
+html[data-bs-theme="dark"] .progress-toolbar__label {
+    color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] .progress-toolbar .progress-search-input {
+    background-color: #212529 !important;
+    border-color: #495057 !important;
+    color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] .progress-toolbar .progress-search-icon {
+    color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] .progress-filter-btn {
+    background: #343a40 !important;
+    color: #e9ecef !important;
+    border-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] .progress-filter-btn:hover {
+    background: #495057 !important;
+    color: #fff !important;
+}
+
+html[data-bs-theme="dark"] .progress-filter-panel {
+    background-color: #2b3035 !important;
+}
+
+html[data-bs-theme="dark"] .progress-filter-label {
+    color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] .progress-card {
+    background: #2b3035 !important;
+    border-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] .progress-card:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+}
+
+html[data-bs-theme="dark"] .progress-card__title {
+    color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] .progress-card__desc,
+html[data-bs-theme="dark"] .progress-card__date,
+html[data-bs-theme="dark"] .progress-card__label {
+    color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] .progress-card__bar {
+    background-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] .progress-card__menu-btn:hover,
+html[data-bs-theme="dark"] .progress-card__menu-btn:focus,
+html[data-bs-theme="dark"] .progress-card__menu-btn[aria-expanded="true"] {
+    background-color: #495057 !important;
+    color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] .progress-card__menu {
+    background-color: #343a40 !important;
+    border-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] .progress-card__menu .dropdown-item {
+    color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] .progress-card__menu .dropdown-item:hover {
+    background-color: #495057 !important;
+    color: #fff !important;
+}
+
+html[data-bs-theme="dark"] .progress-card__menu-danger {
+    color: #f8a4a4 !important;
+}
+
+html[data-bs-theme="dark"] .progress-card__menu-danger:hover {
+    background-color: rgba(220, 53, 69, 0.25) !important;
+    color: #fecaca !important;
+}
+
+html[data-bs-theme="dark"] .progress-view .kpi-link-btn {
+    color: #6ea8fe !important;
+}
+
+html[data-bs-theme="dark"] .progress-view .kpi-link-btn:hover {
+    color: #9ec5fe !important;
+}

@@ -530,7 +530,14 @@ html[data-bs-theme="dark"] #page-content #assignmentSearch {
   color: #e9ecef !important;
 }
 
+html[data-bs-theme="dark"] #page-content thead th {
+  background-color: #343a40 !important;
+  color: #adb5bd !important;
+  border-color: #495057 !important;
+}
+
 html[data-bs-theme="dark"] #page-content .table thead th {
+  background-color: #343a40 !important;
   color: #adb5bd !important;
   border-bottom-color: #495057 !important;
 }
