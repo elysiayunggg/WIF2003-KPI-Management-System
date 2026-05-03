@@ -488,7 +488,6 @@ function renderManagerTrendChart(data) {
   });
 }
 
-
 // ===== Global Navbar Helper Functions =====
 function searchKPI() {
   console.log("Searching KPI...");
@@ -501,6 +500,7 @@ function showNotification() {
 function logout() {
   localStorage.clear();
   alert("Logged out");
+  window.location.href = "../pages/login.html";
 }
 
 // ===== Close dropdowns when clicking outside =====
