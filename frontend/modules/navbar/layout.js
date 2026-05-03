@@ -23,8 +23,10 @@ async function initLayout() {
   await loadComponent("navbar-container", "../components/navbar.html");
   if (typeof syncNavbarAvatar === "function") syncNavbarAvatar();
 
+  if (typeof initNotificationModule === "function") initNotificationModule();
+
   // Step 2: Get user role (default to manager if not set)
-  const role = localStorage.getItem("role") || "manager";
+  const role = localStorage.getItem("role") || "staff";
 
   // Render sidebar based on role (manager or staff)
   renderSidebar(role);

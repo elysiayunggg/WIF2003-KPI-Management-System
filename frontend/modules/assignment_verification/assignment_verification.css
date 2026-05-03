@@ -183,15 +183,6 @@
   min-width: 30px;
 }
 
-/*Misc*/
-.card.shadow-sm {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
-}
-
-.text-muted.small {
-  font-size: 12px;
-}
-
 /* ─── Responsive ───────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .table thead th,
