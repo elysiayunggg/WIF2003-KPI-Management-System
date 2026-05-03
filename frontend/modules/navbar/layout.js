@@ -17,6 +17,15 @@ async function loadComponent(id, file) {
 
 // Main function to initialize the application layout
 async function initLayout() {
+  const appearance = localStorage.getItem("prefAppearance") || "light";
+  if (typeof applySystemAppearanceTheme === "function") {
+    applySystemAppearanceTheme(appearance);
+  } else {
+    document.documentElement.setAttribute(
+      "data-bs-theme",
+      appearance === "dark" ? "dark" : "light"
+    );
+  }
 
   // Step 1: Load sidebar and navbar once (persistent UI)
   await loadComponent("sidebar-container", "../components/sidebar.html");
