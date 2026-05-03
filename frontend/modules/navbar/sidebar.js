@@ -48,7 +48,6 @@ function renderSidebar(role) {
 
       <div class="nav-group">
         <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment & Verification')">
-        <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment & Verification')">
           <i class="bi bi-check2-square"></i> KPI Assignment & Verification
         </a>
       </div>
