@@ -2,16 +2,18 @@
 // STATE
 let filteredKpiData = [];
 let searchInitialized = false;
+let kpiListCurrentPage = 1;
+const kpiListRowsPerPage = 5;
 
 
 // DEMO PROGRESS (TEMP ONLY)
 function getDemoProgress(status) {
   switch (status) {
-    case "COMPLETED": return 100;
-    case "INPROGRESS": return 60;
-    case "PENDING": return 40;
-    case "OVERDUE": return 30;
-    case "UNASSIGNED": return 10;
+    case "Completed": return 100;
+    case "In Progress": return 60;
+    case "Pending": return 40;
+    case "Overdue": return 30;
+    case "Unassigned": return 10;
     default: return 50;
   }
 }
@@ -19,20 +21,20 @@ function getDemoProgress(status) {
 
 // RENDER KPI ROW
 function renderKpiListRow(kpi) {
-  const effectiveStatus = kpi.staff ? kpi.status : "UNASSIGNED";
+  const effectiveStatus = kpi.staff ? kpi.status : "Unassigned";
   const statusConfig = getStatusConfig(effectiveStatus);
-  const progress = getDemoProgress(effectiveStatus);
+  const progress = kpi.progress;
 
   // green if completed
   const progressColor =
-    effectiveStatus === "COMPLETED" ? "bg-success" : "bg-primary";
+    effectiveStatus === "Completed" ? "bg-success" : "bg-primary";
 
   const row = document.createElement("div");
   row.className = "row align-items-center py-2 border-bottom px-2";
 
   row.innerHTML = `
     <div class="col-4">
-      <div class="fw-semibold">${kpi.name}</div>
+      <div class="fw-semibold">${kpi.kpi}</div>
       <small class="text-muted">Owner: ${kpi.staff || "Unassigned"}</small>
     </div>
 
@@ -78,7 +80,7 @@ function initKpiListView() {
 
   container.innerHTML = "";
 
-  const start = (currentPage - 1) * rowsPerPage;
+  const start = (kpiListCurrentPage - 1) * rowsPerPage;
   const end = start + rowsPerPage;
 
   const paginatedData = filteredKpiData.slice(start, end);
@@ -111,12 +113,12 @@ function initKpiListSearch() {
       filteredKpiData = [...window.kpiData];
     } else {
       filteredKpiData = window.kpiData.filter(kpi =>
-        kpi.name.toLowerCase().includes(keyword) ||
+        kpi.kpi.toLowerCase().includes(keyword) ||
         (kpi.staff && kpi.staff.toLowerCase().includes(keyword))
       );
     }
 
-    currentPage = 1;
+    kpiListCurrentPage = 1;
     initKpiListView();
   });
 }
@@ -126,11 +128,11 @@ function initKpiListSearch() {
 
 function updateListPagination() {
   const total = filteredKpiData.length;
-  const totalPages = Math.ceil(total / rowsPerPage);
+  const totalPages = Math.ceil(total / kpiListRowsPerPage);
 
   const summary = document.getElementById("listSummary");
-  const start = (currentPage - 1) * rowsPerPage + 1;
-  const end = Math.min(currentPage * rowsPerPage, total);
+  const start = (kpiListCurrentPage - 1) * kpiListRowsPerPage + 1;
+  const end = Math.min(kpiListCurrentPage * kpiListRowsPerPage, total);
 
   if (summary) {
     summary.textContent = `Showing ${start} to ${end} of ${total}`;
@@ -140,20 +142,20 @@ function updateListPagination() {
   const next = document.getElementById("listNext");
 
   if (prev) {
-    prev.disabled = currentPage === 1;
+    prev.disabled = kpiListCurrentPage === 1;
     prev.onclick = () => {
-      if (currentPage > 1) {
-        currentPage--;
+      if (kpiListCurrentPage > 1) {
+        kpiListCurrentPage--;
         initKpiListView();
       }
     };
   }
 
   if (next) {
-    next.disabled = currentPage === totalPages;
+    next.disabled = kpiListCurrentPage === totalPages;
     next.onclick = () => {
-      if (currentPage < totalPages) {
-        currentPage++;
+      if (kpiListCurrentPage < totalPages) {
+        kpiListCurrentPage++;
         initKpiListView();
       }
     };

@@ -1,5 +1,15 @@
 const API_BASE = "http://localhost:3000/api/auth";
 
+/** Work / standard email: local@domain.tld (practical check, not full RFC 5322) */
+const EMAIL_MAX_LEN = 254;
+function isValidEmailFormat(email) {
+  const s = String(email).trim();
+  if (!s || s.length > EMAIL_MAX_LEN) return false;
+  // No spaces; must have single @; domain has at least one dot; TLD 2+ letters
+  return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/.test(
+    s
+  );
+}
 
 document.querySelectorAll(".password-toggle").forEach((icon) => {
   icon.addEventListener("click", () => {
@@ -69,6 +79,12 @@ if (registerForm) {
     const confirmPassword = document.getElementById("confirmPassword").value;
     const role = document.getElementById("role").value;
 
+    if (!isValidEmailFormat(email)) {
+      alert("Please enter a valid email address (e.g. name@company.com).");
+      document.getElementById("registerEmail")?.focus();
+      return;
+    }
+
     if (!isStrongPassword(password)) {
       alert("Password does not meet the required format.");
       return;
@@ -112,9 +128,21 @@ if (loginForm) {
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value;
     const loginError = document.getElementById("loginError");
+    const loginErrorText = document.getElementById("loginErrorText");
 
     if (loginError) {
       loginError.classList.add("d-none");
+    }
+
+    if (!isValidEmailFormat(email)) {
+      if (loginError) {
+        loginError.classList.remove("d-none");
+        if (loginErrorText) {
+          loginErrorText.textContent =
+            "Please enter a valid email address (e.g. you@company.com).";
+        }
+      }
+      return;
     }
 
     try {
@@ -133,11 +161,18 @@ if (loginForm) {
         window.location.href = "../pages/dashboard.html";
       } else if (loginError) {
         loginError.classList.remove("d-none");
+        if (loginErrorText) {
+          loginErrorText.textContent =
+            "Invalid email or password. Please try again.";
+        }
       }
     } catch (error) {
       if (loginError) {
         loginError.classList.remove("d-none");
-        loginError.textContent = "Cannot connect to server. Please try again later.";
+        const loginErrorText = document.getElementById("loginErrorText");
+        if (loginErrorText) {
+          loginErrorText.textContent = "Cannot connect to server. Please try again later.";
+        }
       }
     }
   });
@@ -152,6 +187,12 @@ if (forgotPasswordForm) {
 
     const email = document.getElementById("forgotEmail").value.trim();
     const resetMessage = document.getElementById("resetMessage");
+
+    if (!isValidEmailFormat(email)) {
+      alert("Please enter a valid email address (e.g. name@company.com).");
+      document.getElementById("forgotEmail")?.focus();
+      return;
+    }
 
     try {
       const response = await fetch(`${API_BASE}/forgot-password`, {

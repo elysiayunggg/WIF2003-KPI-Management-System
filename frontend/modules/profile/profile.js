@@ -224,11 +224,19 @@ function showProfileToast(message) {
   toastEl.addEventListener("hidden.bs.toast", () => toastEl.remove());
 }
 
+// Preferences — global appearance (Bootstrap color mode + style.css dark overrides)
+function applySystemAppearanceTheme(mode) {
+  const theme = mode === "dark" ? "dark" : "light";
+  document.documentElement.setAttribute("data-bs-theme", theme);
+}
+
 // Preferences
 let profileCurrentAppearance = "light"; // tracks in-session selection
 
 function profileSelectAppearance(mode) {
   profileCurrentAppearance = mode;
+  localStorage.setItem("prefAppearance", mode);
+  applySystemAppearanceTheme(mode);
 
   const lightCard  = document.getElementById("prefCardLight");
   const darkCard   = document.getElementById("prefCardDark");
@@ -272,6 +280,7 @@ function profileDiscardPreferences() {
 function profileLoadPreferences() {
   const appearance = localStorage.getItem("prefAppearance") || "light";
   profileCurrentAppearance = appearance;
+  applySystemAppearanceTheme(appearance);
 
   const lightCard  = document.getElementById("prefCardLight");
   const darkCard   = document.getElementById("prefCardDark");

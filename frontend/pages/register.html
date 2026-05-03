@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Register | Trackify KPI</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <link rel="stylesheet" href="../css/auth.css">
@@ -13,18 +17,28 @@
 <body>
   <div class="auth-page">
     <div class="auth-left">
-      <h2 class="brand">Trackify KPI</h2>
+      <div class="auth-left-inner">
+        <div class="auth-brand">
+          <span class="auth-brand-mark" aria-hidden="true"><i class="bi bi-graph-up-arrow"></i></span>
+          <span class="brand">Trackify KPI</span>
+        </div>
 
-      <div class="hero-text">
-        <h1>Manage your KPIs<br>with clarity</h1>
-        <p>Monitor KPI progress, manage assignments, and improve team performance in one centralized system.</p>
+        <div class="hero-text">
+          <p class="hero-kicker">Performance intelligence</p>
+          <h1>Manage your KPIs<br>with clarity</h1>
+          <p>Monitor KPI progress, manage assignments, and improve team performance in one centralized system.</p>
+        </div>
       </div>
+      <div class="auth-left-accent" aria-hidden="true"></div>
     </div>
 
     <div class="auth-right">
-      <div class="auth-form">
-        <h1>Sign up</h1>
-        <p class="subtitle">Create an account to start tracking and managing your team's KPIs.</p>
+      <div class="auth-form-shell auth-form-shell--scroll">
+        <div class="auth-form">
+          <div class="auth-form-header">
+            <h1>Create your account</h1>
+            <p class="subtitle">Join your team and start tracking KPIs in one place.</p>
+          </div>
 
         <form id="registerForm" novalidate>
           <label for="fullName">Full Name</label>
@@ -36,7 +50,9 @@
           <label for="registerEmail">Email Address</label>
           <div class="input-icon">
             <i class="bi bi-envelope"></i>
-            <input type="email" id="registerEmail" class="form-control" placeholder="Enter your Email" required>
+            <input type="email" id="registerEmail" class="form-control" placeholder="name@company.com"
+              maxlength="254" inputmode="email" autocomplete="email" required
+              title="Enter a valid email like name@company.com">
           </div>
 
           <label for="registerPassword">Password</label>
@@ -94,28 +110,30 @@
             </label>
           </div>
 
-          <button type="submit" class="btn auth-btn mt-4">Register →</button>
+          <button type="submit" class="btn auth-btn">
+            <span>Create account</span>
+            <i class="bi bi-arrow-right"></i>
+          </button>
 
           <div class="divider">
             <span>or continue with</span>
           </div>
 
           <button type="button" class="btn google-btn">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="google">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="" width="22" height="22">
             Google
           </button>
 
-
-
-
-          <p class="switch-link">
-            Already have an account? <a href="login.html">Log in here</a>
+          <p class="switch-link register-switch">
+            Already have an account? <a href="login.html">Sign in</a>
           </p>
         </form>
+        </div>
       </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="./auth.js"></script>
 </body>
 </html>

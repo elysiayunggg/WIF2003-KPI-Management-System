@@ -1,0 +1,62 @@
+<section class="p-4 notifications-view">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-2">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item active" aria-current="page">Notifications</li>
+    </ol>
+  </nav>
+
+  <!-- Title -->
+  <div class="mb-4">
+    <h1 class="fw-bold mb-0">Recent Activities</h1>
+  </div>
+
+  <!-- Row 1: Search + Mark all as read -->
+  <div class="d-flex align-items-center gap-3 mb-3">
+    <div class="input-group flex-grow-1">
+      <span class="input-group-text notif-search-icon border-end-0">
+        <i class="bi bi-search text-muted"></i>
+      </span>
+      <input
+        type="text"
+        id="notifPageSearch"
+        class="form-control notif-search-input border-start-0 ps-0"
+        placeholder="Search activity details..."
+        oninput="filterNotificationsBySearch(this.value)"
+      />
+    </div>
+    <button
+      class="btn notif-mark-all-btn d-inline-flex align-items-center gap-2"
+      onclick="markAllAsRead(); renderNotificationCards(activeNotifTab)"
+    >
+      <i class="bi bi-check-all"></i>
+      <span>Mark all as read</span>
+    </button>
+  </div>
+
+  <!-- Row 2: Filter Tabs -->
+  <div class="d-flex flex-wrap gap-2 mb-4" id="notifTabGroup">
+    <button class="btn notif-tab notif-tab-active" onclick="switchNotifTab(this, 'All Activities')">All Activities</button>
+    <button class="btn notif-tab" onclick="switchNotifTab(this, 'Submissions')">Submissions</button>
+    <button class="btn notif-tab" onclick="switchNotifTab(this, 'Approvals')">Approvals</button>
+    <button class="btn notif-tab" onclick="switchNotifTab(this, 'Deadlines')">Deadlines</button>
+    <button class="btn notif-tab" onclick="switchNotifTab(this, 'System')">System</button>
+  </div>
+
+  <!-- Notification Cards Container -->
+  <div id="notificationPageList"></div>
+
+  <!-- Divider + Footer -->
+  <hr class="notif-page-divider my-3">
+  <div class="d-flex justify-content-between align-items-center notif-page-footer">
+    <span id="notifTotalCount" class="text-muted small"></span>
+    <button
+      class="btn notif-delete-all-btn p-0"
+      onclick="deleteAllNotificationsPage()"
+    >
+      Delete all notifications
+    </button>
+  </div>
+
+</section>

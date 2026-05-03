@@ -59,14 +59,12 @@ function setupStaffSelection(container) {
 
 function getUpdateFormData(container) {
   return {
-    name: container.querySelector("#kpiName")?.value.trim(),
+    kpi: container.querySelector("#kpiName")?.value.trim(),
     description: container.querySelector("#kpiDesc")?.value.trim(),
     target: container.querySelector("#kpiTarget")?.value.trim(),
     unit: container.querySelector("#kpiUnit")?.value,
     deadline: container.querySelector("#kpiDeadline")?.value,
-
     status: container.querySelector(".status-btn.active")?.dataset.status,
-
     frequency: container.querySelector("#biWeeklyBtn")?.classList.contains("active")
       ? "BI-WEEKLY"
       : "MONTHLY"
@@ -95,7 +93,7 @@ function setupUpdateSubmit(container) {
 
 
 function validateUpdate(data) {
-  if (!data.name) {
+  if (!data.kpi) {
     alert("KPI Name is required");
     return false;
   }
@@ -139,7 +137,7 @@ function loadKpiData(container) {
   const targetInput = container.querySelector("#kpiTarget");
   const deadlineInput = container.querySelector("#kpiDeadline");
 
-  if (nameInput) nameInput.value = kpi.name || "";
+  if (nameInput) nameInput.value = kpi.kpi || "";
   if (descInput) descInput.value = kpi.description || "";
   if (targetInput) targetInput.value = kpi.target || "";
   if (deadlineInput) deadlineInput.value = formatDateForInput(kpi.deadline);

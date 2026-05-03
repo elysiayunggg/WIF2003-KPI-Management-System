@@ -219,3 +219,354 @@ p { font-size: 13px; }
   text-decoration: underline;
   color:#2a3439;         
 }
+
+/* ----- Dark mode (Profile appearance — html[data-bs-theme="dark"]) ----- */
+html[data-bs-theme="dark"] body {
+  background-color: #121418;
+  color: #e9ecef;
+}
+
+html[data-bs-theme="dark"] .sidebar {
+  background-color: #1a1d23;
+}
+
+html[data-bs-theme="dark"] .sidebar .nav-link {
+  color: #adb5bd;
+}
+
+html[data-bs-theme="dark"] .sidebar .nav-bottom {
+  border-top-color: #343a40;
+}
+
+html[data-bs-theme="dark"] .sidebar .nav-link:hover,
+html[data-bs-theme="dark"] .sidebar .nav-link.active {
+  background-color: #252930;
+  color: #f8f9fa;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+html[data-bs-theme="dark"] .sidebar .nav-link.nav-section-title {
+  color: #f8f9fa;
+}
+
+html[data-bs-theme="dark"] .sidebar .nav-link.nav-section-title.active {
+  background-color: #252930;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+html[data-bs-theme="dark"] .sidebar .nav-link.ms-3 {
+  color: #adb5bd;
+}
+
+html[data-bs-theme="dark"] .topbar {
+  background-color: rgba(26, 29, 35, 0.96);
+  border-bottom-color: #343a40;
+}
+
+html[data-bs-theme="dark"] .search-box {
+  background-color: #252930;
+  color: #e9ecef;
+}
+
+html[data-bs-theme="dark"] .search-wrapper i {
+  color: #adb5bd;
+}
+
+html[data-bs-theme="dark"] .notification-btn {
+  color: #adb5bd;
+}
+
+html[data-bs-theme="dark"] .breadcrumb a {
+  color: #e9ecef;
+}
+
+html[data-bs-theme="dark"] .breadcrumb a:hover {
+  color: #f8f9fa;
+}
+
+/*
+ * Page content: module CSS often sets #fff / #2a3439 while Bootstrap dark mode
+ * sets light body text — fix contrast by darkening surfaces and resetting text.
+ */
+html[data-bs-theme="dark"] #page-content {
+  color: #e9ecef;
+}
+
+html[data-bs-theme="dark"] #page-content h1,
+html[data-bs-theme="dark"] #page-content h2,
+html[data-bs-theme="dark"] #page-content h3,
+html[data-bs-theme="dark"] #page-content h4,
+html[data-bs-theme="dark"] #page-content h5,
+html[data-bs-theme="dark"] #page-content h6 {
+  color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] #page-content .text-muted {
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] #page-content .card {
+  background-color: #2b3035 !important;
+  color: #e9ecef !important;
+  border-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .card-header,
+html[data-bs-theme="dark"] #page-content .card-footer {
+  background-color: #343a40 !important;
+  color: #e9ecef !important;
+  border-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .card-body {
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .bg-light {
+  background-color: #343a40 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .bg-white {
+  background-color: #2b3035 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .border,
+html[data-bs-theme="dark"] #page-content .border-bottom,
+html[data-bs-theme="dark"] #page-content .border-top {
+  border-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .form-control,
+html[data-bs-theme="dark"] #page-content .form-select {
+  background-color: #212529;
+  border-color: #495057;
+  color: #e9ecef;
+}
+
+html[data-bs-theme="dark"] #page-content .form-control::placeholder {
+  color: #6c757d;
+}
+
+html[data-bs-theme="dark"] #page-content .form-control:focus,
+html[data-bs-theme="dark"] #page-content .form-select:focus {
+  background-color: #2b3035;
+  border-color: #6ea8fe;
+  color: #e9ecef;
+}
+
+html[data-bs-theme="dark"] #page-content .input-group-text {
+  background-color: #343a40;
+  border-color: #495057;
+  color: #e9ecef;
+}
+
+html[data-bs-theme="dark"] #page-content .list-group-item {
+  background-color: #2b3035;
+  color: #e9ecef;
+  border-color: #495057;
+}
+
+html[data-bs-theme="dark"] #page-content .modal-content {
+  background-color: #2b3035;
+  color: #e9ecef;
+  border-color: #495057;
+}
+
+html[data-bs-theme="dark"] #page-content .table {
+  color: #e9ecef;
+  --bs-table-bg: transparent;
+  --bs-table-border-color: #495057;
+}
+
+html[data-bs-theme="dark"] #page-content .dropdown-menu {
+  background-color: #343a40;
+  border-color: #495057;
+}
+
+html[data-bs-theme="dark"] #page-content .dropdown-item {
+  color: #e9ecef;
+}
+
+html[data-bs-theme="dark"] #page-content .dropdown-item:hover,
+html[data-bs-theme="dark"] #page-content .dropdown-item:focus {
+  background-color: #495057;
+  color: #fff;
+}
+
+/* Profile module (hardcoded light surfaces in profile.css) */
+html[data-bs-theme="dark"] #page-content .profile-header-card {
+  background-color: #2b3035 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .profile-input {
+  background-color: #212529 !important;
+  border-color: #495057 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .profile-input:focus {
+  background-color: #2b3035 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .profile-label {
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] #page-content .profile-tab:hover {
+  background-color: #343a40 !important;
+  color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] #page-content .profile-tab.active {
+  background-color: #3d4450 !important;
+  color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] #page-content .profile-tab {
+  color: #adb5bd;
+}
+
+html[data-bs-theme="dark"] #page-content .pref-appearance-card,
+html[data-bs-theme="dark"] #page-content .pref-appearance-card.pref-card-dark {
+  background-color: #343a40 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .pref-appearance-desc {
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] #page-content .pref-toggle-title {
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .pref-toggle-row {
+  border-bottom-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .pref-discard-btn,
+html[data-bs-theme="dark"] #page-content .profile-modal-cancel {
+  background-color: #343a40 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .pw-input-error {
+  background-color: #2b3035 !important;
+}
+
+/* Manager / dashboard strips (manager-dashboard.css) */
+html[data-bs-theme="dark"] #page-content .filter-row {
+  background-color: #343a40 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .custom-filter-btn {
+  background-color: #2b3035 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .custom-filter-btn:hover {
+  background-color: #3d4450 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .custom-dropdown,
+html[data-bs-theme="dark"] #page-content .calendar-dropdown {
+  background: #2b3035 !important;
+  border: 1px solid #495057;
+}
+
+html[data-bs-theme="dark"] #page-content .custom-dropdown button {
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .custom-dropdown button:hover {
+  background-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .overview-title,
+html[data-bs-theme="dark"] #page-content #mainHeading {
+  color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] #page-content .overview-subtext {
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] #page-content .calendar-header h5 {
+  color: #f8f9fa !important;
+}
+
+/* Module files: neutralize hardcoded dark text on dark cards */
+html[data-bs-theme="dark"] #page-content .submission-card,
+html[data-bs-theme="dark"] #page-content .file-item {
+  background-color: #343a40 !important;
+  border-color: #495057 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .verification-card {
+  background-color: #343a40 !important;
+  border-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .verification-card:hover {
+  background-color: #3d4450 !important;
+  border-color: #6ea8fe !important;
+}
+
+html[data-bs-theme="dark"] #page-content .verification-card.approve-card.selected {
+  background-color: rgba(25, 135, 84, 0.35) !important;
+}
+
+html[data-bs-theme="dark"] #page-content .verification-card.reject-card.selected {
+  background-color: rgba(220, 53, 69, 0.35) !important;
+}
+
+html[data-bs-theme="dark"] #page-content #verificationSearch,
+html[data-bs-theme="dark"] #page-content #assignmentSearch {
+  background-color: #212529 !important;
+  border-color: #495057 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content thead th {
+  background-color: #343a40 !important;
+  color: #adb5bd !important;
+  border-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .table thead th {
+  background-color: #343a40 !important;
+  color: #adb5bd !important;
+  border-bottom-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .table tbody td {
+  color: #e9ecef !important;
+  border-bottom-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .table tbody tr:hover {
+  background-color: #343a40 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .av-subtext {
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] #page-content .btn-light {
+  background-color: #495057 !important;
+  color: #f8f9fa !important;
+  border-color: #6c757d !important;
+}
+
+html[data-bs-theme="dark"] #page-content .btn-outline-secondary {
+  color: #e9ecef !important;
+  border-color: #6c757d !important;
+}
+
+html[data-bs-theme="dark"] #page-content .btn-outline-secondary:hover {
+  background-color: #495057 !important;
+  color: #fff !important;
+}

@@ -71,18 +71,38 @@ function getStatusLabel(status) {
 
 // Returns the action link HTML based on the item's current status.
 // Pending/new   → primary colour "Go to Verify" / "Assign Staff"
-// Approved      → muted colour "Reviewer Details"
-// Rejected      → danger colour "Reviewer Details"
+// Approved      → muted colour "Review Details"
+// Rejected      → danger colour "Review Details"
 function getVerificationActionLink(item) {
   switch (item.status) {
     case "pending":
-      return `<a href="#" class="av-action-link av-action-primary" onclick="changePage(event, 'Review Submission')">Go to verify</a>`;
+      return `<a href="#" class="av-action-link av-action-primary" onclick="openReviewSubmissionVerify(event, ${item.id})">Go to verify</a>`;
     case "approved":
     case "rejected":
-      return `<a href="#" class="av-action-link av-action-muted" onclick="">Reviewer Details</a>`;
+      return `<a href="#" class="av-action-link av-action-muted" onclick="openReviewSubmissionDetails(event, ${item.id})">Review Details</a>`;
     default:
-      return `<a href="#" class="av-action-link av-action-primary" onclick="changePage(event, 'Review Submission')">Go to verify</a>`;
+      return `<a href="#" class="av-action-link av-action-primary" onclick="openReviewSubmissionVerify(event, ${item.id})">Go to verify</a>`;
   }
+}
+
+/** Pending queue item — full verification UI on Review Submission */
+function openReviewSubmissionVerify(event, submissionId) {
+  event.preventDefault();
+  sessionStorage.setItem(
+    "reviewSubmissionContext",
+    JSON.stringify({ mode: "verify", submissionId })
+  );
+  changePage(event, "Review Submission");
+}
+
+/** Approved/rejected row — read-only decision summary, no verification controls */
+function openReviewSubmissionDetails(event, submissionId) {
+  event.preventDefault();
+  sessionStorage.setItem(
+    "reviewSubmissionContext",
+    JSON.stringify({ mode: "details", submissionId })
+  );
+  changePage(event, "Review Submission");
 }
 
 function getAssignmentActionLink(item) {
@@ -263,6 +283,8 @@ function viewReviewerDetails(id) { console.log("Reviewer details, ID:", id); }
 function assignStaff(id)         { console.log("Assign staff, ID:", id); }
 
 function initAssignmentVerificationView() {
+  sessionStorage.removeItem("reviewSubmissionContext");
+
   // Reset pagination and filtered data on every load to prevent stale state
   verificationPage = 1;
   assignmentPage   = 1;
@@ -278,3 +300,5 @@ function initAssignmentVerificationView() {
   renderVerificationTable();
   renderAssignmentTable();
 }
+
+window.verificationQueueData = verificationQueueData;

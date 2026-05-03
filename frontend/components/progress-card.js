@@ -73,9 +73,13 @@ class ProgressCardComponent {
 
         document.addEventListener('click', (e) => {
             const actionBtn = e.target.closest('.kpi-action-btn');
-            if (actionBtn && typeof window.changePage === 'function') {
-                window.changePage(e, 'KPI Detail');
+            if (!actionBtn || typeof window.changePage !== 'function') return;
+            const card = actionBtn.closest('[data-kpi-index]');
+            if (card) {
+                const idx = parseInt(card.getAttribute('data-kpi-index'), 10);
+                window.selectedKpiDetailIndex = Number.isFinite(idx) ? idx : 0;
             }
+            window.changePage(e, 'KPI Detail');
         });
 
         this.globalListenerAttached = true;

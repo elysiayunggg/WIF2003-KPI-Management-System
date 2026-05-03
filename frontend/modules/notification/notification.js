@@ -1,177 +1,161 @@
-// Hardcoded notification data - will be replaced with API fetch in Phase 2
-const notificationsData = [
-  {
-    id: 1,
-    title: "KPI Assignment",
-    message: "You have been assigned as primary owner for Sales Growth Rate KPI",
-    time: "5 minutes ago",
-    unread: true,
-    icon: "bi-person-check-fill",
-    type: "assignment"
-  },
-  {
-    id: 2,
-    title: "Stakeholder Request",
-    message: "Lisa Wong requested to be added as stakeholder for Marketing Budget KPI",
-    time: "1 hour ago",
-    unread: true,
-    icon: "bi-people-fill",
-    type: "request"
-  },
-  {
-    id: 3,
-    title: "Target Updated",
-    message: "Q2 target for Customer Satisfaction Score has been updated by Johnathan Smith",
-    time: "3 hours ago",
-    unread: false,
-    icon: "bi-graph-up-arrow",
-    type: "update"
-  },
-  {
-    id: 4,
-    title: "Verification Pending",
-    message: "Your KPI achievement verification is pending review by Michael Chen",
-    time: "Yesterday",
-    unread: false,
-    icon: "bi-hourglass-split",
-    type: "verification"
-  },
-  {
-    id: 5,
-    title: "Assignment Removed",
-    message: "You have been removed from the Operations Efficiency KPI assignment",
-    time: "2 days ago",
-    unread: false,
-    icon: "bi-person-dash-fill",
-    type: "assignment"
-  }
-];
+// ============================================================
+// NOTIFICATION PAGE VIEW
+// Depends on: notification-data.js (must be loaded first)
+// ============================================================
 
-// Tracks which notifications have been marked as read
-let readNotifications = new Set();
+// Maps tab labels to the "type" field in notificationsData.
+// null means "show all".
+var tabTypeMap = {
+  "All Activities": null,
+  "Submissions":    "request",
+  "Approvals":      "assignment",
+  "Deadlines":      "verification",
+  "System":         "update",
+};
 
-// Toggles the notification overlay visibility
-function showNotification() {
-  const overlay = document.getElementById("notificationOverlay");
-  const bell = document.getElementById("notificationBell");
+// Icon, colour and icon-background for each notification type.
+var notifIconMap = {
+  assignment:   { icon: "bi-person-check-fill", color: "text-primary", bg: "#e8f0ff" },
+  request:      { icon: "bi-people-fill",        color: "text-success", bg: "#e8f8f0" },
+  update:       { icon: "bi-graph-up-arrow",     color: "text-info",    bg: "#e0f6ff" },
+  verification: { icon: "bi-hourglass-split",    color: "text-warning", bg: "#fff8e0" },
+};
 
-  if (!overlay) return;
+// Tracks the active tab for the current page visit.
+var activeNotifTab = "All Activities";
 
-  const isVisible = overlay.classList.contains("show");
+// ── Tab switching ───────────────────────────────────────────
 
-  if (isVisible) {
-    overlay.classList.remove("show");
-    bell?.classList.remove("active");
+function switchNotifTab(btn, tabName) {
+  activeNotifTab = tabName;
+
+  document.querySelectorAll(".notif-tab").forEach(function (t) {
+    t.classList.remove("notif-tab-active");
+  });
+  btn.classList.add("notif-tab-active");
+
+  var searchVal = document.getElementById("notifPageSearch");
+  renderNotificationCards(tabName, searchVal ? searchVal.value : "");
+}
+
+// ── Search ──────────────────────────────────────────────────
+
+function filterNotificationsBySearch(query) {
+  renderNotificationCards(activeNotifTab, query);
+}
+
+// ── Card builder ────────────────────────────────────────────
+
+function createNotificationCard(notification) {
+  var meta = notifIconMap[notification.type] || {
+    icon: "bi-bell-fill", color: "text-secondary", bg: "#f0f0f0",
+  };
+
+  var isUnread = notification.unread && !readNotifications.has(notification.id);
+
+  var card = document.createElement("div");
+  card.id        = "notif-page-" + notification.id;
+  card.className = "notif-page-card mb-3 p-3 rounded-3 position-relative " +
+                   (isUnread ? "notif-card-unread" : "notif-card-read");
+
+  card.innerHTML =
+    (isUnread ? '<span class="notif-page-red-dot"></span>' : "") +
+    '<div class="d-flex gap-3 align-items-start">' +
+      '<div class="flex-shrink-0 rounded-circle d-flex align-items-center justify-content-center"' +
+           ' style="width:42px;height:42px;background-color:' + meta.bg + '">' +
+        '<i class="bi ' + meta.icon + " " + meta.color + ' fs-5"></i>' +
+      "</div>" +
+      '<div class="flex-grow-1" style="min-width:0">' +
+        '<div class="fw-bold mb-1 notif-page-title">' + notification.title + "</div>" +
+        '<div class="text-muted small mb-2 notif-page-msg">' + notification.message + "</div>" +
+        '<div class="d-flex align-items-center gap-1 notif-page-time">' +
+          '<i class="bi bi-clock"></i><span>' + notification.time + "</span>" +
+        "</div>" +
+      "</div>" +
+    "</div>";
+
+  // Clicking marks as read via the shared helper (triggers onNotifDataChanged,
+  // which updates both this page and the overlay badge/list).
+  card.addEventListener("click", function () {
+    markAsRead(notification.id);
+  });
+
+  return card;
+}
+
+// ── Renderer ────────────────────────────────────────────────
+
+function renderNotificationCards(tabName, searchQuery) {
+  tabName     = tabName     || "All Activities";
+  searchQuery = searchQuery || "";
+
+  var container = document.getElementById("notificationPageList");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  var typeFilter = tabTypeMap[tabName];
+  var query      = searchQuery.toLowerCase().trim();
+
+  var filtered = notificationsData.filter(function (n) {
+    var matchesTab    = !typeFilter || n.type === typeFilter;
+    var matchesSearch = !query ||
+      n.title.toLowerCase().indexOf(query)   !== -1 ||
+      n.message.toLowerCase().indexOf(query) !== -1;
+    return matchesTab && matchesSearch;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML =
+      '<div class="text-center py-5 text-muted">' +
+        '<i class="bi bi-bell-slash fs-1 d-block mb-2 opacity-50"></i>' +
+        '<p class="mb-0 small">No notifications found.</p>' +
+      "</div>";
   } else {
-    overlay.classList.add("show");
-    bell?.classList.add("active");
+    filtered.forEach(function (n) {
+      container.appendChild(createNotificationCard(n));
+    });
+  }
+
+  // Footer total always reflects the full data set, not just the filtered view.
+  var countEl = document.getElementById("notifTotalCount");
+  if (countEl) {
+    var total = notificationsData.length;
+    countEl.textContent = total + " notification" + (total !== 1 ? "s" : "") + " total";
   }
 }
 
-// Marks a notification as read
-function markAsRead(notificationId) {
-  readNotifications.add(notificationId);
+// ── Delete all ──────────────────────────────────────────────
 
-  const notificationElement = document.getElementById(`notification-${notificationId}`);
-  if (notificationElement) {
-    notificationElement.classList.add("read");
-    notificationElement.classList.remove("unread");
-    // Remove unread dot
-    const dot = notificationElement.querySelector(".unread-dot");
-    if (dot) dot.remove();
-  }
-
-  updateUnreadIndicator();
+// Delegates to the shared helper in notification-data.js, which clears
+// notificationsData in-place and fires onNotifDataChanged() — so the
+// overlay panel empties and its badge disappears at the same time.
+function deleteAllNotificationsPage() {
+  if (!confirm("Delete all notifications? This cannot be undone.")) return;
+  deleteAllNotifications();
 }
 
-// Marks all notifications as read
-function markAllAsRead() {
-  notificationsData.forEach(n => readNotifications.add(n.id));
+// ── Module init ─────────────────────────────────────────────
 
-  const notificationElements = document.querySelectorAll(".notification-item");
-  notificationElements.forEach(el => {
-    el.classList.add("read");
-    el.classList.remove("unread");
-    const dot = el.querySelector(".unread-dot");
-    if (dot) dot.remove();
+function initNotificationPageView() {
+  activeNotifTab = "All Activities";
+
+  // Reset tab highlight to "All Activities".
+  document.querySelectorAll(".notif-tab").forEach(function (t) {
+    t.classList.remove("notif-tab-active");
   });
+  var firstTab = document.querySelector(".notif-tab");
+  if (firstTab) firstTab.classList.add("notif-tab-active");
 
-  updateUnreadIndicator();
-}
-
-// Updates the unread indicator on the bell icon
-function updateUnreadIndicator() {
-  const unreadCount = notificationsData.filter(n => 
-    n.unread && !readNotifications.has(n.id)
-  ).length;
-
-  const badge = document.getElementById("unreadBadge");
-  if (badge) {
-    badge.style.display = unreadCount > 0 ? "block" : "none";
-  }
-}
-
-// Creates a notification element from notification data
-function createNotificationElement(notification) {
-  const div = document.createElement("div");
-  div.id = `notification-${notification.id}`;
-  div.className = `notification-item ${notification.unread && !readNotifications.has(notification.id) ? 'unread' : 'read'}`;
-  div.onclick = () => markAsRead(notification.id);
-
-  // Determine icon color based on type
-  let iconColorClass = "text-primary";
-  if (notification.type === "request") iconColorClass = "text-success";
-  if (notification.type === "update") iconColorClass = "text-info";
-  if (notification.type === "verification") iconColorClass = "text-warning";
-
-  div.innerHTML = `
-    <div class="notification-icon">
-      <i class="bi ${notification.icon} ${iconColorClass} fs-5"></i>
-    </div>
-    <div class="notification-content flex-grow-1">
-      <div class="d-flex justify-content-between align-items-start mb-1">
-        <h6 class="notification-title fw-semibold mb-0">${notification.title}</h6>
-        <span class="notification-time small text-muted">${notification.time}</span>
-      </div>
-      <p class="notification-message small text-muted mb-0">${notification.message}</p>
-    </div>
-    ${notification.unread && !readNotifications.has(notification.id) ? '<div class="unread-dot"></div>' : ''}
-  `;
-
-  return div;
-}
-
-// Renders all notifications into the container
-function renderNotifications() {
-  const notificationList = document.getElementById("notificationList");
-  if (!notificationList) return;
-
-  notificationList.innerHTML = "";
-
-  notificationsData.forEach(notification => {
-    notificationList.appendChild(createNotificationElement(notification));
-  });
-
-  updateUnreadIndicator();
-}
-
-// Initializes the notification module
-function initNotificationModule() {
-  renderNotifications();
-
-  // Close overlay when clicking outside
-  document.addEventListener("click", function(event) {
-    const overlay = document.getElementById("notificationOverlay");
-    const bell = document.getElementById("notificationBell");
-
-    if (overlay && overlay.classList.contains("show")) {
-      const isClickInsideOverlay = overlay.contains(event.target);
-      const isClickOnBell = bell?.contains(event.target);
-
-      if (!isClickInsideOverlay && !isClickOnBell) {
-        overlay.classList.remove("show");
-        bell?.classList.remove("active");
-      }
+  // Register so this page re-renders whenever shared data changes
+  // (e.g. markAsRead called from the overlay, or deleteAll from either side).
+  registerNotifChangeListener(function () {
+    // Only re-render if the page is currently mounted in the DOM.
+    if (document.getElementById("notificationPageList")) {
+      var searchVal = document.getElementById("notifPageSearch");
+      renderNotificationCards(activeNotifTab, searchVal ? searchVal.value : "");
     }
   });
+
+  renderNotificationCards("All Activities");
 }

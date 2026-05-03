@@ -17,7 +17,7 @@ function closeDeleteModal() {
 // CONFIRM DELETE
 function confirmDeleteKpi() {
   if (selectedKpiIndex !== null) {
-    kpiData.splice(selectedKpiIndex, 1); // uses global kpiData
+    window.kpiData.splice(selectedKpiIndex, 1); // uses global kpiData
   }
 
   closeDeleteModal();

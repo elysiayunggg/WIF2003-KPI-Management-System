@@ -361,3 +361,74 @@
     font-size: 28px;
   }
 }
+
+/* ----- Dark mode (report page + shared .report-table-card on staff dashboard) ----- */
+
+html[data-bs-theme="dark"] #page-content .report-main-title {
+  color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] #page-content .report-subtitle {
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] #page-content .report-search-input {
+  background-color: #212529 !important;
+  border-color: #495057 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .report-search-wrapper i {
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] #page-content .report-table-card {
+  background-color: #2b3035 !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+html[data-bs-theme="dark"] #page-content .report-table-card thead th {
+  background-color: #343a40 !important;
+  color: #adb5bd !important;
+  border-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .report-table-card tbody td {
+  border-top-color: #495057 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .report-table-card .kpi-name {
+  color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] #page-content .report-table-card .kpi-target {
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .report-view-all {
+  border-top-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .report-bottom-card {
+  background-color: #2b3035 !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+html[data-bs-theme="dark"] #page-content .report-bottom-card h3 {
+  color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] #page-content .report-progress,
+html[data-bs-theme="dark"] #page-content .report-progress-bar {
+  background-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .deadline-item small {
+  background-color: #343a40 !important;
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] #page-content .task-bars .empty {
+  background-color: #495057 !important;
+}
