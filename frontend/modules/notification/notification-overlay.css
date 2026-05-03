@@ -237,3 +237,73 @@
   position: relative;
   display: inline-block;
 }
+
+/* ----- Dark mode (navbar notification dropdown) ----- */
+
+html[data-bs-theme="dark"] .notification-overlay {
+  background-color: #2b3035 !important;
+  border-color: #495057 !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+html[data-bs-theme="dark"] .notification-header {
+  background-color: #343a40 !important;
+  border-bottom-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] .notification-header h6 {
+  color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] .mark-all-read {
+  color: #9ec5fe !important;
+}
+
+html[data-bs-theme="dark"] .notification-item:hover {
+  background-color: #3d4450 !important;
+}
+
+html[data-bs-theme="dark"] .notification-item.unread {
+  background-color: rgba(13, 110, 253, 0.12) !important;
+}
+
+html[data-bs-theme="dark"] .notification-icon {
+  background-color: #495057 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] .notification-title {
+  color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] .notification-message {
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] .notification-time {
+  color: #6c757d !important;
+}
+
+html[data-bs-theme="dark"] .notification-empty {
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] .notification-footer {
+  border-top-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] .notification-footer a {
+  color: #9ec5fe !important;
+}
+
+html[data-bs-theme="dark"] .notification-list::-webkit-scrollbar-track {
+  background: #212529;
+}
+
+html[data-bs-theme="dark"] .notification-list::-webkit-scrollbar-thumb {
+  background: #495057;
+}
+
+html[data-bs-theme="dark"] .notification-list::-webkit-scrollbar-thumb:hover {
+  background: #6c757d;
+}

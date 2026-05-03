@@ -617,3 +617,74 @@
     padding: 20px;
   }
 }
+
+/* ----- Dark mode (manager dashboard) ----- */
+
+html[data-bs-theme="dark"] #page-content .summary-card {
+  background-color: #2b3035 !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+html[data-bs-theme="dark"] #page-content .summary-label {
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] #page-content .summary-number {
+  color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] #page-content .performance-summary-card,
+html[data-bs-theme="dark"] #page-content .kpi-distribution-card,
+html[data-bs-theme="dark"] #page-content .kpi-trend-card {
+  background-color: #2b3035 !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+html[data-bs-theme="dark"] #page-content .performance-summary-title,
+html[data-bs-theme="dark"] #page-content .kpi-distribution-title {
+  color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] #page-content .performance-label {
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] #page-content .performance-score {
+  color: #ced4da !important;
+}
+
+html[data-bs-theme="dark"] #page-content .performance-staff-item {
+  background-color: #343a40 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .performance-staff-item h4 {
+  color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] #page-content .kpi-efficiency-box {
+  background-color: #343a40 !important;
+  border-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .kpi-efficiency-box p {
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] #page-content .kpi-legend div {
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .kpi-pie-chart {
+  box-shadow:
+    0 4px 6px -4px rgba(0, 0, 0, 0.4),
+    0 10px 15px -3px rgba(0, 0, 0, 0.35),
+    0 0 0 4px #2b3035;
+}
+
+html[data-bs-theme="dark"] #page-content .kpi-trend-header h3 {
+  color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] #page-content .kpi-trend-legend {
+  color: #adb5bd !important;
+}

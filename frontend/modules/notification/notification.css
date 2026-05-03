@@ -146,3 +146,75 @@
   color: #b02a37;
   text-decoration: underline;
 }
+
+/* ----- Dark mode (notifications page) ----- */
+
+html[data-bs-theme="dark"] #page-content .notif-tab:not(.notif-tab-active) {
+  background-color: #343a40 !important;
+  border-color: #495057 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .notif-tab:hover:not(.notif-tab-active) {
+  background-color: #495057 !important;
+  color: #fff !important;
+}
+
+html[data-bs-theme="dark"] #page-content .notif-tab.notif-tab-active {
+  background-color: #4e5e82 !important;
+  border-color: #4e5e82 !important;
+  color: #ffffff !important;
+}
+
+html[data-bs-theme="dark"] #page-content .notif-search-icon {
+  background-color: #212529 !important;
+  border-color: #495057 !important;
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] #page-content .notif-search-input {
+  background-color: #212529 !important;
+  border-color: #495057 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .notif-mark-all-btn {
+  background-color: #343a40 !important;
+  border-color: #495057 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .notif-mark-all-btn:hover {
+  background-color: #495057 !important;
+  color: #fff !important;
+}
+
+html[data-bs-theme="dark"] #page-content .notif-page-card {
+  border-color: #495057 !important;
+  background-color: #2b3035 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .notif-card-unread {
+  background-color: rgba(13, 110, 253, 0.15) !important;
+}
+
+html[data-bs-theme="dark"] #page-content .notif-card-read {
+  background-color: #2b3035 !important;
+}
+
+html[data-bs-theme="dark"] #page-content .notif-page-title {
+  color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] #page-content .notif-page-msg {
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] #page-content .notif-page-time {
+  color: #6c757d !important;
+}
+
+html[data-bs-theme="dark"] #page-content .notif-page-divider {
+  border-color: #495057 !important;
+  opacity: 1;
+}
