@@ -111,7 +111,7 @@ kpi-management-system/
 │   │   ├── register.html
 │   │   ├── dashboard.html
 │   │   ├── profile.html
-│   │   ├── kpi.html
+│   │   ├── kpi-management.html
 │   │   ├── assignment.html
 │   │   └── progress.html
 │   │
@@ -120,8 +120,9 @@ kpi-management-system/
 │   │   │   └── auth.js
 │   │   ├── profile/
 │   │   │   └── profile.js
-│   │   ├── kpi/
-│   │   │   └── kpi.js
+│   │   ├── kpi-management/
+│   │   │   ├── kpi-management.css
+│   │   │   └── kpi-management.js
 │   │   ├── assignment/
 │   │   │   └── assignment.js
 │   │   ├── progress/

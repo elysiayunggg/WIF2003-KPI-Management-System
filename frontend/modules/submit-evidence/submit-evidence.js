@@ -1,9 +1,41 @@
+function applyEvidenceContextFromSelectedKpi(root) {
+    const idx =
+        window.selectedKpiDetailIndex != null && window.selectedKpiDetailIndex !== ""
+            ? parseInt(window.selectedKpiDetailIndex, 10)
+            : 0;
+    let row = typeof window.getKpiDataRow === "function" ? window.getKpiDataRow(idx) : null;
+    if (!row && typeof window.getKpiDataRow === "function") row = window.getKpiDataRow(0);
+    if (!row) return;
+
+    const titleInput = root.querySelector("#evidence-title");
+    if (titleInput) titleInput.value = row.kpi || "";
+
+    const desc = root.querySelector("#evidence-desc");
+    if (desc) desc.value = row.description || "";
+
+    const slider = root.querySelector("#progress-slider");
+    const progressVal = root.querySelector("#progress-val");
+    const pct = Math.min(100, Math.max(0, Number(row.progress) || 0));
+    if (slider) {
+        slider.value = String(pct);
+        if (typeof updateSliderFill === "function") updateSliderFill(slider);
+    }
+    if (progressVal) progressVal.textContent = pct + "%";
+
+    const pageDesc = root.querySelector("#page-desc");
+    if (pageDesc) {
+        pageDesc.textContent = `Supporting files for ${row.kpi}. Target ${row.target} · ${row.department}.`;
+    }
+}
+
 /**
  * Initializes the Submit/View Evidence view.
  */
 function initSubmitEvidenceView() {
     const root = document.getElementById('submit-evidence-root');
     if (!root) return;
+
+    applyEvidenceContextFromSelectedKpi(root);
 
     // 1. Progress slider with dynamic fill
     const slider = root.querySelector('#progress-slider');
@@ -76,7 +108,17 @@ function setupEditEvidenceMode(root) {
 
 function setupViewEvidenceMode(root) {
     root.querySelector('#page-title').textContent = "View Evidence";
-    root.querySelector('#page-desc').textContent = "This evidence is under review. Fields are read-only.";
+    const row =
+        typeof window.getKpiDataRow === "function"
+            ? window.getKpiDataRow(
+                  window.selectedKpiDetailIndex != null && window.selectedKpiDetailIndex !== ""
+                      ? parseInt(window.selectedKpiDetailIndex, 10)
+                      : 0
+              )
+            : null;
+    const kpiLine = row ? `${row.kpi} · ${row.target}` : "This KPI";
+    root.querySelector('#page-desc').textContent =
+        `${kpiLine} — under review. Fields are read-only.`;
 
     // Hide action buttons and upload section fully in view mode, not just display: none
     const actionButtons = root.querySelector('#action-buttons');

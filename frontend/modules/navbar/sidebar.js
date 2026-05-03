@@ -5,7 +5,7 @@ const pageRoutes = {
   "Dashboard": "../views/dashboard.html",
   "Staff Dashboard": "../views/staff-dashboard.html",    // staff
   "Report": "../views/report.html",
-  "KPI Management": "../views/kpi.html",
+  "KPI Management": "../views/kpi-management.html",
   "Create KPI": "../views/create-kpi.html",
   "Update KPI": "../views/update-kpi.html",
   "View KPI List": "../views/kpi-list.html",             // staff
@@ -18,7 +18,7 @@ const pageRoutes = {
   "View Evidence": "../views/submit-evidence.html",      // staff
   "Edit Evidence": "../views/submit-evidence.html",      // staff
   // "Update KPI Progress": "../views/update-progress.html",
-  "Notifications": "../views/notifications.html",
+  "Notifications": "../views/notification.html",
   "Profile": "../views/profile.html"
 };
 
@@ -41,23 +41,15 @@ function renderSidebar(role) {
         <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Create KPI')">
           <i class="bi bi-plus-circle"></i> Create KPI
         </a>
-        <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Update KPI')">
-          <i class="bi bi-arrow-repeat"></i> Update KPI
-        </a>
         <a href="#" class="nav-link ms-3" onclick="changePage(event, 'View KPI List')">
           <i class="bi bi-list-ul"></i> View KPI List
         </a>
       </div>
 
       <div class="nav-group">
-        <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment')">
+        <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment & Verification')">
+        <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment & Verification')">
           <i class="bi bi-check2-square"></i> KPI Assignment & Verification
-        </a>
-        <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Assign KPI')">
-          <i class="bi bi-clipboard-plus"></i> Assign KPI
-        </a>
-        <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Review Submission')">
-          <i class="bi bi-eye"></i> Review Submission
         </a>
       </div>
 
@@ -75,15 +67,12 @@ function renderSidebar(role) {
         <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Progress')">
           <i class="bi bi-bar-chart"></i> KPI Progress
         </a>
-        <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Update KPI Progress')">
-          <i class="bi bi-arrow-repeat"></i> Update KPI Progress
-        </a>
         <a href="#" class="nav-link ms-3" onclick="changePage(event, 'View KPI List')">
           <i class="bi bi-list-ul"></i> View KPI List
         </a>
       </div>
 
-      <a href="#" class="nav-link mt-3" onclick="changePage(event, 'Notifications')">
+      <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'Notifications')">
         <i class="bi bi-bell"></i> Notifications
       </a>
     `;
@@ -164,7 +153,7 @@ async function changePage(event, pageName) {
     setTimeout(() => {
       content.innerHTML = html;
       content.style.opacity = "1";
-      
+
       // Ensure initFn also runs when clicking navlinks 
       const initFn = pageInits[pageName];
       if (typeof initFn === "function") {
@@ -191,6 +180,7 @@ async function changePage(event, pageName) {
 // When a view needs JS to run after it loads, add an entry here.
 // The function must be defined in a script loaded by shell.html.
 const pageInits = {
+    
   "Profile": initProfileView,
   "Dashboard": function () {
     const role = localStorage.getItem("role") || "manager";
@@ -212,6 +202,12 @@ const pageInits = {
     }
   },
 
+  "KPI Detail": function () {
+    if (typeof initKPIDetailView === "function") {
+      initKPIDetailView();
+    }
+  },
+
   "Submit Evidence": initSubmitEvidenceView,
   "View Evidence": initSubmitEvidenceView,
   "Edit Evidence": initSubmitEvidenceView,
@@ -222,21 +218,45 @@ const pageInits = {
     }
   },
 
+  "KPI Management": function () {
+    if (typeof initKpiView === "function") {
+      initKpiView();
+    }
+  },
+
+  "View KPI List": function () {
+    if (typeof initKpiListView === "function") {
+      initKpiListView();
+    }
+  },
+
   "Assign KPI": function () {
     if (typeof initAssignmentView === "function") {
       initAssignmentView();
     }
   },
+  
+  "Update KPI": function () {
+    if (typeof initUpdateKpiView === "function") {
+      initUpdateKpiView();
+    }
+  },
 
   "KPI Assignment & Verification": function () {
     if (typeof initAssignmentView === "function") {
-      initAssignmentView();
+      initAssignmentVerificationView();
     }
   },
 
   "Review Submission": function () {
     if (typeof initReviewView === "function") {
       initReviewView();
+    }
+  },
+
+  "Notifications": function () {
+    if (typeof initNotificationPageView === "function") {
+      initNotificationPageView()
     }
   }
 };
