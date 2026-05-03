@@ -16,13 +16,6 @@
     padding-right: 2rem;
 }
 
-.kpi-page-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-}
-
 .kpi-card {
     background: #fff;
     border: 1px solid #d8dde8;
@@ -480,10 +473,6 @@
 
     .kpi-card {
         padding: 1rem;
-    }
-
-    .kpi-page-title {
-        font-size: 1.45rem;
     }
 
     .kpi-milestone-header {

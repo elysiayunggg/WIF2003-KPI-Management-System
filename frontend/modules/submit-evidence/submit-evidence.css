@@ -386,22 +386,6 @@
     letter-spacing: -0.01em;
 }
 
-/* --- Page title / subtext (mirror kpi-detail) ------------------------ */
-
-.submit-evidence-view .kpi-page-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    color: #191b23;
-}
-
-.submit-evidence-view .kpi-subtext {
-    color: #54647a;
-    max-width: 720px;
-    font-size: 0.95rem;
-}
-
 /* --- Responsive ------------------------------------------------------- */
 
 @media (max-width: 575.98px) {

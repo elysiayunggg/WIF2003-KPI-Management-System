@@ -2,19 +2,6 @@
    REPORT STYLES
    ========================================= */
 
-.report-main-title {
-  font-size: 32px;
-  font-weight: 800;
-  color: #2a3439;
-  margin-bottom: 4px;
-}
-
-.report-subtitle {
-  font-size: 13px;
-  color: #6c757d;
-  margin-bottom: 24px;
-}
-
 /* Search */
 .report-search-wrapper {
   position: relative;
@@ -357,20 +344,9 @@
     justify-content: center;
   }
 
-  .report-main-title {
-    font-size: 28px;
-  }
 }
 
 /* ----- Dark mode (report page + shared .report-table-card on staff dashboard) ----- */
-
-html[data-bs-theme="dark"] #page-content .report-main-title {
-  color: #f8f9fa !important;
-}
-
-html[data-bs-theme="dark"] #page-content .report-subtitle {
-  color: #adb5bd !important;
-}
 
 html[data-bs-theme="dark"] #page-content .report-search-input {
   background-color: #212529 !important;

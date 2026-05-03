@@ -1,8 +1,17 @@
-/* General Styles */
+/* General Styles — Plus Jakarta Sans (matches login / register) */
+:root {
+  --app-font-sans: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", "Noto Sans", Arial, sans-serif;
+  --bs-font-sans-serif: var(--app-font-sans);
+  --bs-body-font-family: var(--app-font-sans);
+}
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: var(--app-font-sans);
   background-color: #f7f9fb;
   color: #2a3439;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Sidebar */
@@ -332,6 +341,34 @@ html[data-bs-theme="dark"] #page-content .app-breadcrumb .breadcrumb-item.active
   color: #e9ecef;
 }
 
+/* ----- Unified page titles & subtitles (#page-content) ----- */
+#page-content .page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #2a3439;
+  margin-bottom: 0.35rem;
+}
+
+#page-content .page-title.mb-0 {
+  margin-bottom: 0;
+}
+
+#page-content .page-subtitle {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6c757d;
+  max-width: 42rem;
+  margin-bottom: 0;
+}
+
+@media (max-width: 575.98px) {
+  #page-content .page-title {
+    font-size: 1.45rem;
+  }
+}
+
 /*
  * Page content: module CSS often sets #fff / #2a3439 while Bootstrap dark mode
  * sets light body text — fix contrast by darkening surfaces and resetting text.
@@ -533,8 +570,12 @@ html[data-bs-theme="dark"] #page-content .custom-dropdown button:hover {
 }
 
 html[data-bs-theme="dark"] #page-content .overview-title,
-html[data-bs-theme="dark"] #page-content #mainHeading {
+html[data-bs-theme="dark"] #page-content .page-title {
   color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] #page-content .page-subtitle {
+  color: #adb5bd !important;
 }
 
 html[data-bs-theme="dark"] #page-content .overview-subtext {
