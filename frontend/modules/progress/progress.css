@@ -16,20 +16,6 @@
     line-height: 1;
 }
 
-.progress-view .breadcrumb {
-    font-size: 0.78rem;
-}
-
-.progress-view .breadcrumb-item,
-.progress-view .breadcrumb-item a {
-    color: #6b7280;
-    text-decoration: none;
-}
-
-.progress-view .breadcrumb-item.active {
-    color: #1f2937;
-}
-
 /* --- Toolbar ----------------------------------------------------------- */
 
 .progress-toolbar {
@@ -490,15 +476,6 @@
 
 html[data-bs-theme="dark"] .progress-view {
     background-color: #121418 !important;
-    color: #e9ecef !important;
-}
-
-html[data-bs-theme="dark"] .progress-view .breadcrumb-item,
-html[data-bs-theme="dark"] .progress-view .breadcrumb-item a {
-    color: #adb5bd !important;
-}
-
-html[data-bs-theme="dark"] .progress-view .breadcrumb-item.active {
     color: #e9ecef !important;
 }
 

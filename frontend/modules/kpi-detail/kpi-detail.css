@@ -16,19 +16,6 @@
     padding-right: 2rem;
 }
 
-.kpi-detail-view .breadcrumb {
-    font-size: 0.78rem;
-}
-
-.kpi-detail-view .breadcrumb-item,
-.kpi-detail-view .breadcrumb-item a {
-    color: #6b7280;
-}
-
-.kpi-detail-view .breadcrumb-item.active {
-    color: #1f2937;
-}
-
 .kpi-page-title {
     font-size: 1.75rem;
     font-weight: 700;

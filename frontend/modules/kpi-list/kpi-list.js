@@ -62,10 +62,31 @@ function renderKpiListRow(kpi) {
 }
 
 
+function applyKpiListBreadcrumb() {
+  const ol = document.querySelector(".kpi-list-view .app-breadcrumb ol.breadcrumb");
+  if (!ol) return;
+
+  const role = localStorage.getItem("role") || "manager";
+
+  if (role === "staff") {
+    ol.innerHTML = `
+      <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Progress')">KPI Progress</a></li>
+      <li class="breadcrumb-item active" aria-current="page">KPI List</li>
+    `;
+  } else {
+    ol.innerHTML = `
+      <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Management')">KPI Management</a></li>
+      <li class="breadcrumb-item active" aria-current="page">KPI List</li>
+    `;
+  }
+}
+
 // INIT VIEW
 function initKpiListView() {
   const container = document.getElementById("kpiListContainer");
   if (!container) return;
+
+  applyKpiListBreadcrumb();
 
   // ensure shared data exists
   if (!window.kpiData) {
@@ -80,8 +101,8 @@ function initKpiListView() {
 
   container.innerHTML = "";
 
-  const start = (kpiListCurrentPage - 1) * rowsPerPage;
-  const end = start + rowsPerPage;
+  const start = (kpiListCurrentPage - 1) * kpiListRowsPerPage;
+  const end = start + kpiListRowsPerPage;
 
   const paginatedData = filteredKpiData.slice(start, end);
 

@@ -210,6 +210,37 @@ p { font-size: 13px; }
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* ----- Unified app breadcrumbs (all views in #page-content) ----- */
+#page-content .app-breadcrumb {
+  --bs-breadcrumb-divider: ">";
+  --bs-breadcrumb-divider-color: #adb5bd;
+}
+
+#page-content .app-breadcrumb .breadcrumb {
+  margin-bottom: 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+#page-content .app-breadcrumb .breadcrumb-item {
+  color: #6c757d;
+}
+
+#page-content .app-breadcrumb .breadcrumb-item a {
+  color: #495057;
+  text-decoration: none;
+}
+
+#page-content .app-breadcrumb .breadcrumb-item a:hover {
+  color: #212529;
+  text-decoration: underline;
+}
+
+#page-content .app-breadcrumb .breadcrumb-item.active {
+  color: #212529;
+  font-weight: 500;
+}
+
 .breadcrumb a {
   color: #2a3439;        
   text-decoration: none;
@@ -282,6 +313,23 @@ html[data-bs-theme="dark"] .breadcrumb a {
 
 html[data-bs-theme="dark"] .breadcrumb a:hover {
   color: #f8f9fa;
+}
+
+html[data-bs-theme="dark"] #page-content .app-breadcrumb {
+  --bs-breadcrumb-divider-color: #6c757d;
+}
+
+html[data-bs-theme="dark"] #page-content .app-breadcrumb .breadcrumb-item,
+html[data-bs-theme="dark"] #page-content .app-breadcrumb .breadcrumb-item a {
+  color: #adb5bd;
+}
+
+html[data-bs-theme="dark"] #page-content .app-breadcrumb .breadcrumb-item a:hover {
+  color: #f8f9fa;
+}
+
+html[data-bs-theme="dark"] #page-content .app-breadcrumb .breadcrumb-item.active {
+  color: #e9ecef;
 }
 
 /*

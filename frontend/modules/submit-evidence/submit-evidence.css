@@ -17,20 +17,6 @@
     font-weight: normal;
 }
 
-.submit-evidence-view .breadcrumb {
-    font-size: 0.78rem;
-}
-
-.submit-evidence-view .breadcrumb-item,
-.submit-evidence-view .breadcrumb-item a {
-    color: #6b7280;
-    text-decoration: none;
-}
-
-.submit-evidence-view .breadcrumb-item.active {
-    color: #1f2937;
-}
-
 /* --- Cards ------------------------------------------------------------- */
 
 .evidence-card,
