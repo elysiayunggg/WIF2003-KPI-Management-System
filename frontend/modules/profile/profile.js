@@ -341,6 +341,14 @@ function profileVerifyPassword() {
     document.getElementById("pwNewInput").disabled     = false;
     document.getElementById("pwConfirmInput").disabled = false;
     document.getElementById("pwUpdateBtn").disabled    = false;
+
+    // Show checklist immediately with all items unchecked
+    const checklist = document.getElementById("pwChecklist");
+    if (checklist) {
+      checklist.style.display = "flex";
+      ["pwck-length","pwck-upper","pwck-lower","pwck-number","pwck-symbol","pwck-nospace"]
+        .forEach(id => profileSetCheckItem(id, false));
+    }
   } else {
     inputEl.classList.add("pw-input-error");
     hintEl.innerHTML = '<i class="bi bi-x-circle-fill" style="color:#9f403d"></i> Incorrect password. Please try again.';
@@ -348,49 +356,45 @@ function profileVerifyPassword() {
 }
 
 function profileCheckStrength() {
-  const pw        = document.getElementById("pwNewInput").value;
-  const bar       = document.getElementById("pwStrengthBar");
-  const labelEl   = document.getElementById("pwStrengthLabel");
-  const checklist = document.getElementById("pwChecklist");
-  const reqHint   = document.getElementById("pwReqHint");
+  const pw      = document.getElementById("pwNewInput").value;
+  const bar     = document.getElementById("pwStrengthBar");
+  const labelEl = document.getElementById("pwStrengthLabel");
+
+  const checks = {
+    length:  pw.length >= 8 && pw.length <= 64,
+    upper:   /[A-Z]/.test(pw),
+    lower:   /[a-z]/.test(pw),
+    number:  /[0-9]/.test(pw),
+    symbol:  /[^A-Za-z0-9\s]/.test(pw),
+    nospace: pw.length > 0 && !/\s/.test(pw),
+  };
+
+  profileSetCheckItem("pwck-length",  checks.length);
+  profileSetCheckItem("pwck-upper",   checks.upper);
+  profileSetCheckItem("pwck-lower",   checks.lower);
+  profileSetCheckItem("pwck-number",  checks.number);
+  profileSetCheckItem("pwck-symbol",  checks.symbol);
+  profileSetCheckItem("pwck-nospace", checks.nospace);
 
   if (!pw) {
-    checklist.style.display = "none";
-    reqHint.style.display   = "block";
-    bar.style.width         = "0%";
-    bar.className           = "pw-strength-fill";
-    labelEl.textContent     = "--";
+    bar.style.width     = "0%";
+    bar.className       = "pw-strength-fill";
+    labelEl.textContent = "--";
     return;
   }
 
-  checklist.style.display = "flex";
-  reqHint.style.display   = "none";
-
-  const checks = {
-    length: pw.length >= 12,
-    upper:  /[A-Z]/.test(pw),
-    lower:  /[a-z]/.test(pw),
-    number: /[0-9]/.test(pw),
-    symbol: /[^A-Za-z0-9]/.test(pw),
-  };
-
-  profileSetCheckItem("pwck-length", checks.length);
-  profileSetCheckItem("pwck-upper",  checks.upper);
-  profileSetCheckItem("pwck-lower",  checks.lower);
-  profileSetCheckItem("pwck-number", checks.number);
-  profileSetCheckItem("pwck-symbol", checks.symbol);
-
   const score = Object.values(checks).filter(Boolean).length;
   const levels = [
-    { width: "20%", cls: "pw-strength-weak",   label: "Weak"   },
-    { width: "40%", cls: "pw-strength-weak",   label: "Weak"   },
-    { width: "50%", cls: "pw-strength-fair",   label: "Fair"   },
-    { width: "75%", cls: "pw-strength-medium", label: "Medium" },
-    { width: "100%",cls: "pw-strength-strong", label: "Strong" },
+    { width: "16%",  cls: "pw-strength-weak",   label: "Weak"   },
+    { width: "33%",  cls: "pw-strength-weak",   label: "Weak"   },
+    { width: "50%",  cls: "pw-strength-fair",   label: "Fair"   },
+    { width: "66%",  cls: "pw-strength-fair",   label: "Fair"   },
+    { width: "83%",  cls: "pw-strength-medium", label: "Medium" },
+    { width: "100%", cls: "pw-strength-strong", label: "Strong" },
   ];
   const lvl = levels[score - 1] || levels[0];
-  bar.style.width = lvl.width;
-  bar.className   = "pw-strength-fill " + lvl.cls;
+  bar.style.width     = lvl.width;
+  bar.className       = "pw-strength-fill " + lvl.cls;
   labelEl.textContent = lvl.label;
 }
 
@@ -409,8 +413,12 @@ function profileUpdatePassword() {
     showProfileToast("Passwords do not match.");
     return;
   }
-  if (newPw.length < 12 || !/[^A-Za-z0-9]/.test(newPw)) {
-    showProfileToast("Password must be at least 12 characters and include a symbol.");
+  const valid = newPw.length >= 8 && newPw.length <= 64 &&
+    /[A-Z]/.test(newPw) && /[a-z]/.test(newPw) &&
+    /[0-9]/.test(newPw) && /[^A-Za-z0-9\s]/.test(newPw) &&
+    !/\s/.test(newPw);
+  if (!valid) {
+    showProfileToast("Password does not meet all requirements.");
     return;
   }
 
@@ -441,7 +449,6 @@ function profileResetPasswordForm() {
   const checklist     = document.getElementById("pwChecklist");
   const bar           = document.getElementById("pwStrengthBar");
   const labelEl       = document.getElementById("pwStrengthLabel");
-  const reqHint       = document.getElementById("pwReqHint");
 
   if (!currentInput) return; // tab not yet in DOM
 
@@ -469,7 +476,6 @@ function profileResetPasswordForm() {
 
   hintEl.innerHTML    = '<i class="bi bi-info-circle"></i> Verify your current password to set a new one.';
   checklist.style.display = "none";
-  reqHint.style.display   = "block";
   bar.style.width         = "0%";
   bar.className           = "pw-strength-fill";
   labelEl.textContent     = "--";

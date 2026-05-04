@@ -199,25 +199,25 @@
                 <div class="pw-strength-track">
                   <div class="pw-strength-fill" id="pwStrengthBar" style="width:0%"></div>
                 </div>
-                <p class="pw-req-hint mt-2" id="pwReqHint">
-                  Must be at least 12 characters and include a symbol.
-                </p>
-                <!-- Checklist (shown after typing) -->
+                <!-- Checklist — hidden until current password is verified -->
                 <div id="pwChecklist" class="pw-checklist" style="display:none">
                   <div class="pw-check-item" id="pwck-length">
-                    <i class="bi bi-check-circle-fill"></i> 12+ characters
+                    <i class="bi bi-check-circle-fill"></i> 8 to 64 characters
                   </div>
                   <div class="pw-check-item" id="pwck-upper">
-                    <i class="bi bi-check-circle-fill"></i> 1 uppercase letter
+                    <i class="bi bi-check-circle-fill"></i> At least 1 uppercase letter
                   </div>
                   <div class="pw-check-item" id="pwck-lower">
-                    <i class="bi bi-check-circle-fill"></i> 1 lowercase letter
+                    <i class="bi bi-check-circle-fill"></i> At least 1 lowercase letter
                   </div>
                   <div class="pw-check-item" id="pwck-number">
-                    <i class="bi bi-check-circle-fill"></i> 1 number
+                    <i class="bi bi-check-circle-fill"></i> At least 1 number
                   </div>
                   <div class="pw-check-item" id="pwck-symbol">
-                    <i class="bi bi-check-circle-fill"></i> 1 symbol
+                    <i class="bi bi-check-circle-fill"></i> At least 1 special character
+                  </div>
+                  <div class="pw-check-item" id="pwck-nospace">
+                    <i class="bi bi-check-circle-fill"></i> No spaces
                   </div>
                 </div>
               </div>
