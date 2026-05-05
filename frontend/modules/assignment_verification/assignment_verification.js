@@ -56,23 +56,39 @@ let filteredVerificationData = [...verificationQueueData];
 let filteredAssignmentData = [...assignmentQueueData];
 
 // Returns the soft badge class for a given status
-function getStatusBadgeClass(status) {
+/*function getStatusBadgeClass(status) {
   switch (status) {
     case "approved": return "badge-soft-success";
     case "rejected":  return "badge-soft-danger";
-    case "pending":
-    default:          return "badge-soft-warning";
-  }
+   case "pending":
+   default:          return "badge-soft-warning";
 }
+}*/ 
 
-function getStatusLabel(status) {
+/* function getStatusLabel(status) {
   return status.charAt(0).toUpperCase() + status.slice(1);
-}
+}*/
 
 // Returns the action link HTML based on the item's current status.
 // Pending/new   → primary colour "Go to Verify" / "Assign Staff"
 // Approved      → muted colour "Review Details"
 // Rejected      → danger colour "Review Details"
+
+function mapVerificationStatus(status) {
+  switch (status) {
+    case "approved":
+      return "APPROVED";   
+
+    case "pending":
+      return "PENDING VERIFICATION";
+
+    case "rejected":
+      return "REJECTED";
+
+    default:
+      return status.toUpperCase();
+  }
+}
 function getVerificationActionLink(item) {
   switch (item.status) {
     case "pending":
@@ -112,6 +128,8 @@ function getAssignmentActionLink(item) {
 // Builds one <tr> for the verification table
 function createVerificationRow(item) {
   const tr = document.createElement("tr");
+  const mappedStatus = mapVerificationStatus(item.status);
+  const statusConfig = getStatusConfig(mappedStatus);
   tr.innerHTML = `
     <td>
       <span class="fw-semibold">${item.kpiName}</span>
@@ -123,13 +141,19 @@ function createVerificationRow(item) {
         <span>${item.staff}</span>
       </div>
     </td>
-    <td class="fw-semibold">${item.submissionTime}</td>
-    <td><span class="badge ${getStatusBadgeClass(item.status)}">${getStatusLabel(item.status)}</span></td>
+    <td class="fw-semibold">${item.submissionTime}</td> 
+
+<td>
+  <span class="badge status-badge" style="${statusConfig.style}">
+    ${statusConfig.label}
+  </span>
+</td>
     <td>${getVerificationActionLink(item)}</td>
   `;
   return tr;
 }
-
+//OLD status column removed 
+//<td><span class="badge ${getStatusBadgeClass(item.status)}">${getStatusLabel(item.status)}</span></td> 
 // Builds one <tr> for the assignment table
 function createAssignmentRow(item) {
   const tr = document.createElement("tr");
@@ -171,7 +195,12 @@ function renderPageButtons(containerId, currentPage, totalItems) {
   for (let i = startPage; i <= endPage; i++) {
     const btn = document.createElement("button");
     btn.textContent = i;
-    btn.className = "btn btn-sm " + (i === currentPage ? "av-page-btn-active" : "av-page-btn");
+   //  btn.className = "btn btn-sm " + (i === currentPage ? "av-page-btn-active" : "av-page-btn");
+   btn.className = "btn btn-sm page-btn";
+
+if (i === currentPage) {
+  btn.classList.add("active-page");
+}
 
     // Capture i by value so the onclick closure doesn't use a stale variable
     const pageNum = i;

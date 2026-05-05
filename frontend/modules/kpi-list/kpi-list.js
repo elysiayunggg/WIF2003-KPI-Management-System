@@ -21,13 +21,25 @@ function getDemoProgress(status) {
 
 // RENDER KPI ROW
 function renderKpiListRow(kpi) {
-  const effectiveStatus = kpi.staff ? kpi.status : "Unassigned";
+  let effectiveStatus = kpi.staff ? kpi.status : "UNASSIGNED";
+
+// normalize ALL statuses
+effectiveStatus = effectiveStatus?.trim().toUpperCase();
+
+if (effectiveStatus === "PENDING") {
+  effectiveStatus = "PENDING VERIFICATION";
+}
+
+if (effectiveStatus === "INPROGRESS") {
+  effectiveStatus = "IN PROGRESS";
+}
   const statusConfig = getStatusConfig(effectiveStatus);
   const progress = kpi.progress;
 
   // green if completed
-  const progressColor =
-    effectiveStatus === "Completed" ? "bg-success" : "bg-primary";
+
+    const progressColor =
+  effectiveStatus === "COMPLETED" ? "bg-success" : "bg-primary";;
 
   const row = document.createElement("div");
   row.className = "row align-items-center py-2 border-bottom px-2";

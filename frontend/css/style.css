@@ -659,3 +659,28 @@ html[data-bs-theme="dark"] #page-content .btn-outline-secondary:hover {
   background-color: #495057 !important;
   color: #fff !important;
 }
+
+/* SAME as KPI (remove .kpi-view scope) */
+.page-btn {
+  background: #f8f9fa;
+  border: 1px solid #e0e3e8;
+  margin: 0 4px;
+  border-radius: 8px;
+  min-width: 32px;
+  transition: all 0.2s ease;
+}
+
+.page-btn:hover {
+  background: #eef2f7;
+}
+
+.page-btn.active-page {
+  background: #e9ecef;
+  font-weight: 600;
+}
+
+/* Disabled */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
