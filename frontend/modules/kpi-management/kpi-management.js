@@ -87,23 +87,32 @@ const kpiData = window.kpiData;
 
 const STATUS_CONFIG = {
   COMPLETED: {
-    label: "Completed",
+    label: "COMPLETED",
     style: "background:#d0fae4; color:#17b681;"
   },
+
   "IN PROGRESS": {
-    label: "In Progress",
+    label: "IN PROGRESS",
     style: "background:#dbe9ff; color:#0a6ffd;"
   },
   "PENDING VERIFICATION": {
-    label: "Pending Verification",
+    label: "PENDING VERIFICATION",
     style: "background:#fff4c7; color:#d87e15;"
   },
   OVERDUE: {
-    label: "Overdue",
+    label: "OVERDUE",
+    style: "background:#fee1e2; color:#db2728;"
+  },
+   APPROVED: {
+    label: "APPROVED",
+    style: "background:#d0fae4; color:#17b681;"
+  },
+  REJECTED: {
+    label: "REJECTED",
     style: "background:#fee1e2; color:#db2728;"
   },
   UNASSIGNED: {
-    label: "Unassigned",
+    label: "UNASSIGNED",
     style: "background:#f1f3f5; color:#dc3545;"
   }
 };
@@ -214,7 +223,6 @@ function renderPagination() {
       currentPage = i;
       initKpiView();
     });
-
     container.appendChild(btn);
   }
 }
@@ -335,3 +343,6 @@ function initKpiView() {
   initDeleteKpi();
 }
 window.initKpiView = initKpiView;
+
+window.STATUS_CONFIG = STATUS_CONFIG;
+window.getStatusConfig = getStatusConfig;

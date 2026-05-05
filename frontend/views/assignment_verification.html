@@ -54,14 +54,14 @@
       <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
         <span class="text-muted small" id="verificationCount">Showing 0 of 0</span>
         <div class="d-flex align-items-center gap-1">
-          <button class="btn btn-sm av-page-nav" id="verificationPrev" onclick="navigateVerificationPage('prev')"
+          <button class="btn btn-sm page-btn" id="verificationPrev" onclick="navigateVerificationPage('prev')"
             disabled>
             Previous
           </button>
           <div class="d-flex gap-1" id="verificationPageBtns">
             <!-- Page number buttons injected by renderPageButtons() -->
           </div>
-          <button class="btn btn-sm av-page-nav" id="verificationNext" onclick="navigateVerificationPage('next')"
+          <button class="btn btn-sm page-btn" id="verificationNext" onclick="navigateVerificationPage('next')"
             disabled>
             Next
           </button>
@@ -108,21 +108,24 @@
       </div>
 
       <!-- Footer: count left, prev / page buttons / next right -->
-      <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
-        <span class="text-muted small" id="assignmentCount">Showing 0 of 0</span>
-        <div class="d-flex align-items-center gap-1">
-          <button class="btn btn-sm av-page-nav" id="assignmentPrev" onclick="navigateAssignmentPage('prev')" disabled>
-            Previous
-          </button>
-          <div class="d-flex gap-1" id="assignmentPageBtns">
-            <!-- Page number buttons injected by renderPageButtons() -->
-          </div>
-          <button class="btn btn-sm av-page-nav" id="assignmentNext" onclick="navigateAssignmentPage('next')" disabled>
-            Next
-          </button>
-        </div>
-      </div>
+<div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+  <span class="text-muted small" id="assignmentCount">Showing 0 of 0</span>
 
+  <div class="d-flex align-items-center gap-1 justify-content-end">
+    <button class="btn btn-sm page-btn" id="assignmentPrev"
+      onclick="navigateAssignmentPage('prev')" disabled>
+      Previous
+    </button>
+
+    <div class="d-flex gap-1" id="assignmentPageBtns"></div>
+
+    <button class="btn btn-sm page-btn" id="assignmentNext"
+      onclick="navigateAssignmentPage('next')" disabled>
+      Next
+    </button>
+  </div>
+</div>
+     
     </div>
   </div>
 
