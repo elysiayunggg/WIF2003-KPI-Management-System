@@ -221,7 +221,9 @@ function renderPagination() {
 
 function updateSummary() {
   const total = kpiData.length;
-  const completed = kpiData.filter(k => k.status === "Completed").length;
+  const completed = kpiData.filter(
+  k => k.status?.trim().toUpperCase() === "COMPLETED"
+).length;
   const rate = Math.round((completed / total) * 100);
 
   document.getElementById("totalKPI").textContent = total;
