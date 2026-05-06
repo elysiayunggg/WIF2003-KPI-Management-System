@@ -1,18 +1,39 @@
 /*Search input */
-#verificationSearch,
-#assignmentSearch {
-  background-color: #f0f4f7;
-  border: 1px solid #e0e3e8;
-  padding-left: 38px;
-  border-radius: 8px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+/* Match Report search bar design */
+.av-search-wrapper {
+  position: relative;
+  width: 260px;
 }
 
-#verificationSearch:focus,
-#assignmentSearch:focus {
-  border-color: #4e5e82;
-  box-shadow: 0 0 0 3px rgba(78, 94, 130, 0.1);
-  outline: none;
+.av-search-wrapper i {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+.av-search-wrapper .report-search-input {
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #e1e9ee;
+  padding-left: 42px;
+  font-size: 13px;
+  background-color: #ffffff;
+}
+
+/* Match Report assigned staff avatar */
+.report-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #d3e4fe;
+  color: #005bc4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 /*Filter button*/
@@ -46,14 +67,14 @@
 }
 
 
-.table thead th {
-  font-size: 13px;
-  font-weight: 600;
+.av-view .table thead th {
+  font-size: 11px;
+  font-weight: 800;
+  color: #566166;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #6c757d;
-  border-bottom: 2px solid #e0e3e8;
-  padding: 12px 16px;
+  letter-spacing: 0.6px;
+  background-color: #f8fafc;
+  padding: 16px 20px;
 }
 
 .table tbody td {
@@ -76,13 +97,13 @@
 }
 
 /*Status badges*/
-.badge {
+/* .badge {
   font-size: 13px;
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 6px;
   text-transform: capitalize;
-}
+} */
 
 .badge-soft-warning {
   background-color: #fff3cd;
@@ -134,6 +155,7 @@
 
 /* ─── Pagination ───────────────────────────────────────────────── */
 /* Previous / Next nav buttons */
+/*
 .av-page-nav {
   font-size: 12px;
   color: #4e5e82;
@@ -155,7 +177,10 @@
   cursor: not-allowed;
 }
 
+
+
 /* Numbered page buttons injected by renderPageButtons() */
+/*
 .av-page-btn {
   font-size: 12px;
   color: #4e5e82;
@@ -173,6 +198,7 @@
 }
 
 /* Active page button — filled */
+/*
 .av-page-btn-active {
   font-size: 12px;
   color: #ffffff;
@@ -182,6 +208,43 @@
   border-radius: 6px;
   min-width: 30px;
 }
+*/
+
+/* Shared pagination design */
+.pagination-container {
+  display: flex;
+  align-items: center;
+}
+
+/* Match KPI Management pagination */
+.av-view .pagination-container {
+  display: flex;
+  align-items: center;
+}
+
+.av-view .page-btn {
+  background: #f8f9fa;
+  border: 1px solid #e0e3e8;
+  margin: 0 4px;
+  border-radius: 8px;
+  min-width: 32px;
+  transition: all 0.2s ease;
+}
+
+.av-view .page-btn:hover {
+  background: #eef2f7;
+}
+
+.av-view .page-btn.active-page {
+  background: #e9ecef;
+  font-weight: 600;
+}
+
+.av-view button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 
 /* ─── Responsive ───────────────────────────────────────────────── */
 @media (max-width: 768px) {

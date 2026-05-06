@@ -14,13 +14,16 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h6 class="fw-bold mb-0">KPI List</h6>
-      <input type="text" class="form-control w-25" placeholder="Search KPIs...">
+      <div class="report-search-wrapper kpi-list-search-wrapper">
+        <i class="bi bi-search"></i>
+        <input type="text" class="form-control report-search-input" placeholder="Search...">
+      </div>
     </div>
 
     <!-- Table Header -->
     <div class="row text-muted small fw-bold mb-2 px-2 kpi-list-header">
-      <div class="col-4">KPI NAME</div>
-      <div class="col-4">TARGET PROGRESS</div>
+      <div class="col-3">KPI NAME</div>
+      <div class="col-5">TARGET PROGRESS</div>
       <div class="col-2">STATUS</div>
       <div class="col-2 text-end">DETAILS</div>
     </div>
@@ -34,7 +37,7 @@
 
       <div>
         <button id="listPrev" class="btn btn-sm btn-light">Previous</button>
-        <span id="listPages"></span>
+        <span id="listPages" class="d-inline-flex mx-2"></span>
         <button id="listNext" class="btn btn-sm btn-light">Next</button>
       </div>
     </div>

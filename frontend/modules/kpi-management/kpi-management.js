@@ -138,6 +138,17 @@ function formatDate(dateString) {
     day: "numeric"
   });
 }
+
+function getInitials(name) {
+  if (!name) return "";
+
+  return name
+    .split(" ")
+    .map(word => word[0])
+    .join("")
+    .toUpperCase();
+}
+
 function renderKpiRow(kpi, index) {
  const effectiveStatus = kpi.staff ? kpi.status : "UNASSIGNED";
  const statusConfig = getStatusConfig(effectiveStatus);
@@ -149,30 +160,27 @@ function renderKpiRow(kpi, index) {
 
   row.innerHTML = `
     <td>
-      <strong>${kpi.kpi}</strong><br>
+      <div class="kpi-name">${kpi.kpi}</div>
       <small class="text-muted">${kpi.department} • Priority ${kpi.priority}</small>
     </td>
 
-    <td class="fw-bold text-primary">${kpi.target}</td>
+    <td><span class="kpi-target">${kpi.target}</span></td>
 
     <td>
      ${
   kpi.staff
     ? `<div class="d-flex align-items-center gap-2">
-         <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
-              style="width:30px;height:30px;font-size:12px;">
-           ${kpi.staff.split(" ").map(n => n[0]).join("")}
-         </div>
-         ${kpi.staff}
+         <div class="report-avatar">${getInitials(kpi.staff)}</div>
+          <span class="fw-semibold">${kpi.staff}</span>
        </div>`
     :  `
-  <div class="d-flex align-items-center gap-2">
-    <span class="text-danger fw-semibold">Unassigned</span>
-    <button class="btn btn-sm btn-light border assign-btn">
-      <i class="bi bi-person-plus"></i>
-    </button>
-  </div>
-    `
+      <div class="d-flex align-items-center gap-2">
+        <span class="text-danger fw-semibold">Unassigned</span>
+        <button class="btn btn-sm btn-light border assign-btn">
+          <i class="bi bi-person-plus"></i>
+        </button>
+      </div>
+        `
 }
     </td>
 
@@ -201,6 +209,7 @@ function renderKpiRow(kpi, index) {
 
   return row;
 }
+
 function renderPagination() {
   const totalPages = Math.ceil(kpiData.length / rowsPerPage);
   const container = document.getElementById("pageNumbers");
@@ -209,7 +218,14 @@ function renderPagination() {
 
   container.innerHTML = "";
 
-  for (let i = 1; i <= totalPages; i++) {
+  let startPage = Math.max(1, currentPage - 1);
+  let endPage = Math.min(totalPages, startPage + 2);
+
+  if (endPage - startPage < 2) {
+    startPage = Math.max(1, endPage - 2);
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
     const btn = document.createElement("button");
 
     btn.className = "btn btn-sm page-btn";
@@ -223,6 +239,7 @@ function renderPagination() {
       currentPage = i;
       initKpiView();
     });
+
     container.appendChild(btn);
   }
 }

@@ -45,12 +45,12 @@ if (effectiveStatus === "INPROGRESS") {
   row.className = "row align-items-center py-2 border-bottom px-2";
 
   row.innerHTML = `
-    <div class="col-4">
+    <div class="col-3">
       <div class="fw-semibold">${kpi.kpi}</div>
       <small class="text-muted">Owner: ${kpi.staff || "Unassigned"}</small>
     </div>
 
-    <div class="col-4">
+    <div class="col-5">
       <div class="d-flex align-items-center gap-2">
         <div class="progress flex-grow-1" style="height:6px;">
           <div class="progress-bar ${progressColor}" style="width:${progress}%"></div>
@@ -59,8 +59,8 @@ if (effectiveStatus === "INPROGRESS") {
       </div>
     </div>
 
-    <div class="col-2">
-      <span class="badge" style="${statusConfig.style}">
+    <div class="col-2 ps-4">
+      <span class="badge status-badge" style="${statusConfig.style}">
         ${statusConfig.label}
       </span>
     </div>
@@ -173,6 +173,36 @@ function updateListPagination() {
 
   const prev = document.getElementById("listPrev");
   const next = document.getElementById("listNext");
+
+  const pages = document.getElementById("listPages");
+
+if (pages) {
+  pages.innerHTML = "";
+
+  let startPage = Math.max(1, kpiListCurrentPage - 1);
+  let endPage = Math.min(totalPages, startPage + 2);
+
+  if (endPage - startPage < 2) {
+    startPage = Math.max(1, endPage - 2);
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    const btn = document.createElement("button");
+    btn.className = "btn btn-sm page-btn";
+    btn.textContent = i;
+
+    if (i === kpiListCurrentPage) {
+      btn.classList.add("active-page");
+    }
+
+    btn.onclick = () => {
+      kpiListCurrentPage = i;
+      initKpiListView();
+    };
+
+    pages.appendChild(btn);
+  }
+}
 
   if (prev) {
     prev.disabled = kpiListCurrentPage === 1;

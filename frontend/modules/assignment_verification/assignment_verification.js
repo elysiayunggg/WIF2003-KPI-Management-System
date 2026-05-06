@@ -125,6 +125,16 @@ function getAssignmentActionLink(item) {
   return `<a href="#" class="av-action-link av-action-primary" onclick="changePage(event, 'Assign KPI')">Assign Staff</a>`;
 }
 
+function getInitials(name) {
+  if (!name) return "";
+
+  return name
+    .split(" ")
+    .map(word => word[0])
+    .join("")
+    .toUpperCase();
+}
+
 // Builds one <tr> for the verification table
 function createVerificationRow(item) {
   const tr = document.createElement("tr");
@@ -136,9 +146,9 @@ function createVerificationRow(item) {
       <div class="av-subtext">${item.department} | Priority ${item.priority}</div>
     </td>
     <td>
-      <div class="d-flex align-items-center gap-2 fw-semibold">
-        <i class="bi bi-person-fill"></i>
-        <span>${item.staff}</span>
+      <div class="d-flex align-items-center gap-2">
+        <div class="report-avatar">${getInitials(item.staff)}</div>
+        <span class="fw-semibold">${item.staff}</span>
       </div>
     </td>
     <td class="fw-semibold">${item.submissionTime}</td> 
@@ -163,9 +173,9 @@ function createAssignmentRow(item) {
       <div class="av-subtext">${item.department} | Priority ${item.priority}</div>
     </td>
     <td>
-      <div class="d-flex align-items-center gap-2 fw-semibold">
-        <i class="bi bi-person-fill"></i>
-        <span>${item.recommendedStaff}</span>
+      <div class="d-flex align-items-center gap-2">
+        <div class="report-avatar">${getInitials(item.recommendedStaff)}</div>
+        <span class="fw-semibold">${item.recommendedStaff}</span>
       </div>
     </td>
     <td class="fw-semibold">${item.deadline}</td>

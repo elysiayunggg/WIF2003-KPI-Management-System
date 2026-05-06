@@ -27,7 +27,7 @@
 }
 
 /* ── Search bar ────────────────────────────────────────── */
-
+/* 
 .notif-search-icon {
   background-color: #ffffff;
   border-color: #dee2e6;
@@ -43,8 +43,34 @@
 }
 
 /* Make the left border of the input-group seamless */
-.notif-search-icon + .notif-search-input {
+/* .notif-search-icon + .notif-search-input {
   border-left: none;
+} */ 
+
+ /* Match Report search bar design */
+.notif-report-search-wrapper {
+  position: relative;
+}
+
+.notif-report-search-wrapper i {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+.notif-report-search-input {
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #e1e9ee;
+  padding-left: 42px;
+  font-size: 13px;
+}
+
+.notif-report-search-input:focus {
+  box-shadow: none;
+  border-color: #adb5bd;
 }
 
 /* ── Mark all as read button ───────────────────────────── */
@@ -172,16 +198,14 @@ html[data-bs-theme="dark"] #page-content .notif-tab.notif-tab-active {
   color: #ffffff !important;
 }
 
-html[data-bs-theme="dark"] #page-content .notif-search-icon {
-  background-color: #212529 !important;
-  border-color: #495057 !important;
-  color: #adb5bd !important;
-}
-
-html[data-bs-theme="dark"] #page-content .notif-search-input {
+html[data-bs-theme="dark"] #page-content .notif-report-search-input {
   background-color: #212529 !important;
   border-color: #495057 !important;
   color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] #page-content .notif-report-search-wrapper i {
+  color: #adb5bd !important;
 }
 
 html[data-bs-theme="dark"] #page-content .notif-mark-all-btn {

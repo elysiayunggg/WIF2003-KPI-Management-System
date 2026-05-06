@@ -1,4 +1,4 @@
-<section class="p-4">
+<section class="p-4 av-view">
 
   <!-- Breadcrumb -->
   <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
@@ -9,7 +9,7 @@
 
   <!-- Title -->
   <div class="mb-4">
-    <h1 class="page-title">Assignment Verification</h1>
+    <h1 class="page-title">KPI Assignment and Verification</h1>
     <p class="page-subtitle mt-2">Review and verify staff assignments and KPI verification requests.</p>
   </div>
 
@@ -21,10 +21,12 @@
       <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
         <h5 class="fw-bold mb-0">Verification Queue</h5>
         <div class="d-flex align-items-center gap-2">
-          <div class="search-wrapper" style="width: 260px;">
+          <div class="report-search-wrapper av-search-wrapper">
             <i class="bi bi-search"></i>
-            <input type="text" class="form-control search-box fw-medium" placeholder="Search KPIs..."
-              id="verificationSearch" onkeyup="filterVerificationTable()" style="width: 100%;" />
+            <input type="text" class="form-control report-search-input"
+              placeholder="Search KPIs..."
+              id="verificationSearch"
+              onkeyup="filterVerificationTable()" />
           </div>
           <a href="#" class="av-filter-btn fw-medium">
             <i class="bi bi-funnel me-1"></i>Filters
@@ -53,16 +55,14 @@
       <!-- Footer: count left, prev / page buttons / next right -->
       <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
         <span class="text-muted small" id="verificationCount">Showing 0 of 0</span>
-        <div class="d-flex align-items-center gap-1">
-          <button class="btn btn-sm page-btn" id="verificationPrev" onclick="navigateVerificationPage('prev')"
-            disabled>
+        <div class="pagination-container">
+          <button class="btn btn-sm btn-light" id="verificationPrev" onclick="navigateVerificationPage('prev')" disabled>
             Previous
           </button>
-          <div class="d-flex gap-1" id="verificationPageBtns">
+          <div id="verificationPageBtns" class="d-inline-flex mx-2">
             <!-- Page number buttons injected by renderPageButtons() -->
           </div>
-          <button class="btn btn-sm page-btn" id="verificationNext" onclick="navigateVerificationPage('next')"
-            disabled>
+          <button class="btn btn-sm btn-light" id="verificationNext" onclick="navigateVerificationPage('next')" disabled>
             Next
           </button>
         </div>
@@ -79,10 +79,12 @@
       <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
         <h5 class="fw-bold mb-0">Assignment Queue</h5>
         <div class="d-flex align-items-center gap-2">
-          <div class="search-wrapper" style="width: 260px;">
+          <div class="report-search-wrapper av-search-wrapper">
             <i class="bi bi-search"></i>
-            <input type="text" class="form-control search-box" placeholder="Search KPIs..." id="assignmentSearch"
-              onkeyup="filterAssignmentTable()" style="width: 100%;" />
+            <input type="text" class="form-control report-search-input"
+              placeholder="Search KPIs..."
+              id="assignmentSearch"
+              onkeyup="filterAssignmentTable()" />
           </div>
           <a href="#" class="av-filter-btn fw-medium">
             <i class="bi bi-funnel me-1"></i>Filters
@@ -111,16 +113,15 @@
 <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
   <span class="text-muted small" id="assignmentCount">Showing 0 of 0</span>
 
-  <div class="d-flex align-items-center gap-1 justify-content-end">
-    <button class="btn btn-sm page-btn" id="assignmentPrev"
+  <div class="pagination-container">
+    <button class="btn btn-sm btn-light" id="assignmentPrev"
       onclick="navigateAssignmentPage('prev')" disabled>
       Previous
     </button>
 
-    <div class="d-flex gap-1" id="assignmentPageBtns"></div>
+    <div id="assignmentPageBtns" class="d-inline-flex mx-2"></div>
 
-    <button class="btn btn-sm page-btn" id="assignmentNext"
-      onclick="navigateAssignmentPage('next')" disabled>
+    <button class="btn btn-sm btn-light" id="assignmentNext" onclick="navigateAssignmentPage('next')" disabled>
       Next
     </button>
   </div>
