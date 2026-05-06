@@ -96,7 +96,7 @@
 }
 
 .report-table-card tbody td {
-  padding: 16px 20px;
+  padding: 18px 20px;
   border-top: 1px solid #f0f4f7;
   font-size: 13px;
 }
@@ -154,36 +154,32 @@
   border-radius: 999px;
 }
 
-.status-badge {
+/* .status-badge {
   font-size: 10px;
   font-weight: 800;
   padding: 4px 8px;
   border-radius: 6px;
   text-transform: uppercase;
-}
+} */
 
 .status-progress {
-  background-color: #eff6ff;
-  color: #2563eb;
-  border: 1px solid #dbeafe;
+  background: #dbe9ff;
+  color: #0a6ffd;
 }
 
 .status-overdue {
-  background-color: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fee2e2;
+  background: #fee1e2;
+  color: #db2728;
 }
 
 .status-completed {
-  background-color: #ecfdf5;
-  color: #059669;
-  border: 1px solid #d1fae5;
+  background: #d0fae4;
+  color: #17b681;
 }
 
 .status-pending {
-  background-color: #fff7ed;
-  color: #ea580c;
-  border: 1px solid #fed7aa;
+  background: #fff4c7;
+  color: #d87e15;
 }
 
 .report-action-btn {
@@ -206,6 +202,61 @@
   font-weight: 800;
   color: #6c757d;
   text-transform: uppercase;
+}
+
+/* Adjust column widths like KPI Management */
+/* Better balanced column widths */
+.report-table-card table th:nth-child(1),
+.report-table-card table td:nth-child(1) {
+  width: 20%;   /* KPI NAME ↓ reduced */
+}
+
+.report-table-card table th:nth-child(2),
+.report-table-card table td:nth-child(2) {
+  width: 12%;   /* TARGET */
+}
+
+.report-table-card table th:nth-child(3),
+.report-table-card table td:nth-child(3) {
+  width: 14%;   /* ASSIGN TO ↓ reduced */
+}
+
+.report-table-card table th:nth-child(4),
+.report-table-card table td:nth-child(4) {
+  width: 16%;   /* PROGRESS */
+}
+
+.report-table-card table th:nth-child(5),
+.report-table-card table td:nth-child(5) {
+  width: 14%;   /* STATUS */
+}
+
+.report-table-card table th:nth-child(6),
+.report-table-card table td:nth-child(6) {
+  width: 10%;   /* DEADLINE */
+}
+
+.report-table-card table th:nth-child(7),
+.report-table-card table td:nth-child(7) {
+  width: 8%;    /* ACTION */
+}
+
+.report-table-card table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.report-table-card td {
+  white-space: normal;
+  word-break: break-word;
+}
+
+.report-table-card .kpi-name {
+  font-weight: 700;
+  color: #2a3439;
+  line-height: 1.4;
+  max-height: 3.2em; /* ~2 lines */
+  overflow: hidden;
 }
 
 /* Bottom Cards */

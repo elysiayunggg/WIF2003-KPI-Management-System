@@ -14,14 +14,12 @@
 
   <!-- Row 1: Search + Mark all as read -->
   <div class="d-flex align-items-center gap-3 mb-3">
-    <div class="input-group flex-grow-1">
-      <span class="input-group-text notif-search-icon border-end-0">
-        <i class="bi bi-search text-muted"></i>
-      </span>
+    <div class="notif-report-search-wrapper flex-grow-1">
+      <i class="bi bi-search"></i>
       <input
         type="text"
         id="notifPageSearch"
-        class="form-control notif-search-input border-start-0 ps-0"
+        class="form-control notif-report-search-input"
         placeholder="Search activity details..."
         oninput="filterNotificationsBySearch(this.value)"
       />

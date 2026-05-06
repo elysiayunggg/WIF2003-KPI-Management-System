@@ -198,6 +198,18 @@ h1 { font-size: 24px; }
 h2 { font-size: 18px; }
 p { font-size: 13px; }
 
+/* Shared status badge/chip design */
+.status-badge {
+  font-size: 10px;        /* smaller text */
+  font-weight: 650;       /* keep bold look */
+  padding: 4px 8px;      /* tighter */
+  border-radius: 6px;     /* slightly sharper */
+  display: inline-block;
+  text-transform: uppercase;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .sidebar { width: 220px; }

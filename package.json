@@ -1,0 +1,27 @@
+{
+  "name": "wif2003-kpi-management-system",
+  "version": "1.0.0",
+  "description": "This project is a web-based Key Performance Indicator (KPI) Management System developed for the WIF2003 Web Programming course.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elysiayunggg/WIF2003-KPI-Management-System.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/elysiayunggg/WIF2003-KPI-Management-System/issues"
+  },
+  "homepage": "https://github.com/elysiayunggg/WIF2003-KPI-Management-System#readme",
+  "devDependencies": {
+    "tailwindcss": "^4.2.4"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.2.4"
+  }
+}

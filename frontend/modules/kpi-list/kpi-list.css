@@ -6,6 +6,69 @@
   padding: 12px 16px;
 }
 
+/* KPI List table header - match Report page */
+.kpi-list-view .kpi-list-header {
+  font-size: 11px;
+  font-weight: 800;
+  color: #566166 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  background-color: #f8fafc;
+  padding: 16px 20px;
+}
+
+.kpi-list-view #kpiListContainer .col-4:nth-child(2) small {
+  font-size: 12px;
+}
+
+/* KPI title */
+#kpiListContainer .fw-semibold {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+/* Owner text */
+#kpiListContainer small.text-muted {
+  font-size: 12px;
+}
+
+/* Progress percentage */
+#kpiListContainer .progress + small,
+#kpiListContainer small {
+  font-size: 12px;
+}
+
+.kpi-list-header {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #566166 !important;
+}
+
+/* Match Report search bar */
+.kpi-list-search-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+}
+
+.kpi-list-search-wrapper i {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+.kpi-list-search-wrapper .report-search-input {
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #e1e9ee;
+  padding-left: 42px;
+  font-size: 13px;
+}
+
 /* Dark mode — faux table header is div-based, not thead/th */
 html[data-bs-theme="dark"] #page-content .kpi-list-header {
   background-color: #343a40 !important;

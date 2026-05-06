@@ -6,6 +6,7 @@
     background-color: #eef1f4;
     border: 1px solid #dcdfe4;
     color: #495057;
+    font-size: 13px;
 }
 
 /* Placeholder */
@@ -20,12 +21,14 @@
 
 .create-kpi .assign-btn {
     background-color: #4e5e82;
+    font-size: 13px;
     color: white;
     border: none;
 }
 
 .create-kpi .create-btn {
     background-color: #4e5e82;
+    font-size: 13px;
     color: white;
     border: none;
     border-radius: 8px;
@@ -37,6 +40,7 @@
 
 .create-kpi .toggle-btn {
     background-color: #e9ecef;
+    font-size: 13px;
     border: none;
     color: #495057;
 }
