@@ -21,7 +21,7 @@ async function confirmDeleteKpi() {
 
     if (selectedKpi?.id) {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/api/kpis/${selectedKpi.id}`, {
+        const response = await fetch(`http://127.0.0.1:5050/api/kpis/${selectedKpi.id}`, {
           method: "DELETE"
         });
 

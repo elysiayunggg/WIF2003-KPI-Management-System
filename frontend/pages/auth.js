@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:5000/api/auth";
+const API_BASE = "http://127.0.0.1:5050/api/auth";
 
 /** Work / standard email: local@domain.tld (practical check, not full RFC 5322) */
 const EMAIL_MAX_LEN = 254;
