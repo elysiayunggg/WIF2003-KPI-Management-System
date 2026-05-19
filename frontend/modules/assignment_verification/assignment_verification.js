@@ -1,5 +1,5 @@
 // Hardcoded verification queue data - will be replaced with API fetch in Phase 2
-const verificationQueueData = [
+let verificationQueueData = [
   { id: 1,  kpiName: "Sales Growth Rate",          department: "Sales",          priority: "High",   staff: "Johnathan Smith", submissionTime: "2026-04-25 14:30", status: "pending"  },
   { id: 2,  kpiName: "Customer Satisfaction Score", department: "Marketing",      priority: "Medium", staff: "Sarah Johnson",   submissionTime: "2026-04-24 11:15", status: "pending"  },
   { id: 3,  kpiName: "Marketing ROI",               department: "Marketing",      priority: "Low",    staff: "Michael Chen",    submissionTime: "2026-04-23 09:45", status: "approved" },
@@ -34,8 +34,8 @@ const verificationQueueData = [
   { id: 30, kpiName: "Production Downtime",         department: "Operations",     priority: "High",   staff: "Samuel Lee",      submissionTime: "2026-03-27 12:30", status: "pending"  },
 ];
 
-// Hardcoded assignment queue data - will be replaced with API fetch in Phase 2
-const assignmentQueueData = [
+// Fallback assignment queue data when the backend is unavailable.
+let assignmentQueueData = [
   { id: 1, kpiName: "Net Promoter Score",       department: "Sales",         priority: "High",   recommendedStaff: "David Park",       deadline: "2026-05-15", status: "new"      },
   { id: 2, kpiName: "Cost Reduction Target",    department: "Finance",       priority: "Medium", recommendedStaff: "Johnathan Smith",   deadline: "2026-05-20", status: "new"      },
   { id: 3, kpiName: "Market Share Growth",      department: "Marketing",     priority: "High",   recommendedStaff: "Sarah Johnson",     deadline: "2026-05-10", status: "assigned" },
@@ -92,12 +92,13 @@ function mapVerificationStatus(status) {
 function getVerificationActionLink(item) {
   switch (item.status) {
     case "pending":
-      return `<a href="#" class="av-action-link av-action-primary" onclick="openReviewSubmissionVerify(event, ${item.id})">Go to verify</a>`;
+    case "pending verification":
+      return `<a href="#" class="av-action-link av-action-primary" onclick="openReviewSubmissionVerify(event, '${item.id}')">Go to verify</a>`;
     case "approved":
     case "rejected":
-      return `<a href="#" class="av-action-link av-action-muted" onclick="openReviewSubmissionDetails(event, ${item.id})">Review Details</a>`;
+      return `<a href="#" class="av-action-link av-action-muted" onclick="openReviewSubmissionDetails(event, '${item.id}')">Review Details</a>`;
     default:
-      return `<a href="#" class="av-action-link av-action-primary" onclick="openReviewSubmissionVerify(event, ${item.id})">Go to verify</a>`;
+      return `<a href="#" class="av-action-link av-action-primary" onclick="openReviewSubmissionVerify(event, '${item.id}')">Go to verify</a>`;
   }
 }
 
@@ -122,7 +123,13 @@ function openReviewSubmissionDetails(event, submissionId) {
 }
 
 function getAssignmentActionLink(item) {
-  return `<a href="#" class="av-action-link av-action-primary" onclick="changePage(event, 'Assign KPI')">Assign Staff</a>`;
+  return `<a href="#" class="av-action-link av-action-primary" onclick="openAssignStaff(event, '${item.id}')">Assign Staff</a>`;
+}
+
+function openAssignStaff(event, kpiId) {
+  event.preventDefault();
+  sessionStorage.setItem("assignmentKpiId", kpiId);
+  changePage(event, "Assign KPI");
 }
 
 function getInitials(name) {
@@ -292,6 +299,37 @@ function filterVerificationTable() {
   renderVerificationTable();
 }
 
+function mapKpiToVerificationItem(kpi) {
+  const staff = Array.isArray(kpi.assignedTo) ? kpi.assignedTo[0] : null;
+
+  return {
+    id: kpi._id,
+    kpiId: kpi._id,
+    kpiName: kpi.title,
+    department: kpi.department || "All Departments",
+    priority: (kpi.priority || "medium").charAt(0).toUpperCase() + (kpi.priority || "medium").slice(1),
+    staff: staff?.name || "Assigned Staff",
+    staffEmail: staff?.email || "",
+    submissionTime: kpi.updatedAt ? new Date(kpi.updatedAt).toLocaleString("en-US") : "-",
+    status: String(kpi.status || "pending verification").toLowerCase()
+  };
+}
+
+async function loadVerificationQueueFromApi() {
+  const response = await fetch("http://localhost:5000/api/kpis");
+
+  if (!response.ok) {
+    throw new Error("Failed to load verification queue");
+  }
+
+  const kpis = await response.json();
+  verificationQueueData = kpis
+    .filter(kpi => ["pending verification", "approved", "rejected"].includes(String(kpi.status || "").toLowerCase()))
+    .map(mapKpiToVerificationItem);
+
+  window.verificationQueueData = verificationQueueData;
+}
+
 function filterAssignmentTable() {
   const term = document.getElementById("assignmentSearch")?.value.toLowerCase() || "";
   filteredAssignmentData = assignmentQueueData.filter(item =>
@@ -302,6 +340,31 @@ function filterAssignmentTable() {
   );
   assignmentPage = 1;
   renderAssignmentTable();
+}
+
+function mapKpiToAssignmentItem(kpi) {
+  return {
+    id: kpi._id,
+    kpiName: kpi.title,
+    department: kpi.department || "All Departments",
+    priority: (kpi.priority || "medium").charAt(0).toUpperCase() + (kpi.priority || "medium").slice(1),
+    recommendedStaff: "Select staff",
+    deadline: kpi.dueDate ? new Date(kpi.dueDate).toISOString().split("T")[0] : "-",
+    status: "new"
+  };
+}
+
+async function loadAssignmentQueueFromApi() {
+  const response = await fetch("http://localhost:5000/api/kpis");
+
+  if (!response.ok) {
+    throw new Error("Failed to load assignment queue");
+  }
+
+  const kpis = await response.json();
+  assignmentQueueData = kpis
+    .filter(kpi => !Array.isArray(kpi.assignedTo) || kpi.assignedTo.length === 0)
+    .map(mapKpiToAssignmentItem);
 }
 
 function navigateVerificationPage(direction) {
@@ -321,13 +384,27 @@ function goToVerify(id)          { console.log("Go to verify, ID:", id); }
 function viewReviewerDetails(id) { console.log("Reviewer details, ID:", id); }
 function assignStaff(id)         { console.log("Assign staff, ID:", id); }
 
-function initAssignmentVerificationView() {
+async function initAssignmentVerificationView() {
   sessionStorage.removeItem("reviewSubmissionContext");
 
   // Reset pagination and filtered data on every load to prevent stale state
   verificationPage = 1;
   assignmentPage   = 1;
+
+  try {
+    await loadVerificationQueueFromApi();
+  } catch (error) {
+    console.error(error);
+  }
+
   filteredVerificationData = [...verificationQueueData];
+
+  try {
+    await loadAssignmentQueueFromApi();
+  } catch (error) {
+    console.error(error);
+  }
+
   filteredAssignmentData   = [...assignmentQueueData];
 
   // Clear search inputs in case the user navigated away mid-search
@@ -341,3 +418,4 @@ function initAssignmentVerificationView() {
 }
 
 window.verificationQueueData = verificationQueueData;
+window.openAssignStaff = openAssignStaff;

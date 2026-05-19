@@ -103,6 +103,11 @@ function validateUpdate(data) {
     return false;
   }
 
+  if (!Number.isFinite(Number(data.target))) {
+    alert("Target value must be a number. For example, enter 2 and choose Time (Hours).");
+    return false;
+  }
+
   return true;
 }
 
@@ -139,8 +144,11 @@ function loadKpiData(container) {
 
   if (nameInput) nameInput.value = kpi.kpi || "";
   if (descInput) descInput.value = kpi.description || "";
-  if (targetInput) targetInput.value = kpi.target || "";
+  if (targetInput) targetInput.value = kpi.targetValue ?? "";
   if (deadlineInput) deadlineInput.value = formatDateForInput(kpi.deadline);
+
+  const unitSelect = container.querySelector("#kpiUnit");
+  if (unitSelect) unitSelect.value = unitToSelectLabel(kpi.unit);
 
  
   // SET STATUS BUTTON
@@ -150,7 +158,7 @@ function loadKpiData(container) {
   statusBtns.forEach(btn => {
     btn.classList.remove("active");
 
-    if (btn.dataset.status === kpi.status) {
+    if (normalizeStatusForApi(btn.dataset.status) === normalizeStatusForApi(kpi.status)) {
       btn.classList.add("active");
     }
   });
@@ -174,9 +182,7 @@ function loadKpiData(container) {
   }
 }
 
-// MOCK UPDATE (BACKEND READY)
-
-function updateKpi(data) {
+async function updateKpi(data) {
   const index = window.selectedKpiIndex;
 
   if (index === undefined) {
@@ -184,24 +190,81 @@ function updateKpi(data) {
     return;
   }
 
-  console.log("Updating KPI...", data);
+  const selectedKpi = window.kpiData?.[index];
 
-  setTimeout(() => {
+  if (!selectedKpi?.id) {
+    alert("Unable to update KPI because no database id was found.");
+    return;
+  }
+
+  const payload = {
+    title: data.kpi,
+    description: data.description,
+    targetValue: Number(data.target),
+    unit: normalizeUnit(data.unit),
+    status: normalizeStatusForApi(data.status),
+    dueDate: data.deadline
+  };
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/kpis/${selectedKpi.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      alert(result.message || "Failed to update KPI.");
+      return;
+    }
+
     alert("KPI Updated Successfully!");
+    changePage({ preventDefault() {} }, "KPI Management");
+  } catch (error) {
+    alert("Cannot connect to server. Please make sure the backend is running.");
+  }
+}
 
-    // update global data
-    window.kpiData[index] = {
-      ...window.kpiData[index],
-      ...data
-    };
+function normalizeUnit(unit) {
+  if (unit.includes("Currency")) return "RM";
+  if (unit.includes("Percentage")) return "%";
+  if (unit.includes("Time")) return "hours";
+  return unit;
+}
 
-    // sync localStorage
-    localStorage.setItem("kpiData", JSON.stringify(window.kpiData));
+function unitToSelectLabel(unit) {
+  switch (unit) {
+    case "RM":
+      return "Currency (RM)";
+    case "%":
+      return "Percentage (%)";
+    case "hours":
+      return "Time (Hours)";
+    default:
+      return "Percentage (%)";
+  }
+}
 
-    // redirect back
-    changePage(null, "KPI Management");
+function normalizeStatusForApi(status) {
+  const value = String(status || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
 
-  }, 500);
+  const allowedStatuses = {
+    pending: "pending verification",
+    "pending verification": "pending verification",
+    "in progress": "in progress",
+    completed: "completed",
+    overdue: "overdue",
+    "not started": "not started"
+  };
+
+  return allowedStatuses[value] || "not started";
 }
 
 function formatDateForInput(dateStr) {

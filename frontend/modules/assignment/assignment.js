@@ -1,41 +1,36 @@
 function selectPerson(card) {
-  // Remove selected class from all person cards
   document.querySelectorAll(".staff-card").forEach(c => {
     c.classList.remove("selected");
   });
-  // Add selected class to clicked card
+
   card.classList.add("selected");
 }
 
-// Placeholder for add stakeholder modal - implement based on your modal system
 function openAddStakeholderModal() {
   console.log("Open add stakeholder modal");
-  // TODO: Implement modal/form to add new stakeholder
 }
 
-// Hardcoded for now — in Phase 2 this gets replaced with a fetch() call to your backend API.
-// Each object represents one staff member.
-const staffData = [
-  { id: 1, name: "Johnathan Smith",  role: "Sales Manager",      department: "Sales Department"       },
-  { id: 2, name: "Sarah Johnson",    role: "Marketing Director",  department: "Marketing Department"   },
-  { id: 3, name: "Michael Chen",     role: "Operations Lead",     department: "Operations Department"  },
-  { id: 4, name: "Emily Davis",      role: "HR Specialist",       department: "Human Resources"        },
+let staffData = [
+  { id: 1, name: "Johnathan Smith", role: "Sales Manager", department: "Sales Department" },
+  { id: 2, name: "Sarah Johnson", role: "Marketing Director", department: "Marketing Department" },
+  { id: 3, name: "Michael Chen", role: "Operations Lead", department: "Operations Department" },
+  { id: 4, name: "Emily Davis", role: "HR Specialist", department: "Human Resources" }
 ];
 
 const stakeholderData = [
-  { id: 1, name: "Alex Turner"  },
-  { id: 2, name: "Lisa Wong"    },
-  { id: 3, name: "David Park"   },
+  { id: 1, name: "Alex Turner" },
+  { id: 2, name: "Lisa Wong" },
+  { id: 3, name: "David Park" }
 ];
 
-// Builds one person card div from a staff object and appends it to the staff list.
 function renderStaffCard(person) {
   const card = document.createElement("div");
-  // Sets all the classes the card needs — same as what was hardcoded before
   card.className = "staff-card mb-3 p-3 rounded-3 d-flex align-items-center justify-content-between";
-  card.onclick = function () { selectPerson(this); };
+  card.dataset.staffId = person.id;
+  card.onclick = function () {
+    selectPerson(this);
+  };
 
-  // innerHTML builds the inner structure using the person's data
   card.innerHTML = `
     <div class="d-flex align-items-center gap-3">
       <i class="bi bi-person-fill"></i>
@@ -52,7 +47,6 @@ function renderStaffCard(person) {
   return card;
 }
 
-// Builds one stakeholder badge from a stakeholder object.
 function renderStakeholderBadge(stakeholder) {
   const badge = document.createElement("div");
   badge.className = "stakeholder-badge d-flex align-items-center gap-2 px-3 py-2 rounded-3 bg-light";
@@ -65,17 +59,112 @@ function renderStakeholderBadge(stakeholder) {
   return badge;
 }
 
-// Renders all staff cards and stakeholder badges into their containers.
-// Called once when the assignment view is loaded.
-function initAssignmentView() {
+async function loadStaffFromApi() {
+  const response = await fetch("http://localhost:5000/api/auth/users?role=staff");
+
+  if (!response.ok) {
+    throw new Error("Failed to load staff");
+  }
+
+  const users = await response.json();
+  staffData = users.map(user => ({
+    id: user._id,
+    name: user.name,
+    role: "Staff",
+    department: user.department || "General"
+  }));
+}
+
+async function loadSelectedKpiTitle() {
+  const kpiId = sessionStorage.getItem("assignmentKpiId");
+  const titleSpan = document.querySelector(".page-subtitle .fw-semibold");
+
+  if (!kpiId || !titleSpan) return;
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/kpis/${kpiId}`);
+    if (!response.ok) return;
+
+    const kpi = await response.json();
+    titleSpan.textContent = kpi.title;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function updateAssignment() {
+  const kpiId = sessionStorage.getItem("assignmentKpiId");
+  const selectedCard = document.querySelector(".staff-card.selected");
+
+  if (!kpiId) {
+    alert("Please choose a KPI from the assignment queue first.");
+    return;
+  }
+
+  if (!selectedCard?.dataset.staffId) {
+    alert("Please select a staff member.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/kpis/${kpiId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        assignedTo: [selectedCard.dataset.staffId],
+        status: "in progress"
+      })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      alert(result.message || "Failed to update assignment.");
+      return;
+    }
+
+    alert("KPI assigned successfully!");
+    sessionStorage.removeItem("assignmentKpiId");
+    changePage({ preventDefault() {} }, "KPI Assignment & Verification");
+  } catch (error) {
+    alert("Cannot connect to server. Please make sure the backend is running.");
+  }
+}
+
+function setupAssignmentSubmit() {
+  const updateBtn = Array.from(document.querySelectorAll(".highLightButton"))
+    .find(btn => btn.textContent.trim() === "Update Assignment");
+
+  if (!updateBtn || updateBtn.dataset.bound) return;
+
+  updateBtn.dataset.bound = "true";
+  updateBtn.addEventListener("click", updateAssignment);
+}
+
+async function initAssignmentView() {
   const staffList = document.getElementById("staffList");
   const stakeholderList = document.getElementById("stakeholderList");
 
+  await loadSelectedKpiTitle();
+
+  try {
+    await loadStaffFromApi();
+  } catch (error) {
+    console.error(error);
+  }
+
   if (staffList) {
-    staffList.innerHTML = ""; 
-    staffData.forEach(person => {
-      staffList.appendChild(renderStaffCard(person));
-    });
+    staffList.innerHTML = "";
+
+    if (!staffData.length) {
+      staffList.innerHTML = `<div class="text-muted text-center py-4">No staff accounts found. Register a staff user first.</div>`;
+    } else {
+      staffData.forEach(person => {
+        staffList.appendChild(renderStaffCard(person));
+      });
+    }
   }
 
   if (stakeholderList) {
@@ -84,4 +173,9 @@ function initAssignmentView() {
       stakeholderList.appendChild(renderStakeholderBadge(stakeholder));
     });
   }
+
+  setupAssignmentSubmit();
 }
+
+window.initAssignmentView = initAssignmentView;
+window.openAddStakeholderModal = openAddStakeholderModal;

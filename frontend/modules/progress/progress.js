@@ -11,6 +11,80 @@ let progressCurrentFilter = "all";
 let progressPriorityFilter = "all";
 let progressSearchQuery = "";
 
+function getProgressLoggedInUserId() {
+    try {
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        return user.id;
+    } catch (error) {
+        return null;
+    }
+}
+
+function progressFormatTarget(kpi) {
+    if (kpi.targetValue === undefined || kpi.targetValue === null) return "-";
+    return `${kpi.targetValue}${kpi.unit ? ` ${kpi.unit}` : ""}`;
+}
+
+function progressFormatStatus(status) {
+    const value = String(status || "not started").toLowerCase();
+    if (value === "pending verification") return "Awaiting Review";
+    return value
+        .split(" ")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+}
+
+function progressFormatDate(dateString) {
+    const date = new Date(dateString);
+    if (isNaN(date)) return dateString || "-";
+
+    return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric"
+    });
+}
+
+function mapProgressApiKpi(kpi) {
+    const progress = kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0;
+
+    return {
+        id: kpi._id,
+        kpi: kpi.title,
+        description: kpi.description,
+        department: kpi.department || "All Departments",
+        priority: progressFormatStatus(kpi.priority || "medium"),
+        target: progressFormatTarget(kpi),
+        targetValue: kpi.targetValue,
+        currentValue: kpi.currentValue || 0,
+        unit: kpi.unit || "",
+        staff: localStorage.getItem("userName") || "Staff",
+        progress,
+        status: progressFormatStatus(kpi.status),
+        deadline: progressFormatDate(kpi.dueDate)
+    };
+}
+
+async function loadProgressAssignedKpis() {
+    const userId = getProgressLoggedInUserId();
+    if (!userId) {
+        window.kpiData = [];
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:5000/api/kpis");
+        if (!response.ok) throw new Error("Failed to load assigned KPI progress");
+
+        const kpis = await response.json();
+        window.kpiData = kpis
+            .filter(kpi => Array.isArray(kpi.assignedTo) && kpi.assignedTo.some(user => user._id === userId))
+            .map(mapProgressApiKpi);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 function kpiSharedPriorityTier(priority) {
     const p = (priority || "").toLowerCase();
     if (p.includes("high")) return "high";
@@ -82,7 +156,8 @@ function renderProgressCards() {
     ProgressCardComponent.renderCards("kpi-cards-container", getFilteredProgressData());
 }
 
-function initProgressView() {
+async function initProgressView() {
+    await loadProgressAssignedKpis();
     renderProgressCards();
 
     const summary = document.getElementById("progress-data-summary");

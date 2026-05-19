@@ -1,7 +1,9 @@
-function initReportView() {
+async function initReportView() {
   initReportCalendar();
+  await loadReportKpisFromApi();
+  initReportSearch();
   renderReportTable();
-  updateReportSummary(window.kpiData);
+  updateReportSummary(getFilteredReportRows());
 }
 
 let reportCurrentMonth = 3;
@@ -14,8 +16,101 @@ let reportSelectedStatus = "All Status";
 let reportSelectedStaff = "All Members";
 let reportSelectedStartDate = null;
 let reportSelectedEndDate = null;
+let reportSearchQuery = "";
 
-const reportRows = window.kpiData;
+let reportRows = [];
+
+function reportFormatStatus(status) {
+  const value = String(status || "not started").toLowerCase();
+
+  if (value === "pending verification") return "Pending Verification";
+  if (value === "approved") return "Completed";
+  if (value === "rejected") return "Pending Verification";
+
+  return value
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function reportFormatDate(dateString) {
+  const date = new Date(dateString);
+  if (isNaN(date)) return dateString || "-";
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric"
+  });
+}
+
+function reportFormatTarget(kpi) {
+  if (kpi.targetValue === undefined || kpi.targetValue === null) return "-";
+  return `${kpi.targetValue}${kpi.unit ? ` ${kpi.unit}` : ""}`;
+}
+
+function reportInitials(name) {
+  if (!name) return "-";
+  return name
+    .split(" ")
+    .map(word => word[0])
+    .join("")
+    .toUpperCase();
+}
+
+function mapReportApiKpi(kpi) {
+  const assignedUsers = Array.isArray(kpi.assignedTo) ? kpi.assignedTo : [];
+  const firstStaff = assignedUsers[0];
+  const progress = kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0;
+
+  return {
+    id: kpi._id,
+    kpi: kpi.title,
+    description: kpi.description,
+    department: kpi.department || "All Departments",
+    priority: reportFormatStatus(kpi.priority || "medium"),
+    target: reportFormatTarget(kpi),
+    staff: firstStaff?.name || "Unassigned",
+    initials: reportInitials(firstStaff?.name),
+    progress,
+    status: reportFormatStatus(kpi.status),
+    deadline: reportFormatDate(kpi.dueDate),
+    rawDeadline: kpi.dueDate
+  };
+}
+
+async function loadReportKpisFromApi() {
+  try {
+    const response = await fetch("http://localhost:5000/api/kpis");
+    if (!response.ok) throw new Error("Failed to load report KPIs");
+
+    const kpis = await response.json();
+    reportRows = kpis.map(mapReportApiKpi);
+    window.kpiData = reportRows;
+    updateReportStaffFilterOptions();
+  } catch (error) {
+    console.error(error);
+    reportRows = Array.isArray(window.kpiData) ? window.kpiData : [];
+    updateReportStaffFilterOptions();
+  }
+}
+
+function updateReportStaffFilterOptions() {
+  const dropdown = document.getElementById("reportStaffDropdown");
+  if (!dropdown) return;
+
+  const staffNames = [...new Set(reportRows.map(row => row.staff).filter(Boolean))].sort();
+  dropdown.innerHTML = `
+    <button onclick="selectReportDropdownOption('reportSelectedStaff', 'reportStaffDropdown', 'All Members')">All Members</button>
+    ${staffNames.map(name => `
+      <button onclick="selectReportDropdownOption('reportSelectedStaff', 'reportStaffDropdown', '${escapeReportAttribute(name)}')">${name}</button>
+    `).join("")}
+  `;
+}
+
+function escapeReportAttribute(value) {
+  return String(value).replace(/'/g, "\\'");
+}
 
 function renderReportTable() {
   const tableBody = document.getElementById("reportTableBody");
@@ -34,6 +129,8 @@ function renderReportTable() {
         </td>
       </tr>
     `;
+    updateReportViewAllButton();
+    updateReportSummary(filteredRows);
     return;
   }
 
@@ -75,13 +172,16 @@ function renderReportTable() {
         <td>${row.deadline}</td>
 
         <td class="text-center">
-          <button class="report-action-btn">
+          <button class="report-action-btn" onclick="viewReportKpi('${row.id}')">
             <i class="bi bi-eye"></i>
           </button>
         </td>
       </tr>
     `;
   });
+
+  updateReportViewAllButton();
+  updateReportSummary(filteredRows);
 }
 
 function getFilteredReportRows() {
@@ -101,11 +201,35 @@ function getFilteredReportRows() {
       !reportSelectedEndDate ||
       (rowDate >= reportSelectedStartDate && rowDate <= reportSelectedEndDate);
 
-    return matchStatus && matchStaff && matchDate;
+    const text = [
+      row.kpi,
+      row.department,
+      row.staff,
+      row.status,
+      row.priority
+    ].join(" ").toLowerCase();
+    const matchSearch = !reportSearchQuery || text.includes(reportSearchQuery);
+
+    return matchStatus && matchStaff && matchDate && matchSearch;
+  });
+}
+
+function initReportSearch() {
+  const input = document.getElementById("reportSearchInput");
+  if (!input) return;
+
+  input.value = reportSearchQuery;
+  input.addEventListener("input", function () {
+    reportSearchQuery = input.value.trim().toLowerCase();
+    showAllReportRows = false;
+    renderReportTable();
   });
 }
 
 function parseReportDeadline(deadline) {
+  const parsedDate = new Date(deadline);
+  if (!isNaN(parsedDate)) return parsedDate;
+
   const monthMap = {
     Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
     Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11
@@ -166,7 +290,6 @@ function selectReportDropdownOption(selectedTextId, dropdownId, value) {
 
   showAllReportRows = false;
   renderReportTable();
-  updateReportViewAllButton();
 
   closeAllReportDropdowns();
 }
@@ -309,7 +432,6 @@ function chooseReportDate() {
 
   showAllReportRows = false;
   renderReportTable();
-  updateReportViewAllButton();
 
   closeAllReportDropdowns();
 }
@@ -328,7 +450,6 @@ function clearReportDateFilter(event) {
 
   renderReportCalendar();
   renderReportTable();
-  updateReportViewAllButton();
 }
 
 function updateReportViewAllButton() {
@@ -364,25 +485,247 @@ function formatReportDate(date) {
 
 /* Export Buttons */
 function exportReportPDF() {
-  alert("PDF export will be implemented in Phase 2.");
+  const rows = getFilteredReportRows();
+  const html = buildReportPrintTable(
+    "KPI Report",
+    ["KPI Name", "Department", "Target", "Assigned To", "Progress", "Status", "Deadline"],
+    rows.map(row => [
+      row.kpi,
+      row.department,
+      row.target,
+      row.staff,
+      `${row.progress}%`,
+      row.status,
+      row.deadline
+    ])
+  );
+
+  printReportHtml(html);
 }
 
 function exportReportCSV() {
-  alert("CSV export will be implemented in Phase 2.");
+  const rows = getFilteredReportRows();
+  const csvRows = [
+    ["KPI Name", "Department", "Target", "Assigned To", "Progress", "Status", "Deadline"],
+    ...rows.map(row => [
+      row.kpi,
+      row.department,
+      row.target,
+      row.staff,
+      `${row.progress}%`,
+      row.status,
+      row.deadline
+    ])
+  ];
+
+  downloadReportCsv("kpi-report.csv", csvRows);
 }
 
 function viewAllReportTasks() {
   showAllReportRows = !showAllReportRows;
   renderReportTable();
-  updateReportViewAllButton();
+}
+
+function downloadReportCsv(filename, rows) {
+  const csv = rows
+    .map(row => row.map(value => `"${String(value ?? "").replace(/"/g, '""')}"`).join(","))
+    .join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+function buildReportPrintTable(title, headers, rows) {
+  const printedAt = new Date().toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  return `
+    <!doctype html>
+    <html>
+      <head>
+        <title>${title}</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            color: #172033;
+            margin: 32px;
+          }
+
+          h1 {
+            font-size: 22px;
+            margin: 0 0 4px;
+          }
+
+          .meta {
+            color: #667085;
+            font-size: 12px;
+            margin-bottom: 24px;
+          }
+
+          table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 12px;
+          }
+
+          th,
+          td {
+            border: 1px solid #d9dee8;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+          }
+
+          th {
+            background: #eef2f7;
+            font-weight: 700;
+          }
+
+          tr:nth-child(even) td {
+            background: #f8fafc;
+          }
+
+          @media print {
+            body { margin: 18mm; }
+          }
+        </style>
+      </head>
+      <body>
+        <h1>${escapeReportHtml(title)}</h1>
+        <div class="meta">Generated ${escapeReportHtml(printedAt)}</div>
+        <table>
+          <thead>
+            <tr>${headers.map(header => `<th>${escapeReportHtml(header)}</th>`).join("")}</tr>
+          </thead>
+          <tbody>
+            ${
+              rows.length
+                ? rows.map(row => `<tr>${row.map(value => `<td>${escapeReportHtml(value)}</td>`).join("")}</tr>`).join("")
+                : `<tr><td colspan="${headers.length}">No KPI data found.</td></tr>`
+            }
+          </tbody>
+        </table>
+      </body>
+    </html>
+  `;
+}
+
+function printReportHtml(html) {
+  const printWindow = window.open("", "_blank", "width=1000,height=700");
+  if (!printWindow) {
+    alert("Please allow pop-ups to export the PDF.");
+    return;
+  }
+
+  printWindow.document.open();
+  printWindow.document.write(html);
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+}
+
+function escapeReportHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function viewReportKpi(id) {
+  const index = Array.isArray(window.kpiData)
+    ? window.kpiData.findIndex(item => item.id === id)
+    : -1;
+
+  if (index >= 0) {
+    window.selectedKpiDetailIndex = index;
+  }
+
+  if (typeof changePage === "function") {
+    changePage({ preventDefault() {} }, "KPI Detail");
+  }
 }
 
 function updateReportSummary(data) {
   const total = data.length;
   const completed = data.filter(d => d.status === "Completed").length;
+  const active = data.filter(d => d.status === "In Progress" || d.status === "Pending Verification").length;
 
   const completionRate = total === 0 ? 0 : Math.round((completed / total) * 100);
 
   document.getElementById("reportCompletionRate").textContent = `${completionRate}%`;
-  document.getElementById("reportActiveTasks").textContent = total;
+  document.getElementById("reportActiveTasks").textContent = active;
+
+  const progressBar = document.querySelector(".report-bottom-card .report-progress > div");
+  if (progressBar) {
+    progressBar.style.width = `${completionRate}%`;
+  }
+
+  const changeText = document.querySelector(".report-bottom-card .positive-change");
+  if (changeText) {
+    changeText.textContent = total === 0 ? "No KPI data" : `${completed} of ${total} completed`;
+  }
+
+  updateReportTaskBars(data);
+  updateReportUpcomingDeadlines(data);
+}
+
+function updateReportTaskBars(data) {
+  const bars = document.querySelectorAll(".active-task-card .task-bars div");
+  if (bars.length === 0) return;
+
+  const activeCount = data.filter(d => d.status === "In Progress" || d.status === "Pending Verification").length;
+  const filledBars = Math.min(bars.length, activeCount);
+
+  bars.forEach((bar, index) => {
+    bar.classList.toggle("empty", index >= filledBars);
+    bar.classList.toggle("warning", index === filledBars - 1 && activeCount > 0);
+  });
+}
+
+function updateReportUpcomingDeadlines(data) {
+  const cards = document.querySelectorAll(".report-bottom-card");
+  const deadlineCard = cards[2];
+  if (!deadlineCard) return;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const upcoming = data
+    .filter(row => row.rawDeadline && row.status !== "Completed")
+    .map(row => ({ ...row, due: new Date(row.rawDeadline) }))
+    .filter(row => !isNaN(row.due) && row.due >= today)
+    .sort((a, b) => a.due - b.due)
+    .slice(0, 2);
+
+  deadlineCard.innerHTML = `<p>Upcoming Deadlines</p>`;
+
+  if (upcoming.length === 0) {
+    deadlineCard.innerHTML += `
+      <div class="deadline-item">
+        <span>No upcoming KPI deadlines</span>
+        <small>-</small>
+      </div>
+    `;
+    return;
+  }
+
+  upcoming.forEach(row => {
+    deadlineCard.innerHTML += `
+      <div class="deadline-item">
+        <span>${row.kpi}</span>
+        <small>${reportFormatDate(row.rawDeadline)}</small>
+      </div>
+    `;
+  });
 }

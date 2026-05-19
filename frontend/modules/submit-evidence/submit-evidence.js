@@ -28,6 +28,74 @@ function applyEvidenceContextFromSelectedKpi(root) {
     }
 }
 
+function getSelectedEvidenceKpi() {
+    const idx =
+        window.selectedKpiDetailIndex != null && window.selectedKpiDetailIndex !== ""
+            ? parseInt(window.selectedKpiDetailIndex, 10)
+            : 0;
+
+    if (typeof window.getKpiDataRow === "function") {
+        return window.getKpiDataRow(idx) || window.getKpiDataRow(0);
+    }
+
+    return Array.isArray(window.kpiData) ? window.kpiData[idx] || window.kpiData[0] : null;
+}
+
+async function submitEvidenceProgress(root) {
+    const row = getSelectedEvidenceKpi();
+    const slider = root.querySelector("#progress-slider");
+    const title = root.querySelector("#evidence-title")?.value.trim();
+    const description = root.querySelector("#evidence-desc")?.value.trim() || "";
+    const fileInput = root.querySelector("#file-input");
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+    if (!row?.id) {
+        alert("Unable to submit evidence because no KPI was selected.");
+        return;
+    }
+
+    if (!user.id) {
+        alert("Unable to submit evidence because no logged-in user was found.");
+        return;
+    }
+
+    if (!title) {
+        alert("Submission title is required.");
+        return;
+    }
+
+    const progress = Math.min(100, Math.max(0, Number(slider?.value) || 0));
+    const formData = new FormData();
+    formData.append("kpiId", row.id);
+    formData.append("submittedBy", user.id);
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("progress", String(progress));
+
+    Array.from(fileInput?.files || []).forEach(file => {
+        formData.append("files", file);
+    });
+
+    try {
+        const response = await fetch("http://localhost:5000/api/evidence", {
+            method: "POST",
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            alert(result.message || "Failed to submit evidence.");
+            return;
+        }
+
+        alert("Evidence submitted successfully!");
+        changePage({ preventDefault() {} }, "KPI Progress");
+    } catch (error) {
+        alert("Cannot connect to server. Please make sure the backend is running.");
+    }
+}
+
 /**
  * Initializes the Submit/View Evidence view.
  */
@@ -94,6 +162,7 @@ function setupSubmitEvidenceMode(root) {
     if (submitBtn) {
         submitBtn.textContent = "Submit Evidence";
         submitBtn.classList.remove('evidence-update-mode');
+        submitBtn.onclick = () => submitEvidenceProgress(root);
     }
 }
 
@@ -103,6 +172,7 @@ function setupEditEvidenceMode(root) {
     if (submitBtn) {
         submitBtn.textContent = "Update Evidence";
         submitBtn.classList.add('evidence-update-mode');
+        submitBtn.onclick = () => submitEvidenceProgress(root);
     }
 }
 

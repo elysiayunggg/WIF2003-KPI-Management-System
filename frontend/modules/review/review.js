@@ -47,7 +47,7 @@ function readReviewContext() {
   try {
     const p = JSON.parse(raw);
     const id = p.submissionId;
-    const row = id != null ? queue.find((x) => x.id === id) : null;
+    const row = id != null ? queue.find((x) => String(x.id) === String(id)) : null;
     return {
       mode: p.mode === "details" ? "details" : "verify",
       submission: row ? enrichQueueRow(row) : null
@@ -271,11 +271,71 @@ function selectVerification(type) {
   });
 
   // Add selected class to clicked card
-  const clickedCard = event.currentTarget;
+  const clickedCard = document.querySelector(type === "approve" ? ".approve-card" : ".reject-card");
+  if (!clickedCard) return;
   clickedCard.classList.add("selected");
 
   // Store selection for form submission
   clickedCard.closest(".card-body").dataset.selectedVerification = type;
+}
+
+function getSelectedReviewKpiId() {
+  const ctx = readReviewContext();
+  return ctx.submission?.kpiId || ctx.submission?.id || null;
+}
+
+async function saveReviewDecision() {
+  const actionsCard = document.getElementById("verificationActionsCard");
+  const cardBody = actionsCard?.querySelector(".card-body");
+  const decision = cardBody?.dataset.selectedVerification;
+  const comments = actionsCard?.querySelector("textarea")?.value.trim() || "";
+  const kpiId = getSelectedReviewKpiId();
+
+  if (!kpiId) {
+    alert("Unable to save review because no KPI was selected.");
+    return;
+  }
+
+  if (!decision) {
+    alert("Please choose Approve or Reject.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/kpis/${kpiId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        status: decision === "approve" ? "approved" : "rejected",
+        reviewComments: comments
+      })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      alert(result.message || "Failed to save review decision.");
+      return;
+    }
+
+    alert("Review decision saved successfully!");
+    sessionStorage.removeItem("reviewSubmissionContext");
+    changePage({ preventDefault() {} }, "KPI Assignment & Verification");
+  } catch (error) {
+    alert("Cannot connect to server. Please make sure the backend is running.");
+  }
+}
+
+function setupReviewSubmit() {
+  const saveBtn = Array.from(document.querySelectorAll(".highLightButton"))
+    .find(btn => btn.textContent.trim() === "Save Changes");
+
+  if (!saveBtn || saveBtn.dataset.bound) return;
+
+  saveBtn.dataset.bound = "true";
+  saveBtn.addEventListener("click", saveReviewDecision);
 }
 
 function renderReviewSidePanel() {
@@ -335,4 +395,5 @@ function renderKPIReview() {
 // Initialize the review view when called
 function initReviewView() {
   renderKPIReview();
+  setupReviewSubmit();
 }
