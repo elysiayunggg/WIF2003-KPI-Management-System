@@ -1,5 +1,5 @@
 
-const KPI_API_BASE = "http://localhost:5000/api/kpis";
+const KPI_API_BASE = "http://127.0.0.1:5000/api/kpis";
 let currentPage = 1;
 const rowsPerPage = 5;
 // window.kpiData = [

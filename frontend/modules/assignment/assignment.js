@@ -60,7 +60,7 @@ function renderStakeholderBadge(stakeholder) {
 }
 
 async function loadStaffFromApi() {
-  const response = await fetch("http://localhost:5000/api/auth/users?role=staff");
+  const response = await fetch("http://127.0.0.1:5000/api/auth/users?role=staff");
 
   if (!response.ok) {
     throw new Error("Failed to load staff");
@@ -82,7 +82,7 @@ async function loadSelectedKpiTitle() {
   if (!kpiId || !titleSpan) return;
 
   try {
-    const response = await fetch(`http://localhost:5000/api/kpis/${kpiId}`);
+    const response = await fetch(`http://127.0.0.1:5000/api/kpis/${kpiId}`);
     if (!response.ok) return;
 
     const kpi = await response.json();
@@ -107,7 +107,7 @@ async function updateAssignment() {
   }
 
   try {
-    const response = await fetch(`http://localhost:5000/api/kpis/${kpiId}`, {
+    const response = await fetch(`http://127.0.0.1:5000/api/kpis/${kpiId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
