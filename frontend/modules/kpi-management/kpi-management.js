@@ -1,4 +1,5 @@
 
+const KPI_API_BASE = "http://127.0.0.1:5050/api/kpis";
 let currentPage = 1;
 const rowsPerPage = 5;
 // window.kpiData = [
@@ -83,27 +84,36 @@ const rowsPerPage = 5;
 //     status: "COMPLETED"
 //   }
 // ];
-const kpiData = window.kpiData;
+let kpiData = [];
 
 const STATUS_CONFIG = {
   COMPLETED: {
-    label: "Completed",
+    label: "COMPLETED",
     style: "background:#d0fae4; color:#17b681;"
   },
+
   "IN PROGRESS": {
-    label: "In Progress",
+    label: "IN PROGRESS",
     style: "background:#dbe9ff; color:#0a6ffd;"
   },
   "PENDING VERIFICATION": {
-    label: "Pending Verification",
+    label: "PENDING VERIFICATION",
     style: "background:#fff4c7; color:#d87e15;"
   },
   OVERDUE: {
-    label: "Overdue",
+    label: "OVERDUE",
+    style: "background:#fee1e2; color:#db2728;"
+  },
+   APPROVED: {
+    label: "APPROVED",
+    style: "background:#d0fae4; color:#17b681;"
+  },
+  REJECTED: {
+    label: "REJECTED",
     style: "background:#fee1e2; color:#db2728;"
   },
   UNASSIGNED: {
-    label: "Unassigned",
+    label: "UNASSIGNED",
     style: "background:#f1f3f5; color:#dc3545;"
   }
 };
@@ -129,6 +139,65 @@ function formatDate(dateString) {
     day: "numeric"
   });
 }
+
+function formatTargetValue(kpi) {
+  if (kpi.targetValue === undefined || kpi.targetValue === null) return "-";
+  return `${kpi.targetValue}${kpi.unit ? ` ${kpi.unit}` : ""}`;
+}
+
+function normalizeApiStatus(status) {
+  const value = status || "not started";
+  return value
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function mapApiKpi(kpi) {
+  const assignedUsers = Array.isArray(kpi.assignedTo) ? kpi.assignedTo : [];
+  const firstStaff = assignedUsers[0];
+
+  return {
+    id: kpi._id,
+    kpi: kpi.title,
+    description: kpi.description,
+    department: kpi.department || "All Departments",
+    priority: normalizeApiStatus(kpi.priority || "medium"),
+    targetValue: kpi.targetValue,
+    currentValue: kpi.currentValue || 0,
+    unit: kpi.unit || "",
+    target: formatTargetValue(kpi),
+    staff: firstStaff?.name || null,
+    initials: getInitials(firstStaff?.name),
+    ownerRole: firstStaff?.role || "",
+    progress: kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0,
+    status: normalizeApiStatus(kpi.status),
+    deadline: kpi.dueDate
+  };
+}
+
+async function loadKpisFromApi() {
+  const response = await fetch(KPI_API_BASE);
+
+  if (!response.ok) {
+    throw new Error("Failed to load KPIs");
+  }
+
+  const apiKpis = await response.json();
+  kpiData = apiKpis.map(mapApiKpi);
+  window.kpiData = kpiData;
+}
+
+function getInitials(name) {
+  if (!name) return "";
+
+  return name
+    .split(" ")
+    .map(word => word[0])
+    .join("")
+    .toUpperCase();
+}
+
 function renderKpiRow(kpi, index) {
  const effectiveStatus = kpi.staff ? kpi.status : "UNASSIGNED";
  const statusConfig = getStatusConfig(effectiveStatus);
@@ -157,13 +226,13 @@ function renderKpiRow(kpi, index) {
          ${kpi.staff}
        </div>`
     :  `
-  <div class="d-flex align-items-center gap-2">
-    <span class="text-danger fw-semibold">Unassigned</span>
-    <button class="btn btn-sm btn-light border assign-btn">
-      <i class="bi bi-person-plus"></i>
-    </button>
-  </div>
-    `
+      <div class="d-flex align-items-center gap-2">
+        <span class="text-danger fw-semibold">Unassigned</span>
+        <button class="btn btn-sm btn-light border assign-btn" data-index="${index}">
+          <i class="bi bi-person-plus"></i>
+        </button>
+      </div>
+        `
 }
     </td>
 
@@ -214,22 +283,23 @@ function renderPagination() {
       currentPage = i;
       initKpiView();
     });
-
     container.appendChild(btn);
   }
 }
 
 function updateSummary() {
   const total = kpiData.length;
-  const completed = kpiData.filter(k => k.status === "Completed").length;
-  const rate = Math.round((completed / total) * 100);
+  const completed = kpiData.filter(
+  k => k.status?.trim().toUpperCase() === "COMPLETED"
+).length;
+  const rate = total ? Math.round((completed / total) * 100) : 0;
 
   document.getElementById("totalKPI").textContent = total;
   document.getElementById("completedKPI").textContent = completed;
   document.getElementById("completionRate").textContent = rate + "%";
 
   // FIXED pagination summary
-  const start = (currentPage - 1) * rowsPerPage + 1;
+  const start = total ? (currentPage - 1) * rowsPerPage + 1 : 0;
   const end = Math.min(currentPage * rowsPerPage, total);
 
   const summary = document.getElementById("entrySummary");
@@ -276,14 +346,30 @@ function updatePaginationButtons() {
   }
 }
 
-function initKpiView() {
+async function initKpiView() {
 
-  console.log(kpiData);
   const table = document.getElementById("kpiTableBody");
 
   if (!table) return;
 
+  table.innerHTML = `<tr><td colspan="6" class="text-muted text-center py-4">Loading KPIs...</td></tr>`;
+
+  try {
+    await loadKpisFromApi();
+  } catch (error) {
+    table.innerHTML = `<tr><td colspan="6" class="text-danger text-center py-4">Unable to load KPIs. Please make sure the backend is running.</td></tr>`;
+    return;
+  }
+
   table.innerHTML = "";
+
+  if (!kpiData.length) {
+    table.innerHTML = `<tr><td colspan="6" class="text-muted text-center py-4">No KPIs found. Create your first KPI to see it here.</td></tr>`;
+    updateSummary();
+    updatePaginationButtons();
+    renderPagination();
+    return;
+  }
 
   const start = (currentPage - 1) * rowsPerPage;
   const end = start + rowsPerPage;
@@ -327,9 +413,24 @@ function initKpiView() {
     changePage(e, "Update KPI");
   }
 
+  // ASSIGN BUTTON
+  const assignBtn = e.target.closest(".assign-btn");
+  if (assignBtn) {
+    const index = Number(assignBtn.dataset.index);
+    const selectedKpi = kpiData[index];
+
+    if (selectedKpi?.id) {
+      sessionStorage.setItem("assignmentKpiId", selectedKpi.id);
+      changePage(e, "Assign KPI");
+    }
+  }
+
 });
   }
 
   initDeleteKpi();
 }
 window.initKpiView = initKpiView;
+
+window.STATUS_CONFIG = STATUS_CONFIG;
+window.getStatusConfig = getStatusConfig;

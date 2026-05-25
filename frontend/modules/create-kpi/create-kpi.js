@@ -3,6 +3,7 @@ function initCreateKpiView() {
   console.log("Create KPI page loaded");
 
   setupToggle();
+  setupPriority();
   setupFormSubmit();
 }
 
@@ -23,6 +24,21 @@ function setupToggle() {
   });
 }
 
+function setupPriority() {
+  const group = document.getElementById("priorityGroup");
+  if (!group) return;
+
+  group.addEventListener("click", (e) => {
+    const btn = e.target.closest(".priority-btn");
+    if (!btn || !group.contains(btn)) return;
+
+    group.querySelectorAll(".priority-btn").forEach((b) => {
+      b.classList.remove("active");
+    });
+    btn.classList.add("active");
+  });
+}
+
 function getFormData() {
   return {
     name: document.getElementById("kpiName")?.value.trim(),
@@ -35,7 +51,10 @@ function getFormData() {
       ?.classList.contains("active")
       ? "BI-WEEKLY"
       : "MONTHLY",
-    assignLater: document.getElementById("assignLaterSwitch")?.checked
+    assignLater: document.getElementById("assignLaterSwitch")?.checked,
+    priority:
+      document.querySelector("#priorityGroup .priority-btn.active")?.dataset
+        .priority || "",
   };
 }
 
@@ -55,6 +74,11 @@ function validateForm(data) {
     return false;
   }
 
+  if (!data.priority) {
+    alert("Please select a priority (High, Medium, or Low)");
+    return false;
+  }
+
   return true;
 }
 
@@ -62,28 +86,59 @@ function setupFormSubmit() {
   const btn = document.getElementById("createKpiBtn");
   if (!btn) return;
 
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", async () => {
     const data = getFormData();
 
     console.log("Form Data:", data);
 
     if (!validateForm(data)) return;
 
-    //  Simulate backend save
-    saveKpi(data);
+    await saveKpi(data);
   });
 }
 
-function saveKpi(data) {
-  // simulate API delay
-  setTimeout(() => {
+async function saveKpi(data) {
+  const payload = {
+    title: data.name,
+    description: data.description,
+    targetValue: Number(data.target),
+    currentValue: 0,
+    unit: normalizeUnit(data.unit),
+    priority: data.priority.toLowerCase(),
+    status: "not started",
+    dueDate: data.deadline,
+    category: "General",
+    department: "All Departments"
+  };
+
+  try {
+    const response = await fetch("http://127.0.0.1:5050/api/kpis", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      alert(result.message || "Failed to create KPI.");
+      return;
+    }
+
     alert("KPI Created Successfully!");
-
-    // future:
-    // fetch('/api/kpi', { method: 'POST', body: JSON.stringify(data) })
-
     resetForm();
-  }, 500);
+  } catch (error) {
+    alert("Cannot connect to server. Please make sure the backend is running.");
+  }
+}
+
+function normalizeUnit(unit) {
+  if (unit.includes("Currency")) return "RM";
+  if (unit.includes("Percentage")) return "%";
+  if (unit.includes("Time")) return "hours";
+  return unit;
 }
 
 function resetForm() {
@@ -96,10 +151,10 @@ function resetForm() {
   document.getElementById("monthlyBtn").classList.remove("active");
 
   document.getElementById("assignLaterSwitch").checked = false;
-}
 
-function initCreateKpiView() {
-  initCreateKpiView();
+  document
+    .querySelectorAll("#priorityGroup .priority-btn.active")
+    .forEach((b) => b.classList.remove("active"));
 }
 
 window.initCreateKpiView = initCreateKpiView;

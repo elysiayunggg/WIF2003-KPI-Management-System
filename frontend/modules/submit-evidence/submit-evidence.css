@@ -17,20 +17,6 @@
     font-weight: normal;
 }
 
-.submit-evidence-view .breadcrumb {
-    font-size: 0.78rem;
-}
-
-.submit-evidence-view .breadcrumb-item,
-.submit-evidence-view .breadcrumb-item a {
-    color: #6b7280;
-    text-decoration: none;
-}
-
-.submit-evidence-view .breadcrumb-item.active {
-    color: #1f2937;
-}
-
 /* --- Cards ------------------------------------------------------------- */
 
 .evidence-card,
@@ -398,22 +384,6 @@
     font-weight: 600;
     color: #1f2937;
     letter-spacing: -0.01em;
-}
-
-/* --- Page title / subtext (mirror kpi-detail) ------------------------ */
-
-.submit-evidence-view .kpi-page-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    color: #191b23;
-}
-
-.submit-evidence-view .kpi-subtext {
-    color: #54647a;
-    max-width: 720px;
-    font-size: 0.95rem;
 }
 
 /* --- Responsive ------------------------------------------------------- */

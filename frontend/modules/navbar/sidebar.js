@@ -242,6 +242,12 @@ const pageInits = {
     }
   },
 
+  "Create KPI": function () {
+    if (typeof initCreateKpiView === "function") {
+      initCreateKpiView();
+    }
+  },
+
   "KPI Assignment & Verification": function () {
     if (typeof initAssignmentView === "function") {
       initAssignmentVerificationView();

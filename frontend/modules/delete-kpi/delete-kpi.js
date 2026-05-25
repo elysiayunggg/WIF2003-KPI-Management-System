@@ -15,9 +15,28 @@ function closeDeleteModal() {
 }
 
 // CONFIRM DELETE
-function confirmDeleteKpi() {
+async function confirmDeleteKpi() {
   if (selectedKpiIndex !== null) {
-    window.kpiData.splice(selectedKpiIndex, 1); // uses global kpiData
+    const selectedKpi = window.kpiData[selectedKpiIndex];
+
+    if (selectedKpi?.id) {
+      try {
+        const response = await fetch(`http://127.0.0.1:5050/api/kpis/${selectedKpi.id}`, {
+          method: "DELETE"
+        });
+
+        if (!response.ok) {
+          const result = await response.json();
+          alert(result.message || "Failed to delete KPI.");
+          return;
+        }
+      } catch (error) {
+        alert("Cannot connect to server. Please make sure the backend is running.");
+        return;
+      }
+    }
+
+    window.kpiData.splice(selectedKpiIndex, 1);
   }
 
   closeDeleteModal();

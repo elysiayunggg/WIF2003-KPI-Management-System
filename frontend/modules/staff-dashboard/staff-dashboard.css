@@ -1,22 +1,4 @@
 /* ================================
-   STAFF DASHBOARD PAGE TITLE
-================================ */
-
-.staff-main-title {
-  font-size: 32px;
-  font-weight: 800;
-  color: #2a3439;
-  margin-bottom: 4px;
-}
-
-.staff-subtitle {
-  font-size: 13px;
-  color: #6c757d;
-  margin-bottom: 20px;
-}
-
-
-/* ================================
    STAFF ALERT BOX
 ================================ */
 
@@ -291,14 +273,6 @@
 }
 
 /* ----- Dark mode (staff dashboard) ----- */
-
-html[data-bs-theme="dark"] #page-content .staff-main-title {
-  color: #f8f9fa !important;
-}
-
-html[data-bs-theme="dark"] #page-content .staff-subtitle {
-  color: #adb5bd !important;
-}
 
 html[data-bs-theme="dark"] #page-content .staff-alert-box {
   background-color: rgba(220, 53, 69, 0.25) !important;

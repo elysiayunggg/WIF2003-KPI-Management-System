@@ -1,18 +1,18 @@
 <section class="p-4 update-kpi">
 
   <!-- Breadcrumb -->
-  <nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item">KPI Management</li>
-      <li class="breadcrumb-item active">Update KPI</li>
+  <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Management')">KPI Management</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Update KPI</li>
     </ol>
   </nav>
 
  <!-- Header -->
   <div class="d-flex justify-content-between align-items-start mb-4">
     <div>
-      <h1 class="fw-bold">Update Strategic KPI</h1>
-      <p class="text-muted">
+      <h1 class="page-title">Update Strategic KPI</h1>
+      <p class="page-subtitle mt-2">
         Modify the parameters, targets, and deadlines for the existing performance indicator.
       </p>
     </div>
@@ -80,9 +80,9 @@ This KPI tracks the gross revenue increase across all enterprise software servic
           <label class="form-label mt-2">Current Status</label>
           <div class="d-flex gap-2 flex-wrap">
 
-            <button class="status-btn pending" data-status="PENDING">Pending</button>
+            <button class="status-btn pending" data-status="PENDING VERIFICATION">Pending</button>
 
-            <button class="status-btn progress active" data-status="INPROGRESS">
+            <button class="status-btn progress active" data-status="IN PROGRESS">
               In Progress
             </button>
 

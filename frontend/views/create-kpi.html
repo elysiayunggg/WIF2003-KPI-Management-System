@@ -1,17 +1,17 @@
 <section class="p-4 create-kpi">
 
   <!-- Breadcrumb -->
-  <nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item">KPI Management</li>
-      <li class="breadcrumb-item active">Add New KPI</li>
+  <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Management')">KPI Management</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Add New KPI</li>
     </ol>
   </nav>
 
   <!-- Title -->
   <div class="mb-4">
-    <h1 class="fw-bold">Add New KPI</h1>
-    <p class="text-muted">
+    <h1 class="page-title">Add New KPI</h1>
+    <p class="page-subtitle mt-2">
       Define a new Key Performance Indicator to track departmental success. High-impact metrics should be clear, measurable, and time-bound.
     </p>
   </div>
@@ -51,6 +51,16 @@
                 <option>Percentage (%)</option>
                 <option>Time (Hours)</option>
               </select>
+            </div>
+          </div>
+
+          <!-- Priority -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Priority</label>
+            <div id="priorityGroup" class="btn-group w-100" role="group" aria-label="KPI priority">
+              <button type="button" class="btn priority-btn" data-priority="High">High</button>
+              <button type="button" class="btn priority-btn" data-priority="Medium">Medium</button>
+              <button type="button" class="btn priority-btn" data-priority="Low">Low</button>
             </div>
           </div>
 

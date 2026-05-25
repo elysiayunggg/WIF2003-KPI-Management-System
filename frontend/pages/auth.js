@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:3000/api/auth";
+const API_BASE = "http://127.0.0.1:5050/api/auth";
 
 /** Work / standard email: local@domain.tld (practical check, not full RFC 5322) */
 const EMAIL_MAX_LEN = 254;
@@ -158,7 +158,11 @@ if (loginForm) {
 
       if (response.ok) {
         localStorage.setItem("user", JSON.stringify(data.user));
-        window.location.href = "../pages/dashboard.html";
+        localStorage.setItem("userName", data.user.name);
+        localStorage.setItem("userEmail", data.user.email);
+        localStorage.setItem("role", data.user.role);
+        localStorage.setItem("activePage", "Dashboard");
+        window.location.href = "shell.html";
       } else if (loginError) {
         loginError.classList.remove("d-none");
         if (loginErrorText) {

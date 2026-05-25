@@ -11,8 +11,9 @@ let dashboardRangeEnd = null;
 
 // ===== Init Function =====
 // This is called from sidebar.js pageInits when Dashboard view loads
-function initDashboardView() {
+async function initDashboardView() {
   renderDashboardCalendar();
+  await loadManagerKpisFromApi();
   renderManagerDashboard(getFilteredManagerData());
 
   const calendarDropdown = document.getElementById("calendarDropdown");
@@ -278,8 +279,131 @@ function initManagerDashboardView() {
   renderManagerDashboard(window.kpiData);
 }
 
+function managerFormatStatus(status) {
+  const value = String(status || "not started").toLowerCase();
+
+  if (value === "pending verification") return "Pending Verification";
+  if (value === "approved") return "Completed";
+  if (value === "rejected") return "Pending Verification";
+
+  return value
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function managerFormatDate(dateString) {
+  const date = new Date(dateString);
+  if (isNaN(date)) return dateString || "-";
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric"
+  });
+}
+
+function managerFormatTarget(kpi) {
+  if (kpi.targetValue === undefined || kpi.targetValue === null) return "-";
+  return `${kpi.targetValue}${kpi.unit ? ` ${kpi.unit}` : ""}`;
+}
+
+function managerInitials(name) {
+  if (!name) return "-";
+  return name
+    .split(" ")
+    .map(word => word[0])
+    .join("")
+    .toUpperCase();
+}
+
+function mapManagerApiKpi(kpi) {
+  const assignedUsers = Array.isArray(kpi.assignedTo) ? kpi.assignedTo : [];
+  const firstStaff = assignedUsers[0];
+  const progress = kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0;
+
+  return {
+    id: kpi._id,
+    kpi: kpi.title,
+    description: kpi.description,
+    department: kpi.department || "All Departments",
+    priority: managerFormatStatus(kpi.priority || "medium"),
+    target: managerFormatTarget(kpi),
+    staff: firstStaff?.name || "Unassigned",
+    initials: managerInitials(firstStaff?.name),
+    ownerRole: firstStaff?.role || "",
+    progress,
+    status: managerFormatStatus(kpi.status),
+    deadline: managerFormatDate(kpi.dueDate)
+  };
+}
+
+async function loadManagerKpisFromApi() {
+  try {
+    const response = await fetch("http://127.0.0.1:5050/api/kpis");
+    if (!response.ok) throw new Error("Failed to load manager KPIs");
+
+    const kpis = await response.json();
+    window.kpiData = kpis.map(mapManagerApiKpi);
+    updateManagerDashboardFilterOptions();
+  } catch (error) {
+    console.error(error);
+    window.kpiData = Array.isArray(window.kpiData) ? window.kpiData : [];
+    updateManagerDashboardFilterOptions();
+  }
+}
+
+function updateManagerDashboardFilterOptions() {
+  const rows = Array.isArray(window.kpiData) ? window.kpiData : [];
+  const departmentDropdown = document.getElementById("departmentDropdown");
+  const staffDropdown = document.getElementById("staffDropdown");
+
+  if (departmentDropdown) {
+    const departments = [
+      ...new Set(rows.map(row => row.department).filter(Boolean))
+    ]
+      .filter(department => department !== "All Departments")
+      .sort();
+    departmentDropdown.innerHTML = `
+      <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'All Departments')">All Departments</button>
+      ${departments.map(department => `
+        <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', '${escapeDashboardAttribute(department)}')">${escapeDashboardHtml(department)}</button>
+      `).join("")}
+    `;
+  }
+
+  if (staffDropdown) {
+    const staffNames = [
+      ...new Set(rows.map(row => row.staff).filter(Boolean))
+    ]
+      .filter(staff => staff !== "Unassigned")
+      .sort();
+    staffDropdown.innerHTML = `
+      <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', 'All Members')">All Members</button>
+      ${staffNames.map(staff => `
+        <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', '${escapeDashboardAttribute(staff)}')">${escapeDashboardHtml(staff)}</button>
+      `).join("")}
+    `;
+  }
+}
+
+function escapeDashboardAttribute(value) {
+  return String(value).replace(/'/g, "\\'");
+}
+
+function escapeDashboardHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function getFilteredManagerData() {
-  return window.kpiData.filter(item => {
+  const rows = Array.isArray(window.kpiData) ? window.kpiData : [];
+
+  return rows.filter(item => {
     const matchStatus =
       selectedDashboardStatus === "All Status" ||
       item.status === selectedDashboardStatus;
@@ -304,6 +428,9 @@ function getFilteredManagerData() {
 }
 
 function parseDashboardDeadline(deadline) {
+  const parsedDate = new Date(deadline);
+  if (!isNaN(parsedDate)) return parsedDate;
+
   const monthMap = {
     Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
     Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11

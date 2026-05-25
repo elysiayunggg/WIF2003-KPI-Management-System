@@ -1,8 +1,17 @@
-/* General Styles */
+/* General Styles — Plus Jakarta Sans (matches login / register) */
+:root {
+  --app-font-sans: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", "Noto Sans", Arial, sans-serif;
+  --bs-font-sans-serif: var(--app-font-sans);
+  --bs-body-font-family: var(--app-font-sans);
+}
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: var(--app-font-sans);
   background-color: #f7f9fb;
   color: #2a3439;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Sidebar */
@@ -210,6 +219,37 @@ p { font-size: 13px; }
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* ----- Unified app breadcrumbs (all views in #page-content) ----- */
+#page-content .app-breadcrumb {
+  --bs-breadcrumb-divider: ">";
+  --bs-breadcrumb-divider-color: #adb5bd;
+}
+
+#page-content .app-breadcrumb .breadcrumb {
+  margin-bottom: 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+#page-content .app-breadcrumb .breadcrumb-item {
+  color: #6c757d;
+}
+
+#page-content .app-breadcrumb .breadcrumb-item a {
+  color: #495057;
+  text-decoration: none;
+}
+
+#page-content .app-breadcrumb .breadcrumb-item a:hover {
+  color: #212529;
+  text-decoration: underline;
+}
+
+#page-content .app-breadcrumb .breadcrumb-item.active {
+  color: #212529;
+  font-weight: 500;
+}
+
 .breadcrumb a {
   color: #2a3439;        
   text-decoration: none;
@@ -282,6 +322,51 @@ html[data-bs-theme="dark"] .breadcrumb a {
 
 html[data-bs-theme="dark"] .breadcrumb a:hover {
   color: #f8f9fa;
+}
+
+html[data-bs-theme="dark"] #page-content .app-breadcrumb {
+  --bs-breadcrumb-divider-color: #6c757d;
+}
+
+html[data-bs-theme="dark"] #page-content .app-breadcrumb .breadcrumb-item,
+html[data-bs-theme="dark"] #page-content .app-breadcrumb .breadcrumb-item a {
+  color: #adb5bd;
+}
+
+html[data-bs-theme="dark"] #page-content .app-breadcrumb .breadcrumb-item a:hover {
+  color: #f8f9fa;
+}
+
+html[data-bs-theme="dark"] #page-content .app-breadcrumb .breadcrumb-item.active {
+  color: #e9ecef;
+}
+
+/* ----- Unified page titles & subtitles (#page-content) ----- */
+#page-content .page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #2a3439;
+  margin-bottom: 0.35rem;
+}
+
+#page-content .page-title.mb-0 {
+  margin-bottom: 0;
+}
+
+#page-content .page-subtitle {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6c757d;
+  max-width: 42rem;
+  margin-bottom: 0;
+}
+
+@media (max-width: 575.98px) {
+  #page-content .page-title {
+    font-size: 1.45rem;
+  }
 }
 
 /*
@@ -485,8 +570,12 @@ html[data-bs-theme="dark"] #page-content .custom-dropdown button:hover {
 }
 
 html[data-bs-theme="dark"] #page-content .overview-title,
-html[data-bs-theme="dark"] #page-content #mainHeading {
+html[data-bs-theme="dark"] #page-content .page-title {
   color: #f8f9fa !important;
+}
+
+html[data-bs-theme="dark"] #page-content .page-subtitle {
+  color: #adb5bd !important;
 }
 
 html[data-bs-theme="dark"] #page-content .overview-subtext {
@@ -569,4 +658,29 @@ html[data-bs-theme="dark"] #page-content .btn-outline-secondary {
 html[data-bs-theme="dark"] #page-content .btn-outline-secondary:hover {
   background-color: #495057 !important;
   color: #fff !important;
+}
+
+/* SAME as KPI (remove .kpi-view scope) */
+.page-btn {
+  background: #f8f9fa;
+  border: 1px solid #e0e3e8;
+  margin: 0 4px;
+  border-radius: 8px;
+  min-width: 32px;
+  transition: all 0.2s ease;
+}
+
+.page-btn:hover {
+  background: #eef2f7;
+}
+
+.page-btn.active-page {
+  background: #e9ecef;
+  font-weight: 600;
+}
+
+/* Disabled */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

@@ -1,12 +1,6 @@
 /* =========================================
    MANAGER DASHBOARD STYLES
    ========================================= */
-#mainHeading {
-  font-weight: 800;
-  font-size: 32px;
-  letter-spacing: 0.5px;
-}
-
 /* Overview Section */
 .overview-title {
   font-size: 20px;
