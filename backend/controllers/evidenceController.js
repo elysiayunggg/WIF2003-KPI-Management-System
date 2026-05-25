@@ -3,7 +3,7 @@ const Kpi = require("../models/Kpi");
 
 exports.createEvidence = async (req, res) => {
   try {
-    const { kpiId, submittedBy, title, description, progress } = req.body;
+    const { kpiId, assignmentId, submittedBy, title, description, progress } = req.body;
 
     if (!kpiId || !submittedBy || !title) {
       return res.status(400).json({ message: "KPI, submitter, and title are required" });
@@ -25,7 +25,8 @@ exports.createEvidence = async (req, res) => {
     }));
 
     const evidence = await Evidence.create({
-      kpi: kpiId,
+      kpiId,
+      assignmentId,
       submittedBy,
       title,
       description,
@@ -56,7 +57,7 @@ exports.getEvidence = async (req, res) => {
     const filter = {};
 
     if (req.query.kpiId) {
-      filter.kpi = req.query.kpiId;
+      filter.kpiId = req.query.kpiId;
     }
 
     if (req.query.submittedBy) {
@@ -64,8 +65,10 @@ exports.getEvidence = async (req, res) => {
     }
 
     const evidence = await Evidence.find(filter)
-      .populate("kpi", "title status targetValue currentValue unit")
+      .populate("kpiId", "title status targetValue currentValue unit")
+      .populate("assignmentId", "status progress reviewStatus dueDate")
       .populate("submittedBy", "name email role")
+      .populate("reviewedBy", "name email role")
       .sort({ createdAt: -1 });
 
     res.json(evidence);
