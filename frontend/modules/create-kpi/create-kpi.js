@@ -86,28 +86,59 @@ function setupFormSubmit() {
   const btn = document.getElementById("createKpiBtn");
   if (!btn) return;
 
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", async () => {
     const data = getFormData();
 
     console.log("Form Data:", data);
 
     if (!validateForm(data)) return;
 
-    //  Simulate backend save
-    saveKpi(data);
+    await saveKpi(data);
   });
 }
 
-function saveKpi(data) {
-  // simulate API delay
-  setTimeout(() => {
+async function saveKpi(data) {
+  const payload = {
+    title: data.name,
+    description: data.description,
+    targetValue: Number(data.target),
+    currentValue: 0,
+    unit: normalizeUnit(data.unit),
+    priority: data.priority.toLowerCase(),
+    status: "not started",
+    dueDate: data.deadline,
+    category: "General",
+    department: "All Departments"
+  };
+
+  try {
+    const response = await fetch("http://127.0.0.1:5050/api/kpis", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      alert(result.message || "Failed to create KPI.");
+      return;
+    }
+
     alert("KPI Created Successfully!");
-
-    // future:
-    // fetch('/api/kpi', { method: 'POST', body: JSON.stringify(data) })
-
     resetForm();
-  }, 500);
+  } catch (error) {
+    alert("Cannot connect to server. Please make sure the backend is running.");
+  }
+}
+
+function normalizeUnit(unit) {
+  if (unit.includes("Currency")) return "RM";
+  if (unit.includes("Percentage")) return "%";
+  if (unit.includes("Time")) return "hours";
+  return unit;
 }
 
 function resetForm() {
