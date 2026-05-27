@@ -28,10 +28,14 @@ const evidenceFileSchema = new mongoose.Schema(
 
 const evidenceSchema = new mongoose.Schema(
   {
-    kpi: {
+    kpiId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Kpi",
       required: true
+    },
+    assignmentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "KpiAssignment"
     },
     submittedBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -64,6 +68,13 @@ const evidenceSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: ""
+    },
+    reviewedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    },
+    reviewedAt: {
+      type: Date
     }
   },
   {
