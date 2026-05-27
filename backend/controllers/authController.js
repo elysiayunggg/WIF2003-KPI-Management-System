@@ -4,7 +4,7 @@ const User = require("../models/User");
 
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, employeeId, department, avatar } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: "Name, email, and password are required" });
@@ -23,7 +23,10 @@ exports.register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role: normalizedRole
+      role: normalizedRole,
+      employeeId,
+      department,
+      avatar
     });
 
     res.status(201).json({
@@ -32,7 +35,12 @@ exports.register = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        employeeId: user.employeeId,
+        department: user.department,
+        avatar: user.avatar,
+        preferences: user.preferences,
+        lastLogin: user.lastLogin
       }
     });
   } catch (error) {
@@ -60,6 +68,9 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
+    user.lastLogin = new Date();
+    await user.save();
+
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
@@ -73,7 +84,12 @@ exports.login = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        employeeId: user.employeeId,
+        department: user.department,
+        avatar: user.avatar,
+        preferences: user.preferences,
+        lastLogin: user.lastLogin
       }
     });
   } catch (error) {
