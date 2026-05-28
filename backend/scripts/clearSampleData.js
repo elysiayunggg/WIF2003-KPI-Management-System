@@ -4,6 +4,8 @@ const dotenv = require("dotenv");
 const User = require("../models/User");
 const Kpi = require("../models/Kpi");
 const Evidence = require("../models/Evidence");
+const KpiAssignment = require("../models/KpiAssignment");
+const Notification = require("../models/Notification");
 
 dotenv.config();
 
@@ -11,7 +13,8 @@ const SAMPLE_TAG = "[SAMPLE_SEED]";
 const SAMPLE_USER_EMAILS = [
   "manager@trackify.com",
   "staff@trackify.com",
-  "staff2@trackify.com"
+  "staff2@trackify.com",
+  "staff3@trackify.com"
 ];
 
 async function main() {
@@ -32,16 +35,31 @@ async function main() {
     : { description: { $regex: SAMPLE_TAG } };
 
   const deletedEvidence = await Evidence.deleteMany(evidenceFilter);
+
+  const deletedAssignments = sampleKpiIds.length
+    ? await KpiAssignment.deleteMany({ kpiId: { $in: sampleKpiIds } })
+    : { deletedCount: 0 };
+
+  const deletedNotifications = await Notification.deleteMany({
+    $or: [
+      { message: { $regex: SAMPLE_TAG } },
+      ...(sampleKpiIds.length ? [{ relatedKpiId: { $in: sampleKpiIds } }] : [])
+    ]
+  });
+
   const deletedKpis = sampleKpiIds.length
     ? await Kpi.deleteMany({ _id: { $in: sampleKpiIds } })
     : { deletedCount: 0 };
+
   const deletedUsers = await User.deleteMany({
     email: { $in: SAMPLE_USER_EMAILS }
   });
 
-  console.log(`Deleted evidence: ${deletedEvidence.deletedCount || 0}`);
-  console.log(`Deleted KPIs: ${deletedKpis.deletedCount || 0}`);
-  console.log(`Deleted users: ${deletedUsers.deletedCount || 0}`);
+  console.log(`Deleted evidence:      ${deletedEvidence.deletedCount || 0}`);
+  console.log(`Deleted assignments:   ${deletedAssignments.deletedCount || 0}`);
+  console.log(`Deleted notifications: ${deletedNotifications.deletedCount || 0}`);
+  console.log(`Deleted KPIs:          ${deletedKpis.deletedCount || 0}`);
+  console.log(`Deleted users:         ${deletedUsers.deletedCount || 0}`);
   console.log("Sample cleanup completed.");
 }
 
