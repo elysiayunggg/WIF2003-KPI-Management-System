@@ -277,6 +277,24 @@ async function loadEvidenceByKpi(kpiId) {
     }
 }
 
+async function loadKpiAssignmentsByKpi(kpiId) {
+    if (!kpiId) return [];
+
+    try {
+        const response = await fetch(
+            `${KPI_DETAIL_API_BASE}/kpis/${encodeURIComponent(kpiId)}/assignments`,
+            { headers: getKPIDetailAuthHeaders() }
+        );
+
+        if (!response.ok) return [];
+        const rows = await response.json();
+        return Array.isArray(rows) ? rows : [];
+    } catch (error) {
+        console.error("Failed to load KPI assignments:", error);
+        return [];
+    }
+}
+
 function evidenceActionsDropdown(options = {}) {
     const { showDelete = true } = options;
     const deleteItem = showDelete
@@ -429,28 +447,79 @@ function buildTeamEvidenceRowsFromApi(evidenceList, currentUserId, userRole) {
     return lines.join("");
 }
 
-function buildTimelineHTMLFromEvidence(row, evidenceList) {
-    if (!Array.isArray(evidenceList) || !evidenceList.length) return "";
+function timelineDotClassForEvidenceStatus(status) {
+    const badge = mapEvidenceBadge(status);
+    if (badge.className === "badge-green") return "kpi-dot-success";
+    if (badge.className === "badge-red") return "kpi-dot";
+    return "kpi-dot-primary";
+}
 
-    const latest = [...evidenceList]
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+function buildEvidenceTimelineItem(ev) {
+    const submitter = ev?.submittedBy?.name || "Contributor";
+    const createdAt = formatEvidenceDateTime(ev.createdAt);
+    const badge = mapEvidenceBadge(ev.status);
+    const progress = Math.min(100, Math.max(0, Number(ev.progress) || 0));
+    const firstFile = Array.isArray(ev.files) && ev.files.length
+        ? ev.files[0].originalName
+        : ev.title || "Evidence";
 
-    return latest.map((ev) => {
-        const submitter = ev?.submittedBy?.name || "Contributor";
-        const date = formatEvidenceDate(ev.createdAt);
-        const badge = mapEvidenceBadge(ev.status);
-        const firstFile = Array.isArray(ev.files) && ev.files.length ? ev.files[0].originalName : ev.title || "Evidence";
-
-        return `
-            <div class="kpi-timeline-item">
-                <div class="kpi-dot ${badge.className === "badge-green" ? "kpi-dot-success" : badge.className === "badge-red" ? "kpi-dot" : "kpi-dot-primary"}"></div>
-                <div>
-                    <p><strong>${escapeHtml(submitter)}</strong> submitted <span class="kpi-link-btn">${escapeHtml(firstFile)}</span></p>
-                    <small class="text-muted">${date} · ${badge.label}</small>
+    return `
+        <div class="kpi-timeline-item">
+            <div class="kpi-dot ${timelineDotClassForEvidenceStatus(ev.status)}"></div>
+            <div>
+                <p class="mb-1"><strong>${escapeHtml(submitter)}</strong> created <strong>${progress}%</strong> progress</p>
+                <p class="mb-1 small text-muted">Evidence: <span class="kpi-link-btn">${escapeHtml(firstFile)}</span></p>
+                <div class="d-flex align-items-center flex-wrap gap-2 mt-1">
+                    <small class="text-muted">${createdAt}</small>
+                    <span class="badge ${badge.className}">${badge.label}</span>
                 </div>
             </div>
-        `;
-    }).join("");
+        </div>
+    `;
+}
+
+function buildAssignmentTimelineItem(assignment, row) {
+    const assignee = assignment?.assignedTo?.name || row?.staff || "Staff member";
+    const assigner = assignment?.assignedBy?.name || "Manager";
+    const assignedAt = formatEvidenceDateTime(assignment?.assignedAt || assignment?.createdAt);
+    const kpiName = escapeHtml(row?.kpi || "this KPI");
+
+    return `
+        <div class="kpi-timeline-item">
+            <div class="kpi-dot kpi-dot-success"></div>
+            <div>
+                <p class="mb-1"><strong>${escapeHtml(assigner)}</strong> assigned <strong>${kpiName}</strong> to <strong>${escapeHtml(assignee)}</strong></p>
+                <small class="text-muted">${assignedAt}</small>
+            </div>
+        </div>
+    `;
+}
+
+function buildCombinedTimelineHTML(row, evidenceList, assignmentList) {
+    const events = [];
+
+    (assignmentList || []).forEach((assignment) => {
+        const sortDate = new Date(assignment.assignedAt || assignment.createdAt);
+        if (Number.isNaN(sortDate.getTime())) return;
+        events.push({
+            sortDate,
+            html: buildAssignmentTimelineItem(assignment, row)
+        });
+    });
+
+    (evidenceList || []).forEach((ev) => {
+        const sortDate = new Date(ev.createdAt);
+        if (Number.isNaN(sortDate.getTime())) return;
+        events.push({
+            sortDate,
+            html: buildEvidenceTimelineItem(ev)
+        });
+    });
+
+    if (!events.length) return "";
+
+    events.sort((a, b) => b.sortDate - a.sortDate);
+    return events.map((event) => event.html).join("");
 }
 
 function buildTimelineHTML(row) {
@@ -467,8 +536,8 @@ function buildTimelineHTML(row) {
         <div class="kpi-timeline-item">
             <div class="kpi-dot kpi-dot-primary"></div>
             <div>
-                <p><strong>${staff}</strong> updated progress to ${escapeHtml(String(row.progress ?? 0))}%</p>
-                <small class="text-muted">Latest activity</small>
+                <p class="mb-1"><strong>${staff}</strong> created <strong>${escapeHtml(String(row.progress ?? 0))}%</strong> progress</p>
+                <small class="text-muted">Created by ${staff} · Latest activity</small>
             </div>
         </div>
         <div class="kpi-timeline-item">
@@ -557,7 +626,10 @@ async function populateKpiDetailFromSharedData(root) {
     const timeline = root.querySelector("#kpi-detail-timeline");
 
     const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const evidenceList = await loadEvidenceByKpi(row.id);
+    const [evidenceList, assignmentList] = await Promise.all([
+        loadEvidenceByKpi(row.id),
+        loadKpiAssignmentsByKpi(row.id)
+    ]);
 
     const myRows = buildMyEvidenceRowsFromApi(evidenceList, user.id);
     if (myBody) {
@@ -585,7 +657,7 @@ async function populateKpiDetailFromSharedData(root) {
     }
 
     if (timeline) {
-        const timelineFromApi = buildTimelineHTMLFromEvidence(row, evidenceList);
+        const timelineFromApi = buildCombinedTimelineHTML(row, evidenceList, assignmentList);
         timeline.innerHTML = timelineFromApi || buildTimelineHTML(row);
     }
 }
@@ -836,7 +908,23 @@ function switchKPIDetailQuarter(root, quarter) {
     }
 }
 
+function printKPIDetailPage(root) {
+    closeKPIDetailStatusDropdown(root);
+    document.body.classList.add("kpi-detail-printing");
+    const onAfterPrint = () => {
+        document.body.classList.remove("kpi-detail-printing");
+        window.removeEventListener("afterprint", onAfterPrint);
+    };
+    window.addEventListener("afterprint", onAfterPrint);
+    window.print();
+}
+
 function bindKPIDetailEvents(root) {
+    const exportPdfBtn = root.querySelector("#kpi-detail-export-pdf-btn");
+    if (exportPdfBtn) {
+        exportPdfBtn.addEventListener("click", () => printKPIDetailPage(root));
+    }
+
     const statusBtn = root.querySelector("#status-dropdown-btn");
     if (statusBtn) {
         statusBtn.addEventListener("click", (e) => toggleKPIDetailStatusDropdown(root, e));

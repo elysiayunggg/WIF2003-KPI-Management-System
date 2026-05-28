@@ -1,5 +1,6 @@
 const Kpi = require("../models/Kpi");
 const Evidence = require("../models/Evidence");
+const KpiAssignment = require("../models/KpiAssignment");
 const mongoose = require("mongoose");
 const { computeProgressPercent, resolveKpiWorkflowStatus } = require("../utils/kpiStatus");
 
@@ -10,6 +11,33 @@ function isAssignedToUser(kpi, userId) {
 
 function clampProgress(progress) {
   return Math.min(100, Math.max(0, Number(progress)));
+}
+
+async function createAssignmentsForUsers(kpi, userIds, assignedById) {
+  if (!kpi?._id || !Array.isArray(userIds) || !userIds.length) return;
+
+  const assignerId = assignedById || kpi.createdBy;
+  if (!assignerId) return;
+
+  for (const userId of userIds) {
+    if (!mongoose.isValidObjectId(userId)) continue;
+
+    const exists = await KpiAssignment.findOne({
+      kpiId: kpi._id,
+      assignedTo: userId
+    }).select("_id");
+
+    if (exists) continue;
+
+    await KpiAssignment.create({
+      kpiId: kpi._id,
+      assignedTo: userId,
+      assignedBy: assignerId,
+      assignedAt: new Date(),
+      dueDate: kpi.dueDate,
+      status: "assigned"
+    });
+  }
 }
 
 exports.getKpis = async (req, res) => {
@@ -85,6 +113,57 @@ exports.getAssignedKpis = async (req, res) => {
   }
 };
 
+exports.getKpiAssignments = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: "Invalid KPI id" });
+    }
+
+    const kpi = await Kpi.findById(id)
+      .populate("assignedTo", "name email role")
+      .populate("createdBy", "name email role");
+
+    if (!kpi) {
+      return res.status(404).json({ message: "KPI not found" });
+    }
+
+    const requesterRole = req.user?.role;
+    const requesterId = req.user?.id;
+
+    if (requesterRole !== "manager" && !isAssignedToUser(kpi, requesterId)) {
+      return res.status(403).json({ message: "You are not allowed to view assignments for this KPI" });
+    }
+
+    let rows = await KpiAssignment.find({ kpiId: id })
+      .populate("assignedTo", "name email role")
+      .populate("assignedBy", "name email role")
+      .sort({ assignedAt: -1, createdAt: -1 })
+      .lean();
+
+    if (!rows.length && Array.isArray(kpi.assignedTo) && kpi.assignedTo.length) {
+      const assignedBy = kpi.createdBy || { name: "Manager" };
+      const assignedAt = kpi.updatedAt || kpi.createdAt;
+
+      rows = kpi.assignedTo.map((user) => ({
+        _id: null,
+        kpiId: kpi._id,
+        assignedTo: user,
+        assignedBy,
+        assignedAt,
+        dueDate: kpi.dueDate,
+        status: "assigned",
+        synthetic: true
+      }));
+    }
+
+    return res.json(rows);
+  } catch (error) {
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 exports.getKpiById = async (req, res) => {
   try {
     const kpi = await Kpi.findById(req.params.id)
@@ -147,6 +226,10 @@ exports.createKpi = async (req, res) => {
       assignedTo
     });
 
+    if (Array.isArray(assignedTo) && assignedTo.length) {
+      await createAssignmentsForUsers(kpi, assignedTo, createdBy || req.user?.id);
+    }
+
     res.status(201).json({
       message: "KPI created successfully",
       kpi
@@ -162,6 +245,10 @@ exports.updateKpi = async (req, res) => {
       return res.status(400).json({ message: "Invalid KPI id" });
     }
 
+    const previousKpi = Array.isArray(req.body.assignedTo)
+      ? await Kpi.findById(req.params.id).select("assignedTo createdBy dueDate")
+      : null;
+
     const kpi = await Kpi.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true
@@ -169,6 +256,20 @@ exports.updateKpi = async (req, res) => {
 
     if (!kpi) {
       return res.status(404).json({ message: "KPI not found" });
+    }
+
+    if (previousKpi && Array.isArray(req.body.assignedTo)) {
+      const previousIds = (previousKpi.assignedTo || []).map((id) => String(id));
+      const nextIds = req.body.assignedTo.map((id) => String(id));
+      const newlyAssigned = nextIds.filter((id) => !previousIds.includes(id));
+
+      if (newlyAssigned.length) {
+        await createAssignmentsForUsers(
+          kpi,
+          newlyAssigned,
+          req.user?.id || previousKpi.createdBy
+        );
+      }
     }
 
     // Keep evidence review records aligned with manager decision on KPI.

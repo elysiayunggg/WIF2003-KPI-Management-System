@@ -2,6 +2,7 @@ const express = require("express");
 const {
   getKpis,
   getKpiById,
+  getKpiAssignments,
   createKpi,
   updateKpi,
   deleteKpi,
@@ -14,6 +15,7 @@ const router = express.Router();
 
 router.get("/", getKpis);
 router.get("/assigned/:userId", requireAuth, getAssignedKpis);
+router.get("/:id/assignments", requireAuth, getKpiAssignments);
 router.post("/", createKpi);
 router.patch("/:id/progress", requireAuth, patchKpiProgress);
 router.get("/:id", getKpiById);
