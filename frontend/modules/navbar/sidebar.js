@@ -176,6 +176,8 @@ async function changePage(event, pageName) {
   }
 }
 
+window.changePage = changePage;
+
 // Maps page names to their initialisation functions.
 // When a view needs JS to run after it loads, add an entry here.
 // The function must be defined in a script loaded by shell.html.

@@ -1,12 +1,86 @@
 const Evidence = require("../models/Evidence");
 const Kpi = require("../models/Kpi");
 const mongoose = require("mongoose");
+const path = require("path");
+const fs = require("fs");
+const { resolveKpiWorkflowStatus, computeProgressPercent } = require("../utils/kpiStatus");
+
+function kpiProgressPercent(kpi) {
+  if (!kpi) return 0;
+  if (kpi.targetValue) {
+    return computeProgressPercent(kpi);
+  }
+  return Math.min(100, Math.max(0, Number(kpi.currentValue) || 0));
+}
+
+async function assertEvidenceKpiAccess(kpiId, requesterRole, requesterId) {
+  const kpi = await Kpi.findById(kpiId).select("_id assignedTo");
+  if (!kpi) {
+    return { ok: false, status: 404, message: "KPI not found" };
+  }
+
+  if (requesterRole === "manager") {
+    return { ok: true, kpi };
+  }
+
+  const assigned = Array.isArray(kpi.assignedTo)
+    && kpi.assignedTo.some((id) => String(id) === String(requesterId));
+  if (!assigned) {
+    return {
+      ok: false,
+      status: 403,
+      message: "You are not allowed to access evidence for this KPI"
+    };
+  }
+
+  return { ok: true, kpi };
+}
+
+const UPLOADS_DIR = path.join(__dirname, "..", "uploads");
+
+function resolveSafeUploadPath(filename) {
+  if (!filename || typeof filename !== "string") return null;
+
+  const base = path.basename(filename);
+  if (!base || base === "." || base === "..") return null;
+
+  const absolutePath = path.resolve(UPLOADS_DIR, base);
+  const normalizedUploads = path.resolve(UPLOADS_DIR);
+  if (
+    absolutePath !== normalizedUploads
+    && !absolutePath.startsWith(normalizedUploads + path.sep)
+  ) {
+    return null;
+  }
+
+  return absolutePath;
+}
+
+function deleteEvidenceFilesFromDisk(files) {
+  if (!Array.isArray(files)) return;
+
+  for (const file of files) {
+    const absolutePath = resolveSafeUploadPath(file?.filename);
+    if (!absolutePath) continue;
+
+    try {
+      if (fs.existsSync(absolutePath)) {
+        fs.unlinkSync(absolutePath);
+      }
+    } catch (error) {
+      console.error("Failed to delete evidence file:", absolutePath, error.message);
+    }
+  }
+}
 
 async function refreshKpiProgressFromEvidence(kpiId) {
   const kpi = await Kpi.findById(kpiId);
   if (!kpi) return null;
 
-  const evidenceRows = await Evidence.find({ kpiId }).select("progress");
+  const evidenceRows = await Evidence.find({
+    kpiId,
+    status: { $ne: "rejected" }
+  }).select("progress");
   const totalPct = Math.min(
     100,
     evidenceRows.reduce((sum, row) => sum + (Number(row.progress) || 0), 0)
@@ -17,7 +91,11 @@ async function refreshKpiProgressFromEvidence(kpiId) {
     : totalPct;
 
   kpi.currentValue = currentValue;
-  kpi.status = totalPct >= 100 ? "pending verification" : "in progress";
+  kpi.status = resolveKpiWorkflowStatus({
+    status: kpi.status,
+    dueDate: kpi.dueDate,
+    progressPercent: totalPct
+  });
   await kpi.save();
   return kpi;
 }
@@ -32,6 +110,12 @@ exports.createEvidence = async (req, res) => {
     }
 
     const submittedPct = Math.min(100, Math.max(0, Number(progress) || 0));
+    if (submittedPct <= 0) {
+      return res.status(400).json({
+        message: "Progress for this submission must be greater than 0%."
+      });
+    }
+
     const kpi = await Kpi.findById(kpiId);
 
     if (!kpi) {
@@ -53,6 +137,10 @@ exports.createEvidence = async (req, res) => {
       mimetype: file.mimetype,
       size: file.size
     }));
+
+    if (!files.length) {
+      return res.status(400).json({ message: "At least one file is required." });
+    }
 
     const evidence = await Evidence.create({
       kpiId,
@@ -120,6 +208,11 @@ exports.updateEvidence = async (req, res) => {
 
     if (req.body.progress !== undefined) {
       const pct = Math.min(100, Math.max(0, Number(req.body.progress) || 0));
+      if (pct <= 0) {
+        return res.status(400).json({
+          message: "Progress for this submission must be greater than 0%."
+        });
+      }
       evidence.progress = pct;
     }
 
@@ -132,6 +225,11 @@ exports.updateEvidence = async (req, res) => {
     }));
     if (extraFiles.length) {
       evidence.files = [...(evidence.files || []), ...extraFiles];
+    }
+
+    const totalFiles = Array.isArray(evidence.files) ? evidence.files.length : 0;
+    if (!totalFiles) {
+      return res.status(400).json({ message: "At least one file is required." });
     }
 
     await evidence.save();
@@ -166,15 +264,75 @@ exports.deleteEvidence = async (req, res) => {
       return res.status(403).json({ message: "You are not allowed to delete this evidence" });
     }
 
-    const kpiId = evidence.kpiId;
+    const kpiId = evidence.kpiId?._id || evidence.kpiId;
+    const kpiBefore = await Kpi.findById(kpiId);
+    const previousPct = kpiProgressPercent(kpiBefore);
+    const removedPct = String(evidence.status || "").toLowerCase() === "rejected"
+      ? 0
+      : Math.min(100, Math.max(0, Number(evidence.progress) || 0));
+
+    deleteEvidenceFilesFromDisk(evidence.files);
     await Evidence.deleteOne({ _id: evidence._id });
     const nextKpi = await refreshKpiProgressFromEvidence(kpiId);
+    const nextPct = kpiProgressPercent(nextKpi);
 
     return res.json({
       message: "Evidence deleted successfully",
       deletedEvidenceId: id,
-      kpi: nextKpi
+      kpi: nextKpi,
+      progressSummary: {
+        previousPercent: previousPct,
+        removedPercent: removedPct,
+        currentPercent: nextPct
+      }
     });
+  } catch (error) {
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+exports.getEvidenceFile = async (req, res) => {
+  try {
+    const { evidenceId, fileIndex } = req.params;
+    const requesterRole = req.user?.role;
+    const requesterId = req.user?.id;
+
+    if (!mongoose.isValidObjectId(evidenceId)) {
+      return res.status(400).json({ message: "Invalid evidence id" });
+    }
+
+    const index = Number.parseInt(fileIndex, 10);
+    if (!Number.isFinite(index) || index < 0) {
+      return res.status(400).json({ message: "Invalid file index" });
+    }
+
+    const evidence = await Evidence.findById(evidenceId);
+    if (!evidence) {
+      return res.status(404).json({ message: "Evidence not found" });
+    }
+
+    const access = await assertEvidenceKpiAccess(evidence.kpiId, requesterRole, requesterId);
+    if (!access.ok) {
+      return res.status(access.status).json({ message: access.message });
+    }
+
+    const file = Array.isArray(evidence.files) ? evidence.files[index] : null;
+    if (!file?.filename) {
+      return res.status(404).json({ message: "File not found" });
+    }
+
+    const absolutePath = path.join(__dirname, "..", "uploads", file.filename);
+    if (!fs.existsSync(absolutePath)) {
+      return res.status(404).json({ message: "File not found on server" });
+    }
+
+    const disposition = req.query.disposition === "attachment" ? "attachment" : "inline";
+    const safeName = (file.originalName || file.filename || "evidence-file").replace(/[^\w.\- ()]/g, "_");
+
+    res.setHeader("Content-Type", file.mimetype || "application/octet-stream");
+    res.setHeader("Content-Disposition", `${disposition}; filename="${safeName}"`);
+
+    return res.sendFile(absolutePath);
   } catch (error) {
     return res.status(500).json({ message: "Server error", error: error.message });
   }

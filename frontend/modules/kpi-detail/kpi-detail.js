@@ -26,6 +26,8 @@ function formatKPIDetailTarget(kpi) {
 function formatKPIDetailStatus(status) {
     const value = String(status || "not started").toLowerCase();
     if (value === "pending verification") return "Awaiting Review";
+    if (value === "approved" || value === "completed") return "Completed";
+    if (value === "rejected") return "In Progress";
     return value
         .split(" ")
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -43,7 +45,23 @@ function formatKPIDetailDate(dateString) {
 }
 
 function mapKPIDetailApiKpi(kpi) {
-    const progress = kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0;
+    let progress = 0;
+    if (kpi.progressPercent != null && Number.isFinite(Number(kpi.progressPercent))) {
+        progress = Math.min(100, Math.max(0, Math.round(Number(kpi.progressPercent))));
+    } else if (kpi.targetValue) {
+        progress = Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100);
+    }
+
+    const effectiveStatus =
+        typeof resolveProgressWorkflowStatus === "function"
+            ? resolveProgressWorkflowStatus(kpi.status, kpi.dueDate, progress)
+            : kpi.status;
+
+    const displayStatus =
+        typeof progressFormatStatus === "function"
+            ? progressFormatStatus(effectiveStatus)
+            : formatKPIDetailStatus(effectiveStatus);
+
     return {
         id: kpi._id,
         kpi: kpi.title,
@@ -56,7 +74,8 @@ function mapKPIDetailApiKpi(kpi) {
         unit: kpi.unit || "",
         staff: localStorage.getItem("userName") || "Staff",
         progress,
-        status: formatKPIDetailStatus(kpi.status),
+        apiStatus: effectiveStatus,
+        status: displayStatus,
         deadline: formatKPIDetailDate(kpi.dueDate)
     };
 }
@@ -91,7 +110,8 @@ async function ensureKPIDetailDataLoaded() {
             currentValue: kpi.currentValue,
             unit: kpi.unit,
             status: kpi.status,
-            dueDate: kpi.dueDate
+            dueDate: kpi.dueDate,
+            progressPercent: kpi.progressPercent
         }));
     } catch (error) {
         console.error("Failed to load KPI Detail data:", error);
@@ -172,24 +192,45 @@ function fillDeptPriorityRow(root, department, priority) {
     wrap.appendChild(pill);
 }
 
-function mapKpiRowStatusToDetailUI(status) {
+function mapKpiRowStatusToDetailUI(status, progressPercent) {
     const s = (status || "").toLowerCase();
-    if (s.includes("completed")) return { label: "Completed", cls: "status-completed" };
-    if (s.includes("overdue")) return { label: "Overdue", cls: "status-delayed" };
-    if (s.includes("pending") || s.includes("verification"))
-        return { label: "Pending Verification", cls: "status-on-hold" };
-    if (s.includes("progress")) return { label: "In Progress", cls: "status-in-progress" };
+    const pct = Number(progressPercent);
+
+    if (s.includes("approved") || s.includes("completed")) {
+        return { label: "Completed", cls: "status-completed" };
+    }
+    if (s.includes("overdue")) {
+        return { label: "Overdue", cls: "status-delayed" };
+    }
+    if (Number.isFinite(pct) && pct >= 100) {
+        return { label: "Awaiting Review", cls: "status-on-hold" };
+    }
+    if (s.includes("awaiting review") || s.includes("pending verification")) {
+        return { label: "Awaiting Review", cls: "status-on-hold" };
+    }
+    if (s.includes("pending") || s.includes("verification")) {
+        return { label: "Awaiting Review", cls: "status-on-hold" };
+    }
+    if (s.includes("rejected")) {
+        return { label: "In Progress", cls: "status-in-progress" };
+    }
+    if (s.includes("not started")) {
+        return { label: "Not Started", cls: "status-on-hold" };
+    }
+    if (s.includes("in progress")) {
+        return { label: "In Progress", cls: "status-in-progress" };
+    }
     return { label: status || "In Progress", cls: "status-in-progress" };
 }
 
 function mapApiStatusToDetailStatusClass(status) {
     const s = String(status || "").toLowerCase();
     if (s === "in progress") return "status-in-progress";
-    if (s === "pending verification") return "status-on-hold";
+    if (s === "pending verification" || s === "pending") return "status-on-hold";
     if (s === "overdue") return "status-delayed";
     if (s === "not started") return "status-on-hold";
     if (s === "completed" || s === "approved") return "status-completed";
-    if (s === "rejected") return "status-delayed";
+    if (s === "rejected") return "status-in-progress";
     return "status-in-progress";
 }
 
@@ -202,6 +243,14 @@ function formatEvidenceDate(dateString) {
     const date = new Date(dateString);
     if (isNaN(date)) return "-";
     return date.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+}
+
+function formatEvidenceDateTime(dateString) {
+    const date = new Date(dateString);
+    if (isNaN(date)) return "-";
+    const datePart = date.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+    const timePart = date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+    return `${datePart}, ${timePart}`;
 }
 
 function mapEvidenceBadge(status) {
@@ -228,7 +277,16 @@ async function loadEvidenceByKpi(kpiId) {
     }
 }
 
-function evidenceActionsDropdown() {
+function evidenceActionsDropdown(options = {}) {
+    const { showDelete = true } = options;
+    const deleteItem = showDelete
+        ? `<li>
+                    <button type="button" class="dropdown-item evidence-delete-btn">
+                        <span class="material-symbols-outlined">delete</span>Delete
+                    </button>
+                </li>`
+        : "";
+
     return `
         <div class="dropdown d-inline-block text-start">
             <button class="btn btn-sm btn-light kpi-actions-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -245,11 +303,7 @@ function evidenceActionsDropdown() {
                         <span class="material-symbols-outlined">edit</span>Edit
                     </button>
                 </li>
-                <li>
-                    <button type="button" class="dropdown-item evidence-delete-btn">
-                        <span class="material-symbols-outlined">delete</span>Delete
-                    </button>
-                </li>
+                ${deleteItem}
             </ul>
         </div>`;
 }
@@ -312,15 +366,18 @@ function buildMyEvidenceRowsFromApi(evidenceList, currentUserId) {
 
     mine.forEach((ev) => {
         const badge = mapEvidenceBadge(ev.status);
-        const uploadDate = formatEvidenceDate(ev.createdAt);
+        const uploadDate = formatEvidenceDateTime(ev.createdAt);
         const files = Array.isArray(ev.files) && ev.files.length
             ? ev.files
             : [{ originalName: ev.title || "Evidence submission" }];
 
-        files.forEach((file) => {
+        files.forEach((file, fileIndex) => {
+            const fileCell = typeof buildEvidenceFileNameCell === "function"
+                ? buildEvidenceFileNameCell(ev._id, fileIndex, file)
+                : escapeHtml(file.originalName || file.filename || "Evidence file");
             lines.push(`
                 <tr data-evidence-id="${escapeHtml(ev._id || "")}">
-                    <td>${escapeHtml(file.originalName || file.filename || "Evidence file")}</td>
+                    <td>${fileCell}</td>
                     <td>${uploadDate}</td>
                     <td>${Number(ev.progress) || 0}%</td>
                     <td><span class="badge ${badge.className}">${badge.label}</span></td>
@@ -333,37 +390,35 @@ function buildMyEvidenceRowsFromApi(evidenceList, currentUserId) {
     return lines.join("");
 }
 
-function buildTeamEvidenceRowsFromApi(evidenceList, currentUserId) {
+function buildTeamEvidenceRowsFromApi(evidenceList, currentUserId, userRole) {
     const team = evidenceList.filter(ev => String(ev?.submittedBy?._id || ev?.submittedBy) !== String(currentUserId));
     if (!team.length) return "";
 
-    const actions = evidenceActionsDropdown();
+    const actions = evidenceActionsDropdown({ showDelete: String(userRole || "").toLowerCase() !== "staff" });
     const lines = [];
 
     team.forEach((ev) => {
         const badge = mapEvidenceBadge(ev.status);
         const submitterName = ev?.submittedBy?.name || "Team collaborator";
-        const initials = submitterName
-            .split(" ")
-            .map((word) => word[0])
-            .join("")
-            .slice(0, 3)
-            .toUpperCase() || "TC";
+        const uploadDate = formatEvidenceDateTime(ev.createdAt);
+        const progress = Math.min(100, Math.max(0, Number(ev.progress) || 0));
 
         const files = Array.isArray(ev.files) && ev.files.length
             ? ev.files
             : [{ originalName: ev.title || "Evidence submission" }];
 
-        files.forEach((file) => {
+        files.forEach((file, fileIndex) => {
+            const fileCell = typeof buildEvidenceFileNameCell === "function"
+                ? buildEvidenceFileNameCell(ev._id, fileIndex, file)
+                : escapeHtml(file.originalName || file.filename || "Evidence file");
             lines.push(`
                 <tr data-evidence-id="${escapeHtml(ev._id || "")}">
                     <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="kpi-initials">${escapeHtml(initials)}</div>
-                            <span class="fw-semibold">${escapeHtml(submitterName)}</span>
-                        </div>
+                        ${fileCell}
+                        <small class="text-muted d-block mt-1">By ${escapeHtml(submitterName)}</small>
                     </td>
-                    <td>${escapeHtml(file.originalName || file.filename || "Evidence file")}</td>
+                    <td>${uploadDate}</td>
+                    <td>${progress}%</td>
                     <td><span class="badge ${badge.className}">${badge.label}</span></td>
                     <td class="text-end">${actions}</td>
                 </tr>
@@ -378,8 +433,7 @@ function buildTimelineHTMLFromEvidence(row, evidenceList) {
     if (!Array.isArray(evidenceList) || !evidenceList.length) return "";
 
     const latest = [...evidenceList]
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        .slice(0, 4);
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     return latest.map((ev) => {
         const submitter = ev?.submittedBy?.name || "Contributor";
@@ -490,7 +544,7 @@ async function populateKpiDetailFromSharedData(root) {
     const deptBlock = root.querySelector("#kpi-detail-department");
     if (deptBlock) deptBlock.textContent = row.department || "—";
 
-    const ui = mapKpiRowStatusToDetailUI(row.status);
+    const ui = mapKpiRowStatusToDetailUI(row.apiStatus || row.status, row.progress);
     updateKPIDetailStatus(root, ui.label, ui.cls);
 
     const cap = root.querySelector("#kpi-detail-milestone-caption");
@@ -510,7 +564,7 @@ async function populateKpiDetailFromSharedData(root) {
         myBody.innerHTML = myRows || buildMyEvidenceRows(row);
     }
 
-    const teamRows = buildTeamEvidenceRowsFromApi(evidenceList, user.id);
+    const teamRows = buildTeamEvidenceRowsFromApi(evidenceList, user.id, user.role);
     if (teamBody) {
         if (teamRows) {
             teamBody.innerHTML = teamRows;
@@ -519,14 +573,13 @@ async function populateKpiDetailFromSharedData(root) {
             teamBody.innerHTML = `
                 <tr>
                     <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="kpi-initials">${peer.initials}</div>
-                            <span class="fw-semibold">${peer.staff}</span>
-                        </div>
+                        <div class="fw-semibold">${peer.doc}</div>
+                        <small class="text-muted">By ${peer.staff}</small>
                     </td>
-                    <td>${peer.doc}</td>
+                    <td>—</td>
+                    <td>—</td>
                     <td><span class="badge ${peer.statusClass}">${peer.statusLabel}</span></td>
-                    <td class="text-end">${evidenceActionsDropdown()}</td>
+                    <td class="text-end">${evidenceActionsDropdown({ showDelete: false })}</td>
                 </tr>`;
         }
     }
@@ -585,29 +638,55 @@ async function saveKPIDetailStatus(root, apiStatus) {
     }
 
     const updatedKpi = result.kpi || {};
-    row.status = updatedKpi.status ? mapKpiRowStatusToDetailUI(updatedKpi.status).label : row.status;
-    if (typeof updatedKpi.currentValue === "number") row.currentValue = updatedKpi.currentValue;
-    if (typeof updatedKpi.targetValue === "number" && updatedKpi.targetValue > 0) {
-        row.progress = Math.round(((updatedKpi.currentValue || 0) / updatedKpi.targetValue) * 100);
-    }
+    applyApiKpiToSharedRow(row, updatedKpi);
     return updatedKpi;
 }
 
-function syncSelectedKpiRowFromApiKpi(updatedKpi) {
-    if (!updatedKpi) return;
-    const row = getSelectedKpiDetailRow();
-    if (!row) return;
+function computeKpiProgressPercentFromApi(kpi) {
+    if (!kpi) return 0;
+    const currentValue = Number(kpi.currentValue) || 0;
+    const targetValue = Number(kpi.targetValue);
+    if (Number.isFinite(targetValue) && targetValue > 0) {
+        return Math.min(100, Math.round((currentValue / targetValue) * 100));
+    }
+    return Math.min(100, Math.max(0, currentValue));
+}
+
+function applyApiKpiToSharedRow(row, updatedKpi) {
+    if (!row || !updatedKpi) return;
 
     if (typeof updatedKpi.status === "string" && updatedKpi.status.trim()) {
-        row.status = mapKpiRowStatusToDetailUI(updatedKpi.status).label;
+        row.apiStatus = updatedKpi.status;
+        row.progress = computeKpiProgressPercentFromApi(updatedKpi);
+        row.status = mapKpiRowStatusToDetailUI(updatedKpi.status, row.progress).label;
     }
     if (typeof updatedKpi.currentValue === "number") {
         row.currentValue = updatedKpi.currentValue;
     }
-    if (typeof updatedKpi.targetValue === "number" && updatedKpi.targetValue > 0) {
+    if (typeof updatedKpi.targetValue === "number") {
         row.targetValue = updatedKpi.targetValue;
-        row.progress = Math.round(((updatedKpi.currentValue || 0) / updatedKpi.targetValue) * 100);
         row.target = formatKPIDetailTarget(updatedKpi);
+    }
+    if (typeof updatedKpi.status !== "string" || !updatedKpi.status.trim()) {
+        row.progress = computeKpiProgressPercentFromApi(updatedKpi);
+    }
+}
+
+function syncSelectedKpiRowFromApiKpi(updatedKpi) {
+    if (!updatedKpi) return;
+
+    const kpiId = String(updatedKpi._id || updatedKpi.id || "");
+    const rows = getKPIDetailRows();
+
+    rows.forEach((row) => {
+        if (kpiId && String(row?.id || row?._id || "") === kpiId) {
+            applyApiKpiToSharedRow(row, updatedKpi);
+        }
+    });
+
+    const selected = getSelectedKpiDetailRow();
+    if (selected && (!kpiId || String(selected?.id || selected?._id || "") === kpiId)) {
+        applyApiKpiToSharedRow(selected, updatedKpi);
     }
 }
 
@@ -717,8 +796,22 @@ async function deleteKPIDetailEvidence(root, evidenceId) {
     }
 
     syncSelectedKpiRowFromApiKpi(result.kpi);
+
+    try {
+        if (typeof refreshKpiProgressAcrossViews === "function") {
+            await refreshKpiProgressAcrossViews();
+        }
+    } catch (refreshError) {
+        console.error("Failed to refresh KPI progress data:", refreshError);
+    }
+
     await populateKpiDetailFromSharedData(root);
-    showKPIDetailFeedback(root, "Evidence deleted successfully.", "success");
+
+    const summary = result.progressSummary;
+    const message = summary
+        ? `Evidence deleted. KPI progress: ${summary.previousPercent}% → ${summary.currentPercent}% (−${summary.removedPercent}% from this submission).`
+        : "Evidence deleted successfully.";
+    showKPIDetailFeedback(root, message, "success");
 }
 
 function switchKPIDetailQuarter(root, quarter) {
@@ -759,9 +852,11 @@ function bindKPIDetailEvents(root) {
 
             try {
                 const updatedKpi = await saveKPIDetailStatus(root, apiStatus);
-                const ui = mapKpiRowStatusToDetailUI(updatedKpi?.status || apiStatus);
-                const className = mapApiStatusToDetailStatusClass(updatedKpi?.status || apiStatus);
-                updateKPIDetailStatus(root, ui.label, className);
+                const ui = mapKpiRowStatusToDetailUI(
+                    updatedKpi?.status || apiStatus,
+                    computeKpiProgressPercentFromApi(updatedKpi)
+                );
+                updateKPIDetailStatus(root, ui.label, ui.cls);
             } catch (error) {
                 alert(error.message || "Failed to update KPI status.");
             }
@@ -849,6 +944,17 @@ async function initKPIDetailView() {
     }
 
     populateKpiDetailFromSharedData(root);
+
+    const pendingFeedback = sessionStorage.getItem("kpiDetailFeedback");
+    if (pendingFeedback) {
+        sessionStorage.removeItem("kpiDetailFeedback");
+        try {
+            const { message, type } = JSON.parse(pendingFeedback);
+            if (message) showKPIDetailFeedback(root, message, type || "success");
+        } catch (feedbackError) {
+            console.error("Failed to show KPI detail feedback:", feedbackError);
+        }
+    }
 
     if (root.dataset.kpiDetailEventsBound === "1") return;
     root.dataset.kpiDetailEventsBound = "1";

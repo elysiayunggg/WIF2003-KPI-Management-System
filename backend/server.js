@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Evidence files are served via GET /api/evidence/:evidenceId/files/:fileIndex (authenticated).
 app.use("/api/auth", authRoutes);
 app.use("/api/kpis", kpiRoutes);
 app.use("/api/evidence", evidenceRoutes);

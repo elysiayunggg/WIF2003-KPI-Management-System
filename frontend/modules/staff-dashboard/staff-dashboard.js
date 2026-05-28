@@ -823,6 +823,10 @@ function submitStaffEvidence(kpiName) {
     window.selectedKpiDetailIndex = index;
   }
 
+  if (row?.id) {
+    sessionStorage.setItem("selectedKpiId", String(row.id));
+  }
+
   if (typeof changePage === "function") {
     changePage({ preventDefault() {} }, "Submit Evidence");
   }

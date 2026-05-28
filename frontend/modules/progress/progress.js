@@ -31,9 +31,27 @@ function progressFormatTarget(kpi) {
     return `${kpi.targetValue}${kpi.unit ? ` ${kpi.unit}` : ""}`;
 }
 
+function resolveProgressWorkflowStatus(rawStatus, dueDate, progressPercent) {
+    const status = String(rawStatus || "").toLowerCase().trim();
+    const pct = Number(progressPercent) || 0;
+    const isApproved = status === "approved" || status === "completed";
+
+    if (isApproved) return status;
+    if (pct >= 100) return "pending verification";
+    if (dueDate) {
+        const due = new Date(dueDate);
+        if (!Number.isNaN(due.getTime()) && due < new Date()) return "overdue";
+    }
+    if (status === "rejected") return "in progress";
+    if (status === "not started") return "not started";
+    return "in progress";
+}
+
 function progressFormatStatus(status) {
     const value = String(status || "not started").toLowerCase();
     if (value === "pending verification") return "Awaiting Review";
+    if (value === "approved" || value === "completed") return "Completed";
+    if (value === "rejected") return "In Progress";
     return value
         .split(" ")
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -52,7 +70,13 @@ function progressFormatDate(dateString) {
 }
 
 function mapProgressApiKpi(kpi) {
-    const progress = kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0;
+    let progress = 0;
+    if (kpi.progressPercent != null && Number.isFinite(Number(kpi.progressPercent))) {
+        progress = Math.min(100, Math.max(0, Math.round(Number(kpi.progressPercent))));
+    } else if (kpi.targetValue) {
+        progress = Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100);
+    }
+    const effectiveStatus = resolveProgressWorkflowStatus(kpi.status, kpi.dueDate, progress);
 
     return {
         id: kpi._id,
@@ -66,7 +90,8 @@ function mapProgressApiKpi(kpi) {
         unit: kpi.unit || "",
         staff: localStorage.getItem("userName") || "Staff",
         progress,
-        status: progressFormatStatus(kpi.status),
+        apiStatus: effectiveStatus,
+        status: progressFormatStatus(effectiveStatus),
         deadline: progressFormatDate(kpi.dueDate)
     };
 }
@@ -79,8 +104,14 @@ async function loadProgressAssignedKpis() {
     }
 
     try {
+        if (typeof reloadSharedKpiData === "function") {
+            await reloadSharedKpiData();
+            return;
+        }
+
         const response = await fetch(`http://127.0.0.1:5050/api/kpis/assigned/${userId}`, {
-            headers: getAuthHeaders()
+            headers: getAuthHeaders(),
+            cache: "no-store"
         });
         if (!response.ok) throw new Error("Failed to load assigned KPI progress");
 
@@ -96,6 +127,7 @@ async function loadProgressAssignedKpis() {
             unit: kpi.unit,
             status: kpi.status,
             dueDate: kpi.dueDate,
+            progressPercent: kpi.progressPercent,
             assignedTo: kpi.assignedTo
         }));
     } catch (error) {
@@ -110,17 +142,22 @@ function kpiSharedPriorityTier(priority) {
     return "medium";
 }
 
-function kpiSharedStatusToStyleType(status) {
+function kpiSharedStatusToStyleType(status, progressPercent) {
     const s = (status || "").toLowerCase();
+    const pct = Number(progressPercent);
+
     if (s.includes("overdue")) return "overdue";
-    if (s.includes("completed")) return "completed";
-    if (s.includes("pending") || s.includes("verification") || s.includes("awaiting review")) return "review";
-    if (s.includes("progress")) return "in-progress";
+    if (s.includes("approved") || s.includes("completed")) return "completed";
+    if (Number.isFinite(pct) && pct >= 100) return "review";
+    if (s.includes("awaiting review") || s.includes("pending verification")) return "review";
+    if (s.includes("pending") || s.includes("verification")) return "review";
+    if (s.includes("rejected")) return "in-progress";
+    if (s.includes("in progress")) return "in-progress";
     return "not-started";
 }
 
 function mapSharedKpiRowToCardItem(row, sourceIndex) {
-    const styleType = kpiSharedStatusToStyleType(row.status);
+    const styleType = kpiSharedStatusToStyleType(row.apiStatus || row.status, row.progress);
     let dateIcon = "calendar_today";
     if (styleType === "overdue") dateIcon = "event_busy";
     if (styleType === "completed") dateIcon = "task_alt";
@@ -248,3 +285,7 @@ async function initProgressView() {
         });
     }
 }
+
+window.mapProgressApiKpi = mapProgressApiKpi;
+window.loadProgressAssignedKpis = loadProgressAssignedKpis;
+window.renderProgressCards = renderProgressCards;

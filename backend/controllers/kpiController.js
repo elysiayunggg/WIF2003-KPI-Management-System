@@ -1,6 +1,7 @@
 const Kpi = require("../models/Kpi");
 const Evidence = require("../models/Evidence");
 const mongoose = require("mongoose");
+const { computeProgressPercent, resolveKpiWorkflowStatus } = require("../utils/kpiStatus");
 
 function isAssignedToUser(kpi, userId) {
   if (!kpi || !Array.isArray(kpi.assignedTo) || !userId) return false;
@@ -18,7 +19,18 @@ exports.getKpis = async (req, res) => {
       .populate("assignedTo", "name email role")
       .sort({ createdAt: -1 });
 
-    res.json(kpis);
+    const rows = kpis.map((kpi) => {
+      const payload = kpi.toObject();
+      const progressPercent = computeProgressPercent(kpi);
+      payload.status = resolveKpiWorkflowStatus({
+        status: kpi.status,
+        dueDate: kpi.dueDate,
+        progressPercent
+      });
+      return payload;
+    });
+
+    res.json(rows);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -44,9 +56,12 @@ exports.getAssignedKpis = async (req, res) => {
       .sort({ dueDate: 1, updatedAt: -1 });
 
     const rows = kpis.map((kpi) => {
-      const progress = kpi.targetValue
-        ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100)
-        : 0;
+      const progressPercent = computeProgressPercent(kpi);
+      const status = resolveKpiWorkflowStatus({
+        status: kpi.status,
+        dueDate: kpi.dueDate,
+        progressPercent
+      });
 
       return {
         id: kpi._id,
@@ -57,8 +72,8 @@ exports.getAssignedKpis = async (req, res) => {
         targetValue: kpi.targetValue,
         currentValue: kpi.currentValue,
         unit: kpi.unit,
-        progressPercent: progress,
-        status: kpi.status,
+        progressPercent,
+        status,
         dueDate: kpi.dueDate,
         assignedTo: kpi.assignedTo
       };
@@ -80,7 +95,15 @@ exports.getKpiById = async (req, res) => {
       return res.status(404).json({ message: "KPI not found" });
     }
 
-    res.json(kpi);
+    const progressPercent = computeProgressPercent(kpi);
+    const payload = kpi.toObject();
+    payload.status = resolveKpiWorkflowStatus({
+      status: kpi.status,
+      dueDate: kpi.dueDate,
+      progressPercent
+    });
+
+    res.json(payload);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -236,7 +259,11 @@ exports.patchKpiProgress = async (req, res) => {
 
       kpi.currentValue = nextCurrentValue;
       if (status === undefined) {
-        kpi.status = clampedProgress >= 100 ? "pending verification" : "in progress";
+        kpi.status = resolveKpiWorkflowStatus({
+          status: kpi.status,
+          dueDate: kpi.dueDate,
+          progressPercent: clampedProgress
+        });
       }
     }
 

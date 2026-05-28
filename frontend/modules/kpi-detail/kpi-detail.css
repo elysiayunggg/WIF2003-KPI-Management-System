@@ -465,6 +465,45 @@
     font-size: 17px;
 }
 
+.kpi-evidence-card {
+    min-height: 23rem;
+}
+
+.evidence-file-cell {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.5rem;
+}
+
+.evidence-file-cell__name {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.evidence-file-cell__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+}
+
+.evidence-file-cell__actions .btn-link {
+    color: #4e5e82;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.evidence-file-cell__actions .btn-link:hover {
+    color: #3d4d6e;
+    text-decoration: underline;
+}
+
+.kpi-evidence-table-wrap {
+    min-height: 16rem;
+    padding-bottom: 2.5rem;
+}
+
 @media (max-width: 992px) {
     .kpi-container {
         padding-left: 1rem;
@@ -482,5 +521,14 @@
     .kpi-milestone-row {
         grid-template-columns: 1fr;
         gap: 0.5rem;
+    }
+
+    .kpi-evidence-card {
+        min-height: 0;
+    }
+
+    .kpi-evidence-table-wrap {
+        min-height: 0;
+        padding-bottom: 1rem;
     }
 }

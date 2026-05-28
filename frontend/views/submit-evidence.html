@@ -27,7 +27,7 @@
 
                         <div class="mb-3">
                             <label for="evidence-title" class="form-label evidence-label">SUBMISSION TITLE</label>
-                            <input id="evidence-title" type="text" class="form-control evidence-input" placeholder="e.g., Q3 Operational Efficiency Report" />
+                            <input id="evidence-title" type="text" class="form-control evidence-input" placeholder="e.g., Q3 Sales Report — March update" />
                         </div>
 
                         <div class="mb-3">
@@ -36,13 +36,13 @@
                         </div>
 
                         <div class="mb-2 d-flex justify-content-between align-items-end">
-                            <span class="evidence-label">SET TOTAL TASK PROGRESS (%)</span>
+                            <span class="evidence-label" id="progress-label">KPI PROGRESS AFTER THIS SUBMISSION</span>
                             <span class="evidence-progress-val" id="progress-val">0%</span>
                         </div>
-                        <div class="evidence-slider-wrapper mb-4">
+                        <div class="evidence-slider-wrapper mb-2">
                             <input id="progress-slider" type="range" min="0" max="100" value="0" class="round-slider" />
                         </div>
-                        <p class="text-muted small mb-4">
+                        <p class="evidence-progress-helper text-muted small mb-4" id="progress-helper">
                             Slider starts at current KPI progress and can only move up to 100%.
                         </p>
 
@@ -59,7 +59,8 @@
                                 </div>
                                 <p class="evidence-dropzone__title mb-1">Click to upload or drag and drop</p>
                                 <p class="evidence-dropzone__hint mb-0">PDF, DOCX, XLSX or images up to 10MB each</p>
-                                <input type="file" id="file-input" hidden multiple />
+                                <p class="evidence-dropzone__required text-muted small mb-0 mt-2">At least one file is required.</p>
+                                <input type="file" id="file-input" hidden multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.webp" />
                             </div>
                         </section>
 

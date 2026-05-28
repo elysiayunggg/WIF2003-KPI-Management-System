@@ -4,6 +4,7 @@ const path = require("path");
 const {
   createEvidence,
   getEvidence,
+  getEvidenceFile,
   updateEvidence,
   deleteEvidence
 } = require("../controllers/evidenceController");
@@ -28,6 +29,7 @@ const upload = multer({
   }
 });
 
+router.get("/:evidenceId/files/:fileIndex", requireAuth, getEvidenceFile);
 router.get("/", requireAuth, getEvidence);
 router.post("/", requireAuth, upload.array("files", 5), createEvidence);
 router.patch("/:id", requireAuth, upload.array("files", 5), updateEvidence);

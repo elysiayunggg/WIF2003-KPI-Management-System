@@ -199,6 +199,11 @@
     line-height: 1.4;
 }
 
+.progress-card .kpi-priority-pill {
+    font-size: 0.625rem;
+    padding: 0.3rem 0.6rem;
+}
+
 .progress-card__menu-btn {
     width: 28px;
     height: 28px;
