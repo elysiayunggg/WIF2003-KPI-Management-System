@@ -78,6 +78,11 @@ class ProgressCardComponent {
             if (card) {
                 const idx = parseInt(card.getAttribute('data-kpi-index'), 10);
                 window.selectedKpiDetailIndex = Number.isFinite(idx) ? idx : 0;
+                const cardKpiId = card.getAttribute('data-kpi-id');
+                const rows = Array.isArray(window.kpiData) ? window.kpiData : [];
+                const row = rows[window.selectedKpiDetailIndex] || null;
+                const resolvedKpiId = cardKpiId || row?.id || row?._id || "";
+                if (resolvedKpiId) sessionStorage.setItem("selectedKpiId", String(resolvedKpiId));
             }
             window.changePage(e, 'KPI Detail');
         });

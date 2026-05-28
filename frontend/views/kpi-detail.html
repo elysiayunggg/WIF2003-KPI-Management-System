@@ -19,10 +19,10 @@
                         <span class="material-symbols-outlined ms-1">expand_more</span>
                     </button>
                     <div class="kpi-status-menu card shadow border-0 p-1" id="status-dropdown-menu">
-                        <button class="dropdown-item" type="button" data-status-label="In Progress" data-status-class="status-in-progress">In Progress</button>
-                        <button class="dropdown-item" type="button" data-status-label="Completed" data-status-class="status-completed">Completed</button>
-                        <button class="dropdown-item" type="button" data-status-label="Delayed" data-status-class="status-delayed">Delayed</button>
-                        <button class="dropdown-item" type="button" data-status-label="On Hold" data-status-class="status-on-hold">On Hold</button>
+                        <button class="dropdown-item" type="button" data-status-label="In Progress" data-status-class="status-in-progress" data-api-status="in progress">In Progress</button>
+                        <button class="dropdown-item" type="button" data-status-label="Completed" data-status-class="status-completed" data-api-status="pending verification">Completed</button>
+                        <button class="dropdown-item" type="button" data-status-label="Delayed" data-status-class="status-delayed" data-api-status="overdue">Delayed</button>
+                        <button class="dropdown-item" type="button" data-status-label="On Hold" data-status-class="status-on-hold" data-api-status="not started">On Hold</button>
                     </div>
                 </div>
                 <button class="btn kpi-btn-secondary"><span class="material-symbols-outlined">file_download</span>Export CSV</button>
@@ -156,7 +156,7 @@
                     <div class="table-responsive">
                         <table class="table align-middle kpi-table mb-0">
                             <thead>
-                                <tr><th style="width: 35%;">File Name</th><th>Date Uploaded</th><th>Status</th><th class="text-end">Actions</th></tr>
+                                <tr><th style="width: 32%;">File Name</th><th>Date Uploaded</th><th>Progress</th><th>Status</th><th class="text-end">Actions</th></tr>
                             </thead>
                             <tbody id="kpi-detail-my-evidence-body">
                             </tbody>

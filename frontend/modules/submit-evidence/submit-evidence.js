@@ -1,10 +1,28 @@
-function applyEvidenceContextFromSelectedKpi(root) {
+function getEvidenceKpiRows() {
+    return Array.isArray(window.kpiData) ? window.kpiData : [];
+}
+
+function getSelectedEvidenceKpiIndex() {
+    const selectedKpiId = sessionStorage.getItem("selectedKpiId");
+    const rows = getEvidenceKpiRows();
+    if (selectedKpiId) {
+        const byId = rows.findIndex((row) => String(row?.id || row?._id || "") === String(selectedKpiId));
+        if (byId >= 0) {
+            window.selectedKpiDetailIndex = byId;
+            return byId;
+        }
+    }
     const idx =
         window.selectedKpiDetailIndex != null && window.selectedKpiDetailIndex !== ""
             ? parseInt(window.selectedKpiDetailIndex, 10)
             : 0;
-    let row = typeof window.getKpiDataRow === "function" ? window.getKpiDataRow(idx) : null;
-    if (!row && typeof window.getKpiDataRow === "function") row = window.getKpiDataRow(0);
+    return Number.isFinite(idx) && idx >= 0 ? idx : 0;
+}
+
+function applyEvidenceContextFromSelectedKpi(root) {
+    const rows = getEvidenceKpiRows();
+    const idx = getSelectedEvidenceKpiIndex();
+    let row = rows[idx] || rows[0] || null;
     if (!row) return;
 
     const titleInput = root.querySelector("#evidence-title");
@@ -17,28 +35,48 @@ function applyEvidenceContextFromSelectedKpi(root) {
     const progressVal = root.querySelector("#progress-val");
     const pct = Math.min(100, Math.max(0, Number(row.progress) || 0));
     if (slider) {
+        slider.min = String(pct);
+        slider.max = "100";
         slider.value = String(pct);
+        slider.dataset.currentProgress = String(pct);
         if (typeof updateSliderFill === "function") updateSliderFill(slider);
     }
     if (progressVal) progressVal.textContent = pct + "%";
 
     const pageDesc = root.querySelector("#page-desc");
     if (pageDesc) {
-        pageDesc.textContent = `Supporting files for ${row.kpi}. Target ${row.target} · ${row.department}.`;
+        pageDesc.textContent = `Supporting files for ${row.kpi}. Target ${row.target} · ${row.department}. Progress entered here is added to existing KPI progress.`;
     }
 }
 
 function getSelectedEvidenceKpi() {
-    const idx =
-        window.selectedKpiDetailIndex != null && window.selectedKpiDetailIndex !== ""
-            ? parseInt(window.selectedKpiDetailIndex, 10)
-            : 0;
+    const rows = getEvidenceKpiRows();
+    const idx = getSelectedEvidenceKpiIndex();
+    return rows[idx] || rows[0] || null;
+}
 
-    if (typeof window.getKpiDataRow === "function") {
-        return window.getKpiDataRow(idx) || window.getKpiDataRow(0);
+function getSubmitEvidenceAuthHeaders() {
+    const token = localStorage.getItem("token");
+    if (!token) return {};
+    return { Authorization: `Bearer ${token}` };
+}
+
+async function loadSelectedEvidenceForEdit(kpiId) {
+    const selectedEvidenceId = sessionStorage.getItem("selectedEvidenceId");
+    if (!selectedEvidenceId || !kpiId) return null;
+
+    try {
+        const response = await fetch(`http://127.0.0.1:5050/api/evidence?kpiId=${encodeURIComponent(kpiId)}`, {
+            headers: getSubmitEvidenceAuthHeaders()
+        });
+        if (!response.ok) return null;
+
+        const rows = await response.json();
+        if (!Array.isArray(rows)) return null;
+        return rows.find((item) => String(item._id) === String(selectedEvidenceId)) || null;
+    } catch (error) {
+        return null;
     }
-
-    return Array.isArray(window.kpiData) ? window.kpiData[idx] || window.kpiData[0] : null;
 }
 
 async function submitEvidenceProgress(root) {
@@ -64,23 +102,35 @@ async function submitEvidenceProgress(root) {
         return;
     }
 
-    const progress = Math.min(100, Math.max(0, Number(slider?.value) || 0));
+    const currentProgress = Math.min(100, Math.max(0, Number(slider?.dataset.currentProgress) || 0));
+    const selectedTotalProgress = Math.min(100, Math.max(currentProgress, Number(slider?.value) || currentProgress));
+    const progressToAdd = Math.max(0, selectedTotalProgress - currentProgress);
+    const selectedEvidenceId = sessionStorage.getItem("selectedEvidenceId");
+    const activePage = localStorage.getItem("activePage");
+    const isEditMode = activePage === "Edit Evidence" && !!selectedEvidenceId;
     const formData = new FormData();
-    formData.append("kpiId", row.id);
-    formData.append("submittedBy", user.id);
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("progress", String(progress));
+    formData.append("progress", String(isEditMode ? selectedTotalProgress : progressToAdd));
+    if (!isEditMode) {
+        formData.append("kpiId", row.id);
+    }
 
     Array.from(fileInput?.files || []).forEach(file => {
         formData.append("files", file);
     });
 
     try {
-        const response = await fetch("http://127.0.0.1:5050/api/evidence", {
-            method: "POST",
-            body: formData
-        });
+        const response = await fetch(
+            isEditMode
+                ? `http://127.0.0.1:5050/api/evidence/${selectedEvidenceId}`
+                : "http://127.0.0.1:5050/api/evidence",
+            {
+                method: isEditMode ? "PATCH" : "POST",
+                headers: getSubmitEvidenceAuthHeaders(),
+                body: formData
+            }
+        );
 
         const result = await response.json();
 
@@ -89,7 +139,13 @@ async function submitEvidenceProgress(root) {
             return;
         }
 
-        alert("Evidence submitted successfully!");
+        const summary = result.progressSummary;
+        if (summary) {
+            alert(`Evidence submitted successfully! Progress: ${summary.previousPercent}% -> ${summary.currentPercent}%`);
+        } else {
+            alert(isEditMode ? "Evidence updated successfully!" : "Evidence submitted successfully!");
+        }
+        sessionStorage.removeItem("selectedEvidenceId");
         changePage({ preventDefault() {} }, "KPI Progress");
     } catch (error) {
         alert("Cannot connect to server. Please make sure the backend is running.");
@@ -99,11 +155,35 @@ async function submitEvidenceProgress(root) {
 /**
  * Initializes the Submit/View Evidence view.
  */
-function initSubmitEvidenceView() {
+async function initSubmitEvidenceView() {
     const root = document.getElementById('submit-evidence-root');
     if (!root) return;
 
     applyEvidenceContextFromSelectedKpi(root);
+    const selectedKpi = getSelectedEvidenceKpi();
+    const activePage = localStorage.getItem("activePage");
+    const selectedEvidence = (activePage === "Edit Evidence" || activePage === "View Evidence")
+        ? await loadSelectedEvidenceForEdit(selectedKpi?.id)
+        : null;
+
+    if (selectedEvidence) {
+        const titleInput = root.querySelector("#evidence-title");
+        const descInput = root.querySelector("#evidence-desc");
+        const slider = root.querySelector("#progress-slider");
+        const progressVal = root.querySelector("#progress-val");
+        const pct = Math.min(100, Math.max(0, Number(selectedEvidence.progress) || 0));
+
+        if (titleInput) titleInput.value = selectedEvidence.title || titleInput.value;
+        if (descInput) descInput.value = selectedEvidence.description || "";
+        if (slider) {
+            slider.min = "0";
+            slider.max = "100";
+            slider.value = String(pct);
+            slider.dataset.currentProgress = "0";
+            updateSliderFill(slider);
+        }
+        if (progressVal) progressVal.textContent = `${pct}%`;
+    }
 
     // 1. Progress slider with dynamic fill
     const slider = root.querySelector('#progress-slider');
@@ -133,7 +213,6 @@ function initSubmitEvidenceView() {
     }
 
     // 3. Mode detection (Submit vs Edit vs View)
-    const activePage = localStorage.getItem("activePage");
 
     if (activePage === "View Evidence") {
         setupViewEvidenceMode(root);
@@ -178,14 +257,7 @@ function setupEditEvidenceMode(root) {
 
 function setupViewEvidenceMode(root) {
     root.querySelector('#page-title').textContent = "View Evidence";
-    const row =
-        typeof window.getKpiDataRow === "function"
-            ? window.getKpiDataRow(
-                  window.selectedKpiDetailIndex != null && window.selectedKpiDetailIndex !== ""
-                      ? parseInt(window.selectedKpiDetailIndex, 10)
-                      : 0
-              )
-            : null;
+    const row = getSelectedEvidenceKpi();
     const kpiLine = row ? `${row.kpi} · ${row.target}` : "This KPI";
     root.querySelector('#page-desc').textContent =
         `${kpiLine} — under review. Fields are read-only.`;
@@ -219,6 +291,8 @@ function setupViewEvidenceMode(root) {
     root.querySelectorAll('input, textarea').forEach(el => {
         el.disabled = true;
     });
+    const slider = root.querySelector('#progress-slider');
+    if (slider) slider.disabled = true;
 
     // Drop the per-file remove button when in read-only mode
     const observer = new MutationObserver(() => {

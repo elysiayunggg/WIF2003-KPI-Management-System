@@ -3,8 +3,11 @@ const multer = require("multer");
 const path = require("path");
 const {
   createEvidence,
-  getEvidence
+  getEvidence,
+  updateEvidence,
+  deleteEvidence
 } = require("../controllers/evidenceController");
+const { requireAuth } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -25,7 +28,9 @@ const upload = multer({
   }
 });
 
-router.get("/", getEvidence);
-router.post("/", upload.array("files", 5), createEvidence);
+router.get("/", requireAuth, getEvidence);
+router.post("/", requireAuth, upload.array("files", 5), createEvidence);
+router.patch("/:id", requireAuth, upload.array("files", 5), updateEvidence);
+router.delete("/:id", requireAuth, deleteEvidence);
 
 module.exports = router;
