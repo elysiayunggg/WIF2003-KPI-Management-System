@@ -13,6 +13,30 @@ function clampProgress(progress) {
   return Math.min(100, Math.max(0, Number(progress)));
 }
 
+function mapKpiToAssignedRow(kpi) {
+  const progressPercent = computeProgressPercent(kpi);
+  const status = resolveKpiWorkflowStatus({
+    status: kpi.status,
+    dueDate: kpi.dueDate,
+    progressPercent
+  });
+
+  return {
+    id: kpi._id,
+    title: kpi.title,
+    description: kpi.description,
+    department: kpi.department,
+    priority: kpi.priority,
+    targetValue: kpi.targetValue,
+    currentValue: kpi.currentValue,
+    unit: kpi.unit,
+    progressPercent,
+    status,
+    dueDate: kpi.dueDate,
+    assignedTo: kpi.assignedTo
+  };
+}
+
 async function createAssignmentsForUsers(kpi, userIds, assignedById) {
   if (!kpi?._id || !Array.isArray(userIds) || !userIds.length) return;
 
@@ -79,35 +103,110 @@ exports.getAssignedKpis = async (req, res) => {
       return res.status(403).json({ message: "You can only access your own assigned KPIs" });
     }
 
-    const kpis = await Kpi.find({ assignedTo: userId })
+    const kpis = await Kpi.find({
+      assignedTo: userId,
+      archivedBy: { $nin: [userId] }
+    })
       .populate("assignedTo", "name email role")
       .sort({ dueDate: 1, updatedAt: -1 });
 
-    const rows = kpis.map((kpi) => {
-      const progressPercent = computeProgressPercent(kpi);
-      const status = resolveKpiWorkflowStatus({
-        status: kpi.status,
-        dueDate: kpi.dueDate,
-        progressPercent
-      });
-
-      return {
-        id: kpi._id,
-        title: kpi.title,
-        description: kpi.description,
-        department: kpi.department,
-        priority: kpi.priority,
-        targetValue: kpi.targetValue,
-        currentValue: kpi.currentValue,
-        unit: kpi.unit,
-        progressPercent,
-        status,
-        dueDate: kpi.dueDate,
-        assignedTo: kpi.assignedTo
-      };
-    });
+    const rows = kpis.map(mapKpiToAssignedRow);
 
     return res.json(rows);
+  } catch (error) {
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+exports.getArchivedKpis = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!mongoose.isValidObjectId(userId)) {
+      return res.status(400).json({ message: "Invalid user id" });
+    }
+
+    const requesterId = req.user?.id;
+    const requesterRole = req.user?.role;
+
+    if (requesterRole !== "manager" && String(requesterId) !== String(userId)) {
+      return res.status(403).json({ message: "You can only access your own archived KPIs" });
+    }
+
+    const kpis = await Kpi.find({
+      assignedTo: userId,
+      archivedBy: userId
+    })
+      .populate("assignedTo", "name email role")
+      .sort({ updatedAt: -1 });
+
+    const rows = kpis.map(mapKpiToAssignedRow);
+
+    return res.json(rows);
+  } catch (error) {
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+exports.archiveKpi = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const requesterId = req.user?.id;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: "Invalid KPI id" });
+    }
+
+    if (!mongoose.isValidObjectId(requesterId)) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    const kpi = await Kpi.findById(id);
+    if (!kpi) {
+      return res.status(404).json({ message: "KPI not found" });
+    }
+
+    if (!isAssignedToUser(kpi, requesterId)) {
+      return res.status(403).json({ message: "You can only archive KPIs assigned to you" });
+    }
+
+    await Kpi.findByIdAndUpdate(id, {
+      $addToSet: { archivedBy: requesterId }
+    });
+
+    return res.json({ message: "KPI archived successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+exports.unarchiveKpi = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const requesterId = req.user?.id;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: "Invalid KPI id" });
+    }
+
+    if (!mongoose.isValidObjectId(requesterId)) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    const kpi = await Kpi.findById(id);
+    if (!kpi) {
+      return res.status(404).json({ message: "KPI not found" });
+    }
+
+    if (!isAssignedToUser(kpi, requesterId)) {
+      return res.status(403).json({ message: "You can only restore KPIs assigned to you" });
+    }
+
+    await Kpi.findByIdAndUpdate(id, {
+      $pull: { archivedBy: requesterId }
+    });
+
+    return res.json({ message: "KPI restored successfully" });
   } catch (error) {
     return res.status(500).json({ message: "Server error", error: error.message });
   }

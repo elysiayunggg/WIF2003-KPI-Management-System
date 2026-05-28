@@ -77,6 +77,13 @@ const kpiSchema = new mongoose.Schema(
       }
     ],
 
+    archivedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+      }
+    ],
+
     reviewComments: {
       type: String,
       trim: true,

@@ -13,6 +13,7 @@ const pageRoutes = {
   "Assign KPI": "../views/assignment.html",
   "Review Submission": "../views/review.html",
   "KPI Progress": "../views/progress.html",              // staff
+  "Archived KPIs": "../views/archive.html",              // staff
   "KPI Detail": "../views/kpi-detail.html",              // staff
   "Submit Evidence": "../views/submit-evidence.html",    // staff
   "View Evidence": "../views/submit-evidence.html",      // staff
@@ -69,6 +70,9 @@ function renderSidebar(role) {
         </a>
         <a href="#" class="nav-link ms-3" onclick="changePage(event, 'View KPI List')">
           <i class="bi bi-list-ul"></i> View KPI List
+        </a>
+        <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Archived KPIs')">
+          <i class="bi bi-archive"></i> Archived KPIs
         </a>
       </div>
 
@@ -201,6 +205,12 @@ const pageInits = {
   "KPI Progress": function () {
     if (typeof initProgressView === "function") {
       initProgressView();
+    }
+  },
+
+  "Archived KPIs": function () {
+    if (typeof initArchiveView === "function") {
+      initArchiveView();
     }
   },
 

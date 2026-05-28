@@ -371,6 +371,13 @@
     text-decoration: underline;
 }
 
+.kpi-timeline-highlight {
+    outline: 2px solid #0040a1;
+    outline-offset: 4px;
+    border-radius: 12px;
+    transition: outline-color 0.3s ease;
+}
+
 .kpi-timeline {
     position: relative;
     padding-left: 1.5rem;

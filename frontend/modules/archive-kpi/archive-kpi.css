@@ -1,0 +1,89 @@
+#archiveModal.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(33, 37, 41, 0.55);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+#archiveModal .modal-container {
+  width: 480px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 32px 28px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+#archiveModal .modal-icon--archive {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 18px;
+  background: #fff3cd;
+  color: #856404;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  font-size: 26px;
+}
+
+#archiveModal .modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2f3a3d;
+  margin-bottom: 10px;
+}
+
+#archiveModal .modal-text {
+  font-size: 15px;
+  color: #6c757d;
+  line-height: 1.5;
+  margin-bottom: 26px;
+}
+
+#archiveModal .modal-text strong {
+  color: #2f3a3d;
+  font-weight: 700;
+}
+
+#archiveModal .modal-actions {
+  display: flex;
+  gap: 14px;
+}
+
+#archiveModal .btn-cancel {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: 2px solid #ced4da;
+  background: #ffffff;
+  font-weight: 600;
+  color: #2f3a3d;
+  cursor: pointer;
+}
+
+#archiveModal .btn-archive {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #856404;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(133, 100, 4, 0.25);
+}
+
+#archiveModal .btn-archive:hover {
+  background: #6d5203;
+}
+
+#archiveModal .btn-cancel:hover {
+  background: #f8f9fa;
+}

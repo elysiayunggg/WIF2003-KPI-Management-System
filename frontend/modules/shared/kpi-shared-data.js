@@ -18,6 +18,56 @@ function getKpiSharedLoggedInUserId() {
 /**
  * Fetches assigned KPIs from the API (no-cache) and returns raw rows.
  */
+async function fetchArchivedKpisFromApi() {
+    const userId = getKpiSharedLoggedInUserId();
+    if (!userId) return [];
+
+    const response = await fetch(`${KPI_SHARED_API_BASE}/kpis/archived/${userId}`, {
+        headers: getKpiSharedAuthHeaders(),
+        cache: "no-store"
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to load archived KPIs");
+    }
+
+    const kpis = await response.json();
+    if (!Array.isArray(kpis)) return [];
+
+    if (typeof mapProgressApiKpi === "function") {
+        return kpis.map((kpi) =>
+            mapProgressApiKpi({
+                _id: kpi.id || kpi._id,
+                title: kpi.title,
+                description: kpi.description,
+                department: kpi.department,
+                priority: kpi.priority,
+                targetValue: kpi.targetValue,
+                currentValue: kpi.currentValue,
+                unit: kpi.unit,
+                status: kpi.status,
+                dueDate: kpi.dueDate,
+                progressPercent: kpi.progressPercent,
+                assignedTo: kpi.assignedTo
+            })
+        );
+    }
+
+    return kpis.map((kpi) => ({
+        id: kpi.id || kpi._id,
+        kpi: kpi.title,
+        description: kpi.description,
+        department: kpi.department || "All Departments",
+        progress:
+            kpi.progressPercent != null
+                ? Math.min(100, Math.max(0, Math.round(Number(kpi.progressPercent))))
+                : 0,
+        apiStatus: kpi.status,
+        status: kpi.status,
+        deadline: kpi.dueDate
+    }));
+}
+
 async function fetchAssignedKpisFromApi() {
     const userId = getKpiSharedLoggedInUserId();
     if (!userId) return [];
@@ -88,9 +138,16 @@ async function refreshKpiProgressAcrossViews() {
     await reloadSharedKpiData();
 
     if (typeof renderProgressCards === "function") {
-        const progressRoot = document.querySelector(".progress-view");
+        const progressRoot = document.querySelector("section.progress-view");
         if (progressRoot) {
             renderProgressCards();
+        }
+    }
+
+    if (typeof refreshArchivedView === "function") {
+        const archiveRoot = document.querySelector(".archive-view");
+        if (archiveRoot) {
+            await refreshArchivedView();
         }
     }
 
@@ -101,5 +158,6 @@ async function refreshKpiProgressAcrossViews() {
     }
 }
 
+window.fetchArchivedKpisFromApi = fetchArchivedKpisFromApi;
 window.reloadSharedKpiData = reloadSharedKpiData;
 window.refreshKpiProgressAcrossViews = refreshKpiProgressAcrossViews;

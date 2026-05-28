@@ -180,7 +180,9 @@ function mapSharedKpiRowToCardItem(row, sourceIndex) {
         styleType,
         customClasses: styleDefaults.customClasses || "",
         dateFontWeight: styleDefaults.dateFontWeight || "",
-        kpiIndex: String(sourceIndex)
+        kpiIndex: String(sourceIndex),
+        menuHiddenClass: "",
+        actionButtonClass: "kpi-action-btn"
     };
 }
 
@@ -213,6 +215,10 @@ function renderProgressCards() {
 }
 
 async function initProgressView() {
+    if (typeof initArchiveKpi === "function") {
+        initArchiveKpi();
+    }
+
     await loadProgressAssignedKpis();
     renderProgressCards();
 
@@ -287,5 +293,6 @@ async function initProgressView() {
 }
 
 window.mapProgressApiKpi = mapProgressApiKpi;
+window.mapSharedKpiRowToCardItem = mapSharedKpiRowToCardItem;
 window.loadProgressAssignedKpis = loadProgressAssignedKpis;
 window.renderProgressCards = renderProgressCards;

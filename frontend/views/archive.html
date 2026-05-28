@@ -1,0 +1,27 @@
+<section class="archive-view py-4 py-lg-5">
+    <div class="container-fluid kpi-container">
+        <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'Staff Dashboard')">Staff Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Progress')">KPI Progress</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Archived KPIs</li>
+            </ol>
+        </nav>
+
+        <header class="mb-4">
+            <h1 class="page-title mb-0">Archived KPIs</h1>
+            <p class="page-subtitle small mb-0 mt-2" id="archive-data-summary">Loading archived KPIs...</p>
+        </header>
+
+        <div id="archived-kpi-empty" class="card border-0 shadow-sm d-none">
+            <div class="card-body text-center py-5 text-muted">
+                <span class="material-symbols-outlined d-block mb-2" style="font-size: 2.5rem;">archive</span>
+                <p class="mb-0">No archived KPIs. Use the menu on a progress card to archive a KPI.</p>
+            </div>
+        </div>
+
+        <div id="archived-kpi-cards-container" class="row g-4">
+            <!-- Cards injected by archive.js -->
+        </div>
+    </div>
+</section>

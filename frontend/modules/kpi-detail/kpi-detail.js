@@ -1033,6 +1033,17 @@ async function initKPIDetailView() {
 
     populateKpiDetailFromSharedData(root);
 
+    const scrollTarget = sessionStorage.getItem("kpiDetailScrollTo");
+    if (scrollTarget === "timeline") {
+        sessionStorage.removeItem("kpiDetailScrollTo");
+        const timelineAside = root.querySelector("#kpi-detail-timeline")?.closest(".kpi-card");
+        if (timelineAside) {
+            timelineAside.classList.add("kpi-timeline-highlight");
+            timelineAside.scrollIntoView({ behavior: "smooth", block: "start" });
+            setTimeout(() => timelineAside.classList.remove("kpi-timeline-highlight"), 2000);
+        }
+    }
+
     const pendingFeedback = sessionStorage.getItem("kpiDetailFeedback");
     if (pendingFeedback) {
         sessionStorage.removeItem("kpiDetailFeedback");
