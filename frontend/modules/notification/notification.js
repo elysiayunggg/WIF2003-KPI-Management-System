@@ -24,6 +24,10 @@ var notifIconMap = {
 // Tracks the active tab for the current page visit.
 var activeNotifTab = "All Activities";
 
+// Holds the currently registered page change listener so it can be removed
+// before a new one is registered on each page init, preventing accumulation.
+var _notifPageListener = null;
+
 // ── Tab switching ───────────────────────────────────────────
 
 function switchNotifTab(btn, tabName) {
@@ -138,6 +142,7 @@ function deleteAllNotificationsPage() {
 // ── Module init ─────────────────────────────────────────────
 
 function initNotificationPageView() {
+  if (typeof fetchNotifications === "function") fetchNotifications();
   activeNotifTab = "All Activities";
 
   // Reset tab highlight to "All Activities".
@@ -147,15 +152,19 @@ function initNotificationPageView() {
   var firstTab = document.querySelector(".notif-tab");
   if (firstTab) firstTab.classList.add("notif-tab-active");
 
-  // Register so this page re-renders whenever shared data changes
-  // (e.g. markAsRead called from the overlay, or deleteAll from either side).
-  registerNotifChangeListener(function () {
-    // Only re-render if the page is currently mounted in the DOM.
+  // Remove the previous page listener before registering a new one.
+  // Without this, every visit to the Notifications page adds another copy of
+  // the listener to _notifListeners, causing redundant re-renders.
+  if (_notifPageListener) {
+    unregisterNotifChangeListener(_notifPageListener);
+  }
+  _notifPageListener = function () {
     if (document.getElementById("notificationPageList")) {
       var searchVal = document.getElementById("notifPageSearch");
       renderNotificationCards(activeNotifTab, searchVal ? searchVal.value : "");
     }
-  });
+  };
+  registerNotifChangeListener(_notifPageListener);
 
   renderNotificationCards("All Activities");
 }

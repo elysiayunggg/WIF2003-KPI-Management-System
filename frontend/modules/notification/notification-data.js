@@ -37,6 +37,11 @@ function registerNotifChangeListener(fn) {
   _notifListeners.push(fn);
 }
 
+function unregisterNotifChangeListener(fn) {
+  var idx = _notifListeners.indexOf(fn);
+  if (idx !== -1) _notifListeners.splice(idx, 1);
+}
+
 function onNotifDataChanged() {
   _notifListeners.forEach(function (fn) {
     if (typeof fn === "function") fn();
@@ -150,17 +155,26 @@ async function fetchNotifications() {
     // response.json() parses the JSON body and returns a plain JS array.
     const data = await response.json();
 
-    // Clear the existing array in place using .length = 0.
-    // This is important: we do NOT reassign notificationsData to a new array
-    // because other modules may have captured a reference to this array.
-    // Clearing in place means all references still point to the same object.
+    // Before wiping the array, capture any SSE-delivered notifications that
+    // are not yet in the DB response. This guards against a race where the fetch
+    // was in-flight when a notification was inserted: the SSE shows the badge,
+    // then the fetch resolves with stale data and would otherwise discard the
+    // live notification, causing the badge to vanish.
+    var fetchedIds = new Set(data.map(function (raw) { return String(raw._id); }));
+    var sseOnly = notificationsData.filter(function (n) {
+      return !fetchedIds.has(String(n.id));
+    });
+
     notificationsData.length = 0;
 
-    // Transform each raw DB document and push it into the shared array.
-    // .forEach() is used instead of .map() because we are mutating in place
-    // rather than creating a new array.
     data.forEach(function (raw) {
       notificationsData.push(transformNotification(raw));
+    });
+
+    // Prepend SSE-only items so they remain visible until the next fetch
+    // confirms they are in the DB.
+    sseOnly.forEach(function (item) {
+      notificationsData.unshift(item);
     });
 
     // Notify all registered listeners (overlay panel, notification page)
@@ -293,5 +307,32 @@ function getUnreadCount() {
   }).length;
 }
 
+// Opens a persistent SSE connection to the backend. When the server pushes a
+// new notification document the client transforms it and prepends it to the
+// shared array, then fires onNotifDataChanged() so every registered listener
+// (overlay badge, sidebar badge, notification page) updates immediately.
+// The browser EventSource API handles reconnection automatically on drop.
+function subscribeToNotifications() {
+  var userId = getLoggedInUserId();
+  if (!userId) return;
+
+  var source = new EventSource(NOTIF_API_BASE + "/subscribe?userId=" + userId);
+
+  source.onmessage = function (event) {
+    try {
+      var raw = JSON.parse(event.data);
+      notificationsData.unshift(transformNotification(raw));
+      onNotifDataChanged();
+    } catch (e) {
+      console.error("SSE parse error:", e);
+    }
+  };
+
+  source.onerror = function () {
+    console.warn("SSE connection lost, browser will retry.");
+  };
+}
+
 // Fetch all notfications when initialising
 fetchNotifications();
+subscribeToNotifications();

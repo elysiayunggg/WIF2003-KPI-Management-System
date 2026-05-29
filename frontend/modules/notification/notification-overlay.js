@@ -17,6 +17,7 @@ function showNotification() {
     overlay.classList.remove("show");
     if (bell) bell.classList.remove("active");
   } else {
+    if (typeof fetchNotifications === "function") fetchNotifications();
     overlay.classList.add("show");
     if (bell) bell.classList.add("active");
   }
@@ -24,11 +25,15 @@ function showNotification() {
 
 // ── Render helpers ──────────────────────────────────────────
 
-// Updates the red dot badge on the bell icon.
+// Updates the red dot badge on the bell icon and the sidebar nav link.
 function updateUnreadIndicator() {
+  var hasUnread = getUnreadCount() > 0;
+
   var badge = document.getElementById("unreadBadge");
-  if (!badge) return;
-  badge.style.display = getUnreadCount() > 0 ? "block" : "none";
+  if (badge) badge.style.display = hasUnread ? "block" : "none";
+
+  var sidebarBadge = document.getElementById("sidebarUnreadBadge");
+  if (sidebarBadge) sidebarBadge.style.display = hasUnread ? "block" : "none";
 }
 
 // Builds a single notification item element for the overlay list.

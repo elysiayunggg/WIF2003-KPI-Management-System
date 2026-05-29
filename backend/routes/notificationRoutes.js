@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   getNotifications,
+  subscribeNotifications,
   markOneAsRead,
   markAllAsRead,
   deleteAllNotifications,
@@ -14,6 +15,10 @@ const router = express.Router();
 // GET /api/notifications?userId=<id>
 // Fetch all notifications for the logged-in user.
 router.get("/", getNotifications);
+
+// GET /api/notifications/subscribe?userId=<id>
+// Opens a persistent SSE stream — must be declared before /:id routes.
+router.get("/subscribe", subscribeNotifications);
 
 // PUT /api/notifications/read-all?userId=<id>
 // Mark every notification for this user as read.

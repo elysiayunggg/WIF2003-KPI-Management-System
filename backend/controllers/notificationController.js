@@ -1,4 +1,5 @@
 const Notification = require("../models/Notification");
+const { addClient, removeClient } = require("../sse/sseClients");
 
 // GET /api/notifications?userId=<id>
 // Returns all notifications for one user, newest first.
@@ -69,6 +70,25 @@ exports.markAllAsRead = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
+};
+
+// GET /api/notifications/subscribe?userId=<id>
+// Opens a persistent SSE stream for the given user.
+// The browser EventSource API reconnects automatically if the connection drops.
+exports.subscribeNotifications = (req, res) => {
+  const { userId } = req.query;
+  if (!userId) return res.status(400).end();
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders();
+
+  addClient(userId, res);
+
+  req.on("close", function () {
+    removeClient(userId, res);
+  });
 };
 
 // DELETE /api/notifications?userId=<id>

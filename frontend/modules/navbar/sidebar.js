@@ -49,13 +49,13 @@ function renderSidebar(role) {
 
       <div class="nav-group">
         <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment & Verification')">
-        <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment & Verification')">
           <i class="bi bi-check2-square"></i> KPI Assignment & Verification
         </a>
       </div>
 
-      <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'Notifications')">
+      <a href="#" class="nav-link nav-section-title mt-3 position-relative" onclick="changePage(event, 'Notifications')">
         <i class="bi bi-bell"></i> Notifications
+        <span id="sidebarUnreadBadge" style="display:none;position:absolute;top:8px;right:10px;width:8px;height:8px;background-color:#dc3545;border-radius:50%;"></span>
       </a>
     `;
   } else {
@@ -76,14 +76,22 @@ function renderSidebar(role) {
         </a>
       </div>
 
-      <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'Notifications')">
+      <a href="#" class="nav-link nav-section-title mt-3 position-relative" onclick="changePage(event, 'Notifications')">
         <i class="bi bi-bell"></i> Notifications
+        <span id="sidebarUnreadBadge" style="display:none;position:absolute;top:8px;right:10px;width:8px;height:8px;background-color:#dc3545;border-radius:50%;"></span>
       </a>
     `;
   }
 
   // After injecting nav links, mark the correct one as active
   setActiveLink();
+
+  // #sidebarUnreadBadge was just created above — sync its visibility with the
+  // current unread count so it reflects any notifications already in memory
+  // (e.g. fetchNotifications() completed before renderSidebar was called).
+  if (typeof updateUnreadIndicator === "function") {
+    updateUnreadIndicator();
+  }
 }
 
 // Reads which page is active from localStorage and applies the active class.

@@ -10,7 +10,13 @@ function openAddStakeholderModal() {
   console.log("Open add stakeholder modal");
 }
 
-function renderStaffCard(person) {
+function highlightMatch(text, query) {
+  if (!query) return text;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return text.replace(new RegExp(`(${escaped})`, "gi"), "<mark>$1</mark>");
+}
+
+function renderStaffCard(person, query = "") {
   const card = document.createElement("div");
   card.className = "staff-card mb-3 p-3 rounded-3 d-flex align-items-center justify-content-between";
   card.dataset.staffId = person.id;
@@ -18,12 +24,15 @@ function renderStaffCard(person) {
     selectPerson(this);
   };
 
+  const name = highlightMatch(person.name, query);
+  const department = highlightMatch(person.department, query);
+
   card.innerHTML = `
     <div class="d-flex align-items-center gap-3">
       <i class="bi bi-person-fill"></i>
       <div>
-        <h6 class="fw-bold mb-0">${person.name}</h6>
-        <p class="text-muted small mb-0">${person.role} | ${person.department}</p>
+        <h6 class="fw-bold mb-0">${name}</h6>
+        <p class="text-muted small mb-0">${person.role} | ${department}</p>
       </div>
     </div>
     <div class="selected-indicator">
@@ -32,6 +41,30 @@ function renderStaffCard(person) {
   `;
 
   return card;
+}
+
+function filterAndRenderStaff(query) {
+  const staffList = document.getElementById("staffList");
+  if (!staffList) return;
+
+  const trimmed = query.trim();
+  const lower = trimmed.toLowerCase();
+
+  const matches = trimmed
+    ? staffData.filter(p =>
+        p.name.toLowerCase().includes(lower) ||
+        p.department.toLowerCase().includes(lower)
+      )
+    : staffData;
+
+  staffList.innerHTML = "";
+
+  if (!matches.length) {
+    staffList.innerHTML = `<div class="text-muted text-center py-4">No staff found matching "${trimmed}".</div>`;
+    return;
+  }
+
+  matches.forEach(person => staffList.appendChild(renderStaffCard(person, trimmed)));
 }
 
 async function loadStaffFromApi() {
@@ -108,6 +141,11 @@ async function updateAssignment() {
   }
 }
 
+function discardAssignment() {
+  document.querySelectorAll(".staff-card").forEach(c => c.classList.remove("selected"));
+  changePage({ preventDefault() {} }, "KPI Assignment & Verification");
+}
+
 function setupAssignmentSubmit() {
   const updateBtn = Array.from(document.querySelectorAll(".highLightButton"))
     .find(btn => btn.textContent.trim() === "Update Assignment");
@@ -116,6 +154,14 @@ function setupAssignmentSubmit() {
 
   updateBtn.dataset.bound = "true";
   updateBtn.addEventListener("click", updateAssignment);
+
+  const discardBtn = Array.from(document.querySelectorAll("button"))
+    .find(btn => btn.textContent.trim() === "Discard");
+
+  if (discardBtn && !discardBtn.dataset.bound) {
+    discardBtn.dataset.bound = "true";
+    discardBtn.addEventListener("click", discardAssignment);
+  }
 }
 
 async function initAssignmentView() {
@@ -131,14 +177,16 @@ async function initAssignmentView() {
   }
 
   if (staffList) {
-    staffList.innerHTML = "";
-
     if (!staffData.length) {
       staffList.innerHTML = `<div class="text-muted text-center py-4">No staff accounts found. Register a staff user first.</div>`;
     } else {
-      staffData.forEach(person => {
-        staffList.appendChild(renderStaffCard(person));
-      });
+      filterAndRenderStaff("");
+
+      const searchInput = document.getElementById("staffSearchInput");
+      if (searchInput) {
+        searchInput.value = "";
+        searchInput.addEventListener("input", e => filterAndRenderStaff(e.target.value));
+      }
     }
   }
 

@@ -2,6 +2,7 @@ const express = require("express");
 const {
   getKpis,
   getKpiById,
+  getKpiReviewData,
   getKpiAssignments,
   createKpi,
   updateKpi,
@@ -20,7 +21,8 @@ router.get("/", getKpis);
 router.get("/assigned/:userId", requireAuth, getAssignedKpis);
 router.get("/archived/:userId", requireAuth, getArchivedKpis);
 router.get("/:id/assignments", requireAuth, getKpiAssignments);
-router.post("/", createKpi);
+router.get("/:id/review-data", getKpiReviewData);
+router.post("/", requireAuth, createKpi);
 router.post("/:id/archive", requireAuth, archiveKpi);
 router.post("/:id/unarchive", requireAuth, unarchiveKpi);
 router.patch("/:id/progress", requireAuth, patchKpiProgress);

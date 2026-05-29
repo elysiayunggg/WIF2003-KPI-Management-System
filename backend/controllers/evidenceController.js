@@ -1,10 +1,11 @@
 const Evidence = require("../models/Evidence");
 const Kpi = require("../models/Kpi");
-<<<<<<< Updated upstream
+const Notification = require("../models/Notification");
 const mongoose = require("mongoose");
 const path = require("path");
 const fs = require("fs");
 const { resolveKpiWorkflowStatus, computeProgressPercent } = require("../utils/kpiStatus");
+const { pushToUser } = require("../sse/sseClients");
 
 function kpiProgressPercent(kpi) {
   if (!kpi) return 0;
@@ -100,9 +101,6 @@ async function refreshKpiProgressFromEvidence(kpiId) {
   await kpi.save();
   return kpi;
 }
-=======
-const Notification = require("../models/Notification");
->>>>>>> Stashed changes
 
 exports.createEvidence = async (req, res) => {
   try {
@@ -164,20 +162,21 @@ exports.createEvidence = async (req, res) => {
       ? Math.round(((nextKpi.currentValue || 0) / nextKpi.targetValue) * 100)
       : 0;
 
+    // Create notification that new evidence is submitted.
     try {
-      const managerId = kpi.managerId || kpi.createdBy;
+      const managerId = kpi.createdBy;
       if (managerId) {
-        await Notification.create({
+        const notif = await Notification.create({
           userId: managerId,
           title: "New Evidence Submitted",
-          message: `Staff submitted evidence for KPI: "${kpi.title}". Current progress: ${pct}%.`,
-          type: "verification", // Ensure this value is allowed in your Notification schema enum
+          message: `Staff submitted evidence for KPI: "${kpi.title}". Current progress: ${submittedPct}%.`,
+          type: "verification",
           relatedKpiId: kpi._id,
           relatedEvidenceId: evidence._id
         });
+        pushToUser(managerId, notif);
       }
     } catch (notifError) {
-      // Log the error but don't crash the request if notifications fail
       console.error("Notification failed to send:", notifError.message);
     }
 
@@ -228,6 +227,7 @@ exports.updateEvidence = async (req, res) => {
       evidence.description = req.body.description.trim();
     }
 
+    let pctValue = evidence.progress; // Initialize default fallback tracking variable
     if (req.body.progress !== undefined) {
       const pct = Math.min(100, Math.max(0, Number(req.body.progress) || 0));
       if (pct <= 0) {
@@ -236,6 +236,7 @@ exports.updateEvidence = async (req, res) => {
         });
       }
       evidence.progress = pct;
+      pctValue = pct;
     }
 
     const extraFiles = (req.files || []).map(file => ({
@@ -256,6 +257,28 @@ exports.updateEvidence = async (req, res) => {
 
     await evidence.save();
     const nextKpi = await refreshKpiProgressFromEvidence(evidence.kpiId);
+
+    // Create notification that evidence is updated.
+    try {
+      // Find the KPI document since it doesn't exist natively in this scope
+      const kpi = await Kpi.findById(evidence.kpiId);
+      if (kpi) {
+        const managerId = kpi.createdBy;
+        if (managerId) {
+          const notif = await Notification.create({
+            userId: managerId,
+            title: "KPI Evidence Updated",
+            message: `Staff updated evidence for KPI: "${kpi.title}". Current progress: ${pctValue}%.`,
+            type: "update",
+            relatedKpiId: kpi._id,
+            relatedEvidenceId: evidence._id
+          });
+          pushToUser(managerId, notif);
+        }
+      }
+    } catch (notifError) {
+      console.error("Notification failed to send:", notifError.message);
+    }
 
     return res.json({
       message: "Evidence updated successfully",

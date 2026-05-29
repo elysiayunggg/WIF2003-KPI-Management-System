@@ -1,9 +1,10 @@
 const Kpi = require("../models/Kpi");
-<<<<<<< Updated upstream
 const Evidence = require("../models/Evidence");
 const KpiAssignment = require("../models/KpiAssignment");
+const Notification = require("../models/Notification");
 const mongoose = require("mongoose");
 const { computeProgressPercent, resolveKpiWorkflowStatus } = require("../utils/kpiStatus");
+const { pushToUser } = require("../sse/sseClients");
 
 function isAssignedToUser(kpi, userId) {
   if (!kpi || !Array.isArray(kpi.assignedTo) || !userId) return false;
@@ -64,9 +65,6 @@ async function createAssignmentsForUsers(kpi, userIds, assignedById) {
     });
   }
 }
-=======
-const Notification = require("../models/Notification");
->>>>>>> Stashed changes
 
 exports.getKpis = async (req, res) => {
   try {
@@ -267,6 +265,109 @@ exports.getKpiAssignments = async (req, res) => {
   }
 };
 
+exports.getKpiReviewData = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: "Invalid KPI id" });
+    }
+
+    const kpi = await Kpi.findById(id)
+      .populate("assignedTo", "name email role department")
+      .populate("createdBy", "name email role");
+
+    if (!kpi) {
+      return res.status(404).json({ message: "KPI not found" });
+    }
+
+    const evidence = await Evidence.findOne({ kpiId: id })
+      .populate("submittedBy", "name email role department")
+      .populate("reviewedBy", "name email role")
+      .sort({ createdAt: -1 });
+
+    const progressPercent = computeProgressPercent(kpi);
+    const staff = Array.isArray(kpi.assignedTo) && kpi.assignedTo.length > 0
+      ? kpi.assignedTo[0]
+      : null;
+
+    const statusMap = {
+      "pending verification": "Pending Review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "completed": "Approved",
+      "in progress": "In Progress",
+      "not started": "Not Started",
+      "overdue": "Overdue"
+    };
+
+    function fmtDate(date) {
+      if (!date) return "-";
+      return new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    }
+
+    function fmtTime(date) {
+      if (!date) return "-";
+      return new Date(date).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+    }
+
+    function fmtSize(bytes) {
+      if (!bytes) return "0 B";
+      const mb = bytes / (1024 * 1024);
+      if (mb >= 1) return `${mb.toFixed(1)} MB`;
+      return `${(bytes / 1024).toFixed(0)} KB`;
+    }
+
+    function mimeToType(mimetype) {
+      if (!mimetype) return "document";
+      if (mimetype === "application/pdf") return "pdf";
+      if (/spreadsheet|excel|csv/.test(mimetype)) return "spreadsheet";
+      if (/presentation|powerpoint/.test(mimetype)) return "presentation";
+      if (mimetype.startsWith("image/")) return "image";
+      return "document";
+    }
+
+    const files = Array.isArray(evidence?.files)
+      ? evidence.files.map((f, idx) => ({
+          name: f.originalName || f.filename,
+          size: fmtSize(f.size),
+          type: mimeToType(f.mimetype),
+          uploadDate: fmtDate(evidence.createdAt),
+          evidenceId: evidence._id,
+          fileIndex: idx
+        }))
+      : [];
+
+    const payload = {
+      kpiId: kpi._id,
+      kpiName: kpi.title,
+      assignedTo: staff?.name || "Unassigned",
+      status: statusMap[String(kpi.status).toLowerCase()] || kpi.status,
+      target: `${kpi.targetValue} ${kpi.unit}`,
+      actual: `${kpi.currentValue || 0} ${kpi.unit}`,
+      actualPercentage: Math.round(progressPercent * 10) / 10,
+      submissionDate: evidence ? fmtDate(evidence.createdAt) : "-",
+      submissionTime: evidence ? fmtTime(evidence.createdAt) : "-",
+      staffComments: evidence?.description || "",
+      evidence: files,
+      staff: staff
+        ? {
+            name: staff.name,
+            role: staff.role,
+            department: staff.department || kpi.department || "",
+            email: staff.email
+          }
+        : null,
+      reviewedBy: evidence?.reviewedBy?.name || null,
+      reviewedAt: evidence?.reviewedAt ? fmtDate(evidence.reviewedAt) : null,
+      reviewComments: kpi.reviewComments || evidence?.reviewerComments || ""
+    };
+
+    return res.json(payload);
+  } catch (error) {
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 exports.getKpiById = async (req, res) => {
   try {
     const kpi = await Kpi.findById(req.params.id)
@@ -305,9 +406,10 @@ exports.createKpi = async (req, res) => {
       priority,
       startDate,
       dueDate,
-      createdBy,
       assignedTo
     } = req.body;
+
+    const createdBy = req.user.id;
 
     if (!title || targetValue === undefined || !dueDate) {
       return res.status(400).json({ message: "Title, target value, and due date are required" });
@@ -329,16 +431,11 @@ exports.createKpi = async (req, res) => {
       assignedTo
     });
 
-<<<<<<< Updated upstream
     if (Array.isArray(assignedTo) && assignedTo.length) {
       await createAssignmentsForUsers(kpi, assignedTo, createdBy || req.user?.id);
     }
 
-=======
     // --- Notification block (createKpi) ---
-
-    // assignedTo is an array of user IDs (can be empty if manager didn't assign anyone yet)
-    // We only proceed if there is at least one staff member assigned
     if (assignedTo && assignedTo.length > 0) {
 
       // Build one notification object per assigned staff member.
@@ -355,12 +452,12 @@ exports.createKpi = async (req, res) => {
       // insertMany() writes all the notification documents to MongoDB in one
       // database call instead of calling Notification.create() in a loop.
       // This is more efficient when there are multiple assignees.
-      await Notification.insertMany(notifications);
+      const inserted = await Notification.insertMany(notifications);
+      inserted.forEach(function (notif) { pushToUser(notif.userId, notif); });
     }
 
     // --- End notification block ---
 
->>>>>>> Stashed changes
     res.status(201).json({
       message: "KPI created successfully",
       kpi
@@ -372,7 +469,6 @@ exports.createKpi = async (req, res) => {
 
 exports.updateKpi = async (req, res) => {
   try {
-<<<<<<< Updated upstream
     if (!mongoose.isValidObjectId(req.params.id)) {
       return res.status(400).json({ message: "Invalid KPI id" });
     }
@@ -381,21 +477,6 @@ exports.updateKpi = async (req, res) => {
       ? await Kpi.findById(req.params.id).select("assignedTo createdBy dueDate")
       : null;
 
-=======
-
-    // We need to read the KPI's CURRENT state BEFORE applying the update.
-    // This is so we can compare the old assignedTo list against the new one
-    // and only notify staff who are being assigned for the first time.
-    // findById() fetches the document as it currently exists in MongoDB.
-    const existingKpi = await Kpi.findById(req.params.id);
-
-    if (!existingKpi) {
-      return res.status(404).json({ message: "KPI not found" });
-    }
-
-    // Now apply the update. { new: true } means the returned `kpi` variable
-    // will be the updated document, not the old one.
->>>>>>> Stashed changes
     const kpi = await Kpi.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true
@@ -406,13 +487,13 @@ exports.updateKpi = async (req, res) => {
     // Only run this block if the request body actually contains an assignedTo field.
     // If the manager only updated the title or dueDate, req.body.assignedTo would be
     // undefined, and we'd skip this entire block.
-    if (req.body.assignedTo) {
+    if (previousKpi && Array.isArray(req.body.assignedTo)) {
 
       // Convert both lists to plain strings so we can compare them reliably.
       // MongoDB ObjectIds are objects, not strings — comparing them directly with
       // === or .includes() would always return false even if the values look the same.
       // .toString() converts each ObjectId to its 24-character hex string form.
-      const oldAssignedIds = existingKpi.assignedTo.map((id) => id.toString());
+      const oldAssignedIds = previousKpi.assignedTo.map((id) => id.toString());
       const newAssignedIds = req.body.assignedTo.map((id) => id.toString());
 
       // .filter() keeps only the IDs from the new list that do NOT appear in the old list.
@@ -429,11 +510,11 @@ exports.updateKpi = async (req, res) => {
           relatedKpiId: kpi._id
         }));
 
-        await Notification.insertMany(notifications);
+        const insertedUpdate = await Notification.insertMany(notifications);
+        insertedUpdate.forEach(function (notif) { pushToUser(notif.userId, notif); });
       }
     }
 
-<<<<<<< Updated upstream
     if (previousKpi && Array.isArray(req.body.assignedTo)) {
       const previousIds = (previousKpi.assignedTo || []).map((id) => String(id));
       const nextIds = req.body.assignedTo.map((id) => String(id));
@@ -466,10 +547,35 @@ exports.updateKpi = async (req, res) => {
         latestEvidence.reviewedAt = new Date();
         await latestEvidence.save();
       }
+
+      // Notify every staff member assigned to this KPI about the decision.
+      try {
+        const staffIds = Array.isArray(kpi.assignedTo) ? kpi.assignedTo : [];
+        const verb = req.body.status === "approved" ? "approved" : "rejected";
+        const titleText = req.body.status === "approved"
+          ? "KPI Evidence Approved"
+          : "KPI Evidence Rejected";
+        const comment = req.body.reviewComments?.trim();
+        const messageText = comment
+          ? `Your evidence for KPI "${kpi.title}" has been ${verb}. Reviewer comment: ${comment}`
+          : `Your evidence for KPI "${kpi.title}" has been ${verb}.`;
+
+        for (const staffId of staffIds) {
+          if (!mongoose.isValidObjectId(staffId)) continue;
+          const notif = await Notification.create({
+            userId: staffId,
+            title: titleText,
+            message: messageText,
+            type: "verification",
+            relatedKpiId: kpi._id,
+            relatedEvidenceId: latestEvidence?._id
+          });
+          pushToUser(staffId, notif);
+        }
+      } catch (notifError) {
+        console.error("Review notification failed:", notifError.message);
+      }
     }
-=======
-    // --- End notification block ---
->>>>>>> Stashed changes
 
     res.json({
       message: "KPI updated successfully",
