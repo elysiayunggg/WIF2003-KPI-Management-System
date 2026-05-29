@@ -126,9 +126,12 @@
   margin-right: 6px;
 }
 
-.actual-dot,
-.completed-dot {
+.actual-dot {
   background-color: #0056d2;
+}
+
+.completed-dot {
+  background-color: #10b981;
 }
 
 .target-dot {
@@ -136,7 +139,7 @@
 }
 
 .progress-dot {
-  background-color: #10b981;
+  background-color: #0056d2;
 }
 
 .pending-dot {

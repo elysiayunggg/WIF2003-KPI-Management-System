@@ -524,7 +524,7 @@ function renderManagerDistributionChart(data) {
       labels: ["Completed", "Pending Verification", "In Progress", "Overdue"],
       datasets: [{
         data: [completed, pending, inProgress, overdue],
-        backgroundColor: ["#0056d2", "#f59e0b", "#10b981", "#ba1a1a"],
+        backgroundColor: ["#10b981", "#f59e0b", "#0056d2", "#ba1a1a"],
         borderWidth: 0
       }]
     },

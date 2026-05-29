@@ -522,6 +522,14 @@
   border-radius: 50%;
 }
 
+.completed-dot {
+  background-color: #10b981;
+}
+
+.progress-dot {
+  background-color: #0056d2;
+}
+
 
 /* =========================================
    KPI TREND CHART - CHART.JS
