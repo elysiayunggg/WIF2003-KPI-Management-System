@@ -180,6 +180,38 @@ function loadKpiData(container) {
   if (!kpi.staff) {
     console.log("KPI has no assigned staff");
   }
+
+  // FILL PROGRESS CARD
+  const progress = kpi.progress ?? 0;
+  const currentVal = kpi.currentValue ?? 0;
+  const targetVal = kpi.targetValue ?? 0;
+  const unit = kpi.unit || "";
+
+  function fmtVal(val, u) {
+    if (!u) return String(val);
+    if (u === "%") return `${val}%`;
+    if (u === "RM") return `RM ${val}`;
+    return `${val} ${u}`;
+  }
+
+  const progressPct = container.querySelector("#updateKpiProgressPct");
+  const progressValue = container.querySelector("#updateKpiProgressValue");
+  const progressBar = container.querySelector("#updateKpiProgressBar");
+  const progressBadge = container.querySelector("#updateKpiProgressBadge");
+  const progressNote = container.querySelector("#updateKpiProgressNote");
+
+  if (progressPct) progressPct.textContent = `${progress}%`;
+  if (progressValue) progressValue.textContent = `${fmtVal(currentVal, unit)} / ${fmtVal(targetVal, unit)}`;
+  if (progressBar) progressBar.style.width = `${Math.min(100, progress)}%`;
+
+  const statusUpper = (kpi.status || "").toUpperCase();
+  let badgeText = "ON TRACK";
+  if (statusUpper.includes("OVERDUE")) badgeText = "OVERDUE";
+  else if (statusUpper.includes("COMPLET")) badgeText = "COMPLETED";
+  else if (statusUpper.includes("PENDING")) badgeText = "PENDING";
+  if (progressBadge) progressBadge.textContent = badgeText;
+
+  if (progressNote) progressNote.textContent = `${progress}% of target achieved`;
 }
 
 async function updateKpi(data) {

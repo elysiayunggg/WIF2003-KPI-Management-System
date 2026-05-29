@@ -152,19 +152,17 @@ This KPI tracks the gross revenue increase across all enterprise software servic
 
           <div class="d-flex justify-content-between align-items-center mb-2">
             <small>Current Progress</small>
-            <span class="badge bg-light text-dark">ON TRACK</span>
+            <span id="updateKpiProgressBadge" class="badge bg-light text-dark">—</span>
           </div>
 
-          <h5>$2.15M / $2.4M</h5>
-          <h3 class="fw-bold text-warning">89%</h3>
+          <h5 id="updateKpiProgressValue">—</h5>
+          <h3 id="updateKpiProgressPct" class="fw-bold text-warning">—</h3>
 
           <div class="progress mt-2" style="height:6px;">
-            <div class="progress-bar bg-white" style="width:89%"></div>
+            <div id="updateKpiProgressBar" class="progress-bar bg-white" style="width:0%"></div>
           </div>
 
-          <small class="opacity-75 mt-2 d-block">
-            Data synchronized from Enterprise CRM 2 hours ago.
-          </small>
+          <small id="updateKpiProgressNote" class="opacity-75 mt-2 d-block"></small>
 
         </div>
       </div>
