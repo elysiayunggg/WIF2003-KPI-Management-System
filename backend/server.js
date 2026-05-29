@@ -6,6 +6,7 @@ const path = require("path");
 const authRoutes = require("./routes/authRoutes");
 const kpiRoutes = require("./routes/kpiRoutes");
 const evidenceRoutes = require("./routes/evidenceRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 dotenv.config();
 
@@ -13,13 +14,21 @@ const app = express();
 
 const corsOptions = {
   origin: "*",
+<<<<<<< Updated upstream
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+=======
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+>>>>>>> Stashed changes
   allowedHeaders: ["Content-Type", "Authorization"]
 };
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
+<<<<<<< Updated upstream
   res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+=======
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS,PATCH");
+>>>>>>> Stashed changes
   res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
 
   if (req.method === "OPTIONS") {
@@ -31,7 +40,12 @@ app.use((req, res, next) => {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+<<<<<<< Updated upstream
 // Evidence files are served via GET /api/evidence/:evidenceId/files/:fileIndex (authenticated).
+=======
+app.use("/api/notifications", notificationRoutes);       
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+>>>>>>> Stashed changes
 app.use("/api/auth", authRoutes);
 app.use("/api/kpis", kpiRoutes);
 app.use("/api/evidence", evidenceRoutes);

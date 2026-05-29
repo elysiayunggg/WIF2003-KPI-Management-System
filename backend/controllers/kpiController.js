@@ -1,4 +1,5 @@
 const Kpi = require("../models/Kpi");
+<<<<<<< Updated upstream
 const Evidence = require("../models/Evidence");
 const KpiAssignment = require("../models/KpiAssignment");
 const mongoose = require("mongoose");
@@ -63,6 +64,9 @@ async function createAssignmentsForUsers(kpi, userIds, assignedById) {
     });
   }
 }
+=======
+const Notification = require("../models/Notification");
+>>>>>>> Stashed changes
 
 exports.getKpis = async (req, res) => {
   try {
@@ -325,10 +329,38 @@ exports.createKpi = async (req, res) => {
       assignedTo
     });
 
+<<<<<<< Updated upstream
     if (Array.isArray(assignedTo) && assignedTo.length) {
       await createAssignmentsForUsers(kpi, assignedTo, createdBy || req.user?.id);
     }
 
+=======
+    // --- Notification block (createKpi) ---
+
+    // assignedTo is an array of user IDs (can be empty if manager didn't assign anyone yet)
+    // We only proceed if there is at least one staff member assigned
+    if (assignedTo && assignedTo.length > 0) {
+
+      // Build one notification object per assigned staff member.
+      // .map() loops over each staffId in the array and returns a new array
+      // of plain objects shaped exactly how the Notification model expects them.
+      const notifications = assignedTo.map((staffId) => ({
+        userId: staffId,                              // who receives this notification
+        title: "New KPI Assigned",                    // short heading shown in the notification UI
+        message: `You have been assigned a new KPI: "${kpi.title}"`, // full message; uses the title of the just-created KPI
+        type: "assignment",                           // matches the enum in Notification model
+        relatedKpiId: kpi._id                         // links the notification back to this specific KPI document
+      }));
+
+      // insertMany() writes all the notification documents to MongoDB in one
+      // database call instead of calling Notification.create() in a loop.
+      // This is more efficient when there are multiple assignees.
+      await Notification.insertMany(notifications);
+    }
+
+    // --- End notification block ---
+
+>>>>>>> Stashed changes
     res.status(201).json({
       message: "KPI created successfully",
       kpi
@@ -340,6 +372,7 @@ exports.createKpi = async (req, res) => {
 
 exports.updateKpi = async (req, res) => {
   try {
+<<<<<<< Updated upstream
     if (!mongoose.isValidObjectId(req.params.id)) {
       return res.status(400).json({ message: "Invalid KPI id" });
     }
@@ -348,15 +381,59 @@ exports.updateKpi = async (req, res) => {
       ? await Kpi.findById(req.params.id).select("assignedTo createdBy dueDate")
       : null;
 
+=======
+
+    // We need to read the KPI's CURRENT state BEFORE applying the update.
+    // This is so we can compare the old assignedTo list against the new one
+    // and only notify staff who are being assigned for the first time.
+    // findById() fetches the document as it currently exists in MongoDB.
+    const existingKpi = await Kpi.findById(req.params.id);
+
+    if (!existingKpi) {
+      return res.status(404).json({ message: "KPI not found" });
+    }
+
+    // Now apply the update. { new: true } means the returned `kpi` variable
+    // will be the updated document, not the old one.
+>>>>>>> Stashed changes
     const kpi = await Kpi.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true
     });
 
-    if (!kpi) {
-      return res.status(404).json({ message: "KPI not found" });
+    // --- Notification block (updateKpi) ---
+
+    // Only run this block if the request body actually contains an assignedTo field.
+    // If the manager only updated the title or dueDate, req.body.assignedTo would be
+    // undefined, and we'd skip this entire block.
+    if (req.body.assignedTo) {
+
+      // Convert both lists to plain strings so we can compare them reliably.
+      // MongoDB ObjectIds are objects, not strings — comparing them directly with
+      // === or .includes() would always return false even if the values look the same.
+      // .toString() converts each ObjectId to its 24-character hex string form.
+      const oldAssignedIds = existingKpi.assignedTo.map((id) => id.toString());
+      const newAssignedIds = req.body.assignedTo.map((id) => id.toString());
+
+      // .filter() keeps only the IDs from the new list that do NOT appear in the old list.
+      // These are the staff members being assigned for the first time in this update.
+      // Staff already in the old list are excluded — they were already notified at creation.
+      const newlyAssignedIds = newAssignedIds.filter((id) => !oldAssignedIds.includes(id));
+
+      if (newlyAssignedIds.length > 0) {
+        const notifications = newlyAssignedIds.map((staffId) => ({
+          userId: staffId,
+          title: "New KPI Assigned",
+          message: `You have been assigned a new KPI: "${kpi.title}"`,
+          type: "assignment",
+          relatedKpiId: kpi._id
+        }));
+
+        await Notification.insertMany(notifications);
+      }
     }
 
+<<<<<<< Updated upstream
     if (previousKpi && Array.isArray(req.body.assignedTo)) {
       const previousIds = (previousKpi.assignedTo || []).map((id) => String(id));
       const nextIds = req.body.assignedTo.map((id) => String(id));
@@ -390,6 +467,9 @@ exports.updateKpi = async (req, res) => {
         await latestEvidence.save();
       }
     }
+=======
+    // --- End notification block ---
+>>>>>>> Stashed changes
 
     res.json({
       message: "KPI updated successfully",

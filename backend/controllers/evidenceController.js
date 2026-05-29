@@ -1,5 +1,6 @@
 const Evidence = require("../models/Evidence");
 const Kpi = require("../models/Kpi");
+<<<<<<< Updated upstream
 const mongoose = require("mongoose");
 const path = require("path");
 const fs = require("fs");
@@ -99,6 +100,9 @@ async function refreshKpiProgressFromEvidence(kpiId) {
   await kpi.save();
   return kpi;
 }
+=======
+const Notification = require("../models/Notification");
+>>>>>>> Stashed changes
 
 exports.createEvidence = async (req, res) => {
   try {
@@ -160,6 +164,23 @@ exports.createEvidence = async (req, res) => {
       ? Math.round(((nextKpi.currentValue || 0) / nextKpi.targetValue) * 100)
       : 0;
 
+    try {
+      const managerId = kpi.managerId || kpi.createdBy;
+      if (managerId) {
+        await Notification.create({
+          userId: managerId,
+          title: "New Evidence Submitted",
+          message: `Staff submitted evidence for KPI: "${kpi.title}". Current progress: ${pct}%.`,
+          type: "verification", // Ensure this value is allowed in your Notification schema enum
+          relatedKpiId: kpi._id,
+          relatedEvidenceId: evidence._id
+        });
+      }
+    } catch (notifError) {
+      // Log the error but don't crash the request if notifications fail
+      console.error("Notification failed to send:", notifError.message);
+    }
+
     res.status(201).json({
       message: "Evidence submitted successfully",
       evidence,
@@ -170,6 +191,7 @@ exports.createEvidence = async (req, res) => {
         currentPercent: nextPct
       }
     });
+
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }

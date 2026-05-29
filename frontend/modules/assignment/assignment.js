@@ -10,19 +10,6 @@ function openAddStakeholderModal() {
   console.log("Open add stakeholder modal");
 }
 
-let staffData = [
-  { id: 1, name: "Johnathan Smith", role: "Sales Manager", department: "Sales Department" },
-  { id: 2, name: "Sarah Johnson", role: "Marketing Director", department: "Marketing Department" },
-  { id: 3, name: "Michael Chen", role: "Operations Lead", department: "Operations Department" },
-  { id: 4, name: "Emily Davis", role: "HR Specialist", department: "Human Resources" }
-];
-
-const stakeholderData = [
-  { id: 1, name: "Alex Turner" },
-  { id: 2, name: "Lisa Wong" },
-  { id: 3, name: "David Park" }
-];
-
 function renderStaffCard(person) {
   const card = document.createElement("div");
   card.className = "staff-card mb-3 p-3 rounded-3 d-flex align-items-center justify-content-between";
@@ -45,18 +32,6 @@ function renderStaffCard(person) {
   `;
 
   return card;
-}
-
-function renderStakeholderBadge(stakeholder) {
-  const badge = document.createElement("div");
-  badge.className = "stakeholder-badge d-flex align-items-center gap-2 px-3 py-2 rounded-3 bg-light";
-
-  badge.innerHTML = `
-    <i class="bi bi-person-fill"></i>
-    <span class="fw-medium small">${stakeholder.name}</span>
-  `;
-
-  return badge;
 }
 
 async function loadStaffFromApi() {
