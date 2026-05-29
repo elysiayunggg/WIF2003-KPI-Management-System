@@ -652,6 +652,7 @@ function viewReportKpi(id) {
   }
 
   if (typeof changePage === "function") {
+    sessionStorage.setItem("kpiDetailSource", "report");
     changePage({ preventDefault() {} }, "KPI Detail");
   }
 }

@@ -141,6 +141,7 @@ function viewKpiListDetail(id) {
   }
 
   if (typeof changePage === "function") {
+    sessionStorage.setItem("kpiDetailSource", "kpi-list");
     changePage({ preventDefault() {} }, "KPI Detail");
   }
 }
