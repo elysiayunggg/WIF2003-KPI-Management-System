@@ -3,13 +3,13 @@
   <!-- Breadcrumb -->
   <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
     <ol class="breadcrumb mb-0">
-      <li class="breadcrumb-item active" aria-current="page">Notifications</li>
+      <li class="breadcrumb-item active" aria-current="page" data-i18n="notif_breadcrumbCurrent">Notifications</li>
     </ol>
   </nav>
 
   <!-- Title -->
   <div class="mb-4">
-    <h1 class="page-title mb-0">Recent Activities</h1>
+    <h1 class="page-title mb-0" data-i18n="notif_pageTitle">Recent Activities</h1>
   </div>
 
   <!-- Row 1: Search + Mark all as read -->
@@ -21,6 +21,7 @@
         id="notifPageSearch"
         class="form-control notif-report-search-input"
         placeholder="Search activity details..."
+        data-i18n-placeholder="notif_searchPlaceholder"
         oninput="filterNotificationsBySearch(this.value)"
       />
     </div>
@@ -29,17 +30,17 @@
       onclick="markAllAsRead(); renderNotificationCards(activeNotifTab)"
     >
       <i class="bi bi-check-all"></i>
-      <span>Mark all as read</span>
+      <span data-i18n="notif_markAllRead">Mark all as read</span>
     </button>
   </div>
 
   <!-- Row 2: Filter Tabs -->
   <div class="d-flex flex-wrap gap-2 mb-4" id="notifTabGroup">
-    <button class="btn notif-tab notif-tab-active" onclick="switchNotifTab(this, 'All Activities')">All Activities</button>
-    <button class="btn notif-tab" onclick="switchNotifTab(this, 'Submissions')">Submissions</button>
-    <button class="btn notif-tab" onclick="switchNotifTab(this, 'Approvals')">Approvals</button>
-    <button class="btn notif-tab" onclick="switchNotifTab(this, 'Deadlines')">Deadlines</button>
-    <button class="btn notif-tab" onclick="switchNotifTab(this, 'System')">System</button>
+    <button class="btn notif-tab notif-tab-active" onclick="switchNotifTab(this, 'All Activities')" data-i18n="notif_tabAll">All Activities</button>
+    <button class="btn notif-tab" onclick="switchNotifTab(this, 'Submissions')" data-i18n="notif_tabSubmissions">Submissions</button>
+    <button class="btn notif-tab" onclick="switchNotifTab(this, 'Approvals')" data-i18n="notif_tabApprovals">Approvals</button>
+    <button class="btn notif-tab" onclick="switchNotifTab(this, 'Deadlines')" data-i18n="notif_tabDeadlines">Deadlines</button>
+    <button class="btn notif-tab" onclick="switchNotifTab(this, 'System')" data-i18n="notif_tabSystem">System</button>
   </div>
 
   <!-- Notification Cards Container -->
@@ -52,6 +53,7 @@
     <button
       class="btn notif-delete-all-btn p-0"
       onclick="deleteAllNotificationsPage()"
+      data-i18n="notif_deleteAllBtn"
     >
       Delete all notifications
     </button>

@@ -1,0 +1,12 @@
+{
+  "name": "kpi-selenium-tests",
+  "version": "1.0.0",
+  "description": "Selenium UI tests for WIF2003 KPI Management System",
+  "main": "test-selenium.js",
+  "scripts": {
+    "test": "node test-selenium.js"
+  },
+  "dependencies": {
+    "selenium-webdriver": "^4.21.0"
+  }
+}

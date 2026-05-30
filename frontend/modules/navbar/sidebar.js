@@ -28,51 +28,51 @@ function renderSidebar(role) {
   if (role === "manager") {
     menu.innerHTML = `
       <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'Dashboard')">
-        <i class="bi bi-grid"></i> Dashboard
+        <i class="bi bi-grid"></i> ${t('navDashboard')}
       </a>
       <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'Report')">
-        <i class="bi bi-clipboard-data"></i> Report
+        <i class="bi bi-clipboard-data"></i> ${t('navReport')}
       </a>
 
       <div class="nav-group">
         <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Management')">
-          <i class="bi bi-bar-chart"></i> KPI Management
+          <i class="bi bi-bar-chart"></i> ${t('navKpiMgmt')}
         </a>
         <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Create KPI')">
-          <i class="bi bi-plus-circle"></i> Create KPI
+          <i class="bi bi-plus-circle"></i> ${t('navCreateKpi')}
         </a>
         <a href="#" class="nav-link ms-3" onclick="changePage(event, 'View KPI List')">
-          <i class="bi bi-list-ul"></i> View KPI List
+          <i class="bi bi-list-ul"></i> ${t('navViewKpiList')}
         </a>
       </div>
 
       <div class="nav-group">
         <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Assignment & Verification')">
-          <i class="bi bi-check2-square"></i> KPI Assignment & Verification
+          <i class="bi bi-check2-square"></i> ${t('navAssign')}
         </a>
       </div>
 
       <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'Notifications')">
-        <i class="bi bi-bell"></i> Notifications
+        <i class="bi bi-bell"></i> ${t('navNotifications')}
       </a>
     `;
   } else {
     menu.innerHTML = `
       <a href="#" class="nav-link" onclick="changePage(event, 'Dashboard')">
-        <i class="bi bi-grid"></i> Dashboard
+        <i class="bi bi-grid"></i> ${t('navDashboard')}
       </a>
 
       <div class="nav-group">
         <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'KPI Progress')">
-          <i class="bi bi-bar-chart"></i> KPI Progress
+          <i class="bi bi-bar-chart"></i> ${t('navKpiProgress')}
         </a>
         <a href="#" class="nav-link ms-3" onclick="changePage(event, 'View KPI List')">
-          <i class="bi bi-list-ul"></i> View KPI List
+          <i class="bi bi-list-ul"></i> ${t('navViewKpiList')}
         </a>
       </div>
 
       <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'Notifications')">
-        <i class="bi bi-bell"></i> Notifications
+        <i class="bi bi-bell"></i> ${t('navNotifications')}
       </a>
     `;
   }
@@ -153,10 +153,13 @@ async function changePage(event, pageName) {
       content.innerHTML = html;
       content.style.opacity = "1";
 
-      // Ensure initFn also runs when clicking navlinks 
+      if (typeof applyI18n === "function") applyI18n();
+
       const initFn = pageInits[pageName];
       if (typeof initFn === "function") {
-        initFn();
+        Promise.resolve(initFn()).then(() => {
+          if (typeof applyI18n === "function") applyI18n();
+        });
       }
 
     }, 150); // must match the transition duration in style.css

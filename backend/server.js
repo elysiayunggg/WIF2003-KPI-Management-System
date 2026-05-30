@@ -6,6 +6,7 @@ const path = require("path");
 const authRoutes = require("./routes/authRoutes");
 const kpiRoutes = require("./routes/kpiRoutes");
 const evidenceRoutes = require("./routes/evidenceRoutes");
+const profileRoutes = require("./routes/profileRoutes");
 
 dotenv.config();
 
@@ -32,9 +33,11 @@ app.use((req, res, next) => {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(express.static(path.join(__dirname, "../frontend")));
 app.use("/api/auth", authRoutes);
 app.use("/api/kpis", kpiRoutes);
 app.use("/api/evidence", evidenceRoutes);
+app.use("/api/profile", profileRoutes);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))

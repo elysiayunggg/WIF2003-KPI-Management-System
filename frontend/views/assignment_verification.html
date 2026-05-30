@@ -3,14 +3,14 @@
   <!-- Breadcrumb -->
   <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
     <ol class="breadcrumb mb-0">
-      <li class="breadcrumb-item active" aria-current="page">KPI Assignment &amp; Verification</li>
+      <li class="breadcrumb-item active" aria-current="page" data-i18n="assignVerif_breadcrumbCurrent">KPI Assignment &amp; Verification</li>
     </ol>
   </nav>
 
   <!-- Title -->
   <div class="mb-4">
-    <h1 class="page-title">KPI Assignment and Verification</h1>
-    <p class="page-subtitle mt-2">Review and verify staff assignments and KPI verification requests.</p>
+    <h1 class="page-title" data-i18n="assignVerif_pageTitle">KPI Assignment and Verification</h1>
+    <p class="page-subtitle mt-2" data-i18n="assignVerif_pageSubtitle">Review and verify staff assignments and KPI verification requests.</p>
   </div>
 
   <!-- Verification Queue Section -->
@@ -19,17 +19,18 @@
 
       <!-- Header row: title + search + filter side by side -->
       <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
-        <h5 class="fw-bold mb-0">Verification Queue</h5>
+        <h5 class="fw-bold mb-0" data-i18n="assignVerif_verifQueueTitle">Verification Queue</h5>
         <div class="d-flex align-items-center gap-2">
           <div class="report-search-wrapper av-search-wrapper">
             <i class="bi bi-search"></i>
             <input type="text" class="form-control report-search-input"
               placeholder="Search KPIs..."
+              data-i18n-placeholder="assignVerif_verifSearchPlaceholder"
               id="verificationSearch"
               onkeyup="filterVerificationTable()" />
           </div>
           <a href="#" class="av-filter-btn fw-medium">
-            <i class="bi bi-funnel me-1"></i>Filters
+            <i class="bi bi-funnel me-1"></i><span data-i18n="assignVerif_filtersBtn">Filters</span>
           </a>
         </div>
       </div>
@@ -39,11 +40,11 @@
         <table class="table table-hover align-middle" id="verificationTable">
           <thead class="table-light">
             <tr>
-              <th scope="col" style="width: 30%;">KPI Name</th>
-              <th scope="col" style="width: 20%;">Responsible Staff</th>
-              <th scope="col" style="width: 19%;">Submission Time</th>
-              <th scope="col" style="width: 19%;">Status</th>
-              <th scope="col" style="width: 12%;">Actions</th>
+              <th scope="col" style="width: 30%;" data-i18n="assignVerif_verifColKpiName">KPI Name</th>
+              <th scope="col" style="width: 20%;" data-i18n="assignVerif_verifColStaff">Responsible Staff</th>
+              <th scope="col" style="width: 19%;" data-i18n="assignVerif_verifColSubmission">Submission Time</th>
+              <th scope="col" style="width: 19%;" data-i18n="assignVerif_verifColStatus">Status</th>
+              <th scope="col" style="width: 12%;" data-i18n="assignVerif_verifColActions">Actions</th>
             </tr>
           </thead>
           <tbody id="verificationTableBody">
@@ -56,13 +57,13 @@
       <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
         <span class="text-muted small" id="verificationCount">Showing 0 of 0</span>
         <div class="pagination-container">
-          <button class="btn btn-sm btn-light" id="verificationPrev" onclick="navigateVerificationPage('prev')" disabled>
+          <button class="btn btn-sm btn-light" id="verificationPrev" onclick="navigateVerificationPage('prev')" disabled data-i18n="assignVerif_paginationPrev">
             Previous
           </button>
           <div id="verificationPageBtns" class="d-inline-flex mx-2">
             <!-- Page number buttons injected by renderPageButtons() -->
           </div>
-          <button class="btn btn-sm btn-light" id="verificationNext" onclick="navigateVerificationPage('next')" disabled>
+          <button class="btn btn-sm btn-light" id="verificationNext" onclick="navigateVerificationPage('next')" disabled data-i18n="assignVerif_paginationNext">
             Next
           </button>
         </div>
@@ -77,17 +78,18 @@
 
       <!-- Header row: title + search + filter side by side -->
       <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
-        <h5 class="fw-bold mb-0">Assignment Queue</h5>
+        <h5 class="fw-bold mb-0" data-i18n="assignVerif_assignQueueTitle">Assignment Queue</h5>
         <div class="d-flex align-items-center gap-2">
           <div class="report-search-wrapper av-search-wrapper">
             <i class="bi bi-search"></i>
             <input type="text" class="form-control report-search-input"
               placeholder="Search KPIs..."
+              data-i18n-placeholder="assignVerif_assignSearchPlaceholder"
               id="assignmentSearch"
               onkeyup="filterAssignmentTable()" />
           </div>
           <a href="#" class="av-filter-btn fw-medium">
-            <i class="bi bi-funnel me-1"></i>Filters
+            <i class="bi bi-funnel me-1"></i><span data-i18n="assignVerif_filtersBtn">Filters</span>
           </a>
         </div>
       </div>
@@ -97,10 +99,10 @@
         <table class="table table-hover align-middle" id="assignmentTable">
           <thead class="table-light">
             <tr>
-              <th scope="col" style="width: 30%;">KPI Name</th>
-              <th scope="col" style="width: 39%;">Recommended Staff (Lowest Load)</th>
-              <th scope="col" style="width: 19%;">Deadline</th>
-              <th scope="col" style="width: 12%;">Actions</th>
+              <th scope="col" style="width: 30%;" data-i18n="assignVerif_assignColKpiName">KPI Name</th>
+              <th scope="col" style="width: 39%;" data-i18n="assignVerif_assignColRecommended">Recommended Staff (Lowest Load)</th>
+              <th scope="col" style="width: 19%;" data-i18n="assignVerif_assignColDeadline">Deadline</th>
+              <th scope="col" style="width: 12%;" data-i18n="assignVerif_assignColActions">Actions</th>
             </tr>
           </thead>
           <tbody id="assignmentTableBody">
@@ -115,18 +117,18 @@
 
   <div class="pagination-container">
     <button class="btn btn-sm btn-light" id="assignmentPrev"
-      onclick="navigateAssignmentPage('prev')" disabled>
+      onclick="navigateAssignmentPage('prev')" disabled data-i18n="assignVerif_paginationPrev">
       Previous
     </button>
 
     <div id="assignmentPageBtns" class="d-inline-flex mx-2"></div>
 
-    <button class="btn btn-sm btn-light" id="assignmentNext" onclick="navigateAssignmentPage('next')" disabled>
+    <button class="btn btn-sm btn-light" id="assignmentNext" onclick="navigateAssignmentPage('next')" disabled data-i18n="assignVerif_paginationNext">
       Next
     </button>
   </div>
 </div>
-     
+
     </div>
   </div>
 

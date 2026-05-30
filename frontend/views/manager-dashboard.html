@@ -2,18 +2,18 @@
 
   <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
     <ol class="breadcrumb mb-0">
-      <li class="breadcrumb-item active" aria-current="page">Manager Dashboard</li>
+      <li class="breadcrumb-item active" aria-current="page" data-i18n="dash_breadcrumb">Manager Dashboard</li>
     </ol>
   </nav>
 
   <!-- MAIN TITLE -->
-  <h1 id="mainHeading" class="page-title mb-0">Manager Dashboard</h1>
-  
+  <h1 id="mainHeading" class="page-title mb-0" data-i18n="dash_pageTitle">Manager Dashboard</h1>
+
 
   <!-- OVERVIEW SECTION -->
   <div class="mt-4">
-    <h2 class="overview-title">Overview</h2>
-    <p class="overview-subtext">
+    <h2 class="overview-title" data-i18n="dash_overviewTitle">Overview</h2>
+    <p class="overview-subtext" data-i18n="dash_overviewSubtext">
       Real-time metrics and KPI achievement tracking
     </p>
   </div>
@@ -23,37 +23,37 @@
 
     <!-- STATUS FILTER -->
     <div class="filter-item">
-      <label>STATUS:</label>
+      <label data-i18n="dash_filterStatus">STATUS:</label>
       <div class="dropdown-wrapper">
         <button class="custom-filter-btn" onclick="toggleDropdown(event, 'statusDropdown')">
-          <span id="selectedStatus">All Status</span>
+          <span id="selectedStatus" data-i18n="dash_statusAll">All Status</span>
           <i class="bi bi-chevron-down dropdown-icon"></i>
         </button>
 
         <div class="custom-dropdown" id="statusDropdown">
-          <button onclick="selectDropdownOption('selectedStatus', 'statusDropdown', 'All Status')">All Status</button>
-          <button onclick="selectDropdownOption('selectedStatus', 'statusDropdown', 'In Progress')">In Progress</button>
-          <button onclick="selectDropdownOption('selectedStatus', 'statusDropdown', 'Pending Verification')">Pending Verification</button>
-          <button onclick="selectDropdownOption('selectedStatus', 'statusDropdown', 'Completed')">Completed</button>
-          <button onclick="selectDropdownOption('selectedStatus', 'statusDropdown', 'Overdue')">Overdue</button>
+          <button data-i18n="dash_statusAll" onclick="selectDropdownOption('selectedStatus', 'statusDropdown', 'All Status')">All Status</button>
+          <button data-i18n="dash_statusInProgress" onclick="selectDropdownOption('selectedStatus', 'statusDropdown', 'In Progress')">In Progress</button>
+          <button data-i18n="dash_statusPendingVerification" onclick="selectDropdownOption('selectedStatus', 'statusDropdown', 'Pending Verification')">Pending Verification</button>
+          <button data-i18n="dash_statusCompleted" onclick="selectDropdownOption('selectedStatus', 'statusDropdown', 'Completed')">Completed</button>
+          <button data-i18n="dash_statusOverdue" onclick="selectDropdownOption('selectedStatus', 'statusDropdown', 'Overdue')">Overdue</button>
         </div>
       </div>
     </div>
 
     <!-- DEPARTMENT FILTER -->
     <div class="filter-item">
-      <label>DEPARTMENT:</label>
+      <label data-i18n="dash_filterDepartment">DEPARTMENT:</label>
       <div class="dropdown-wrapper">
         <button class="custom-filter-btn" onclick="toggleDropdown(event, 'departmentDropdown')">
-          <span id="selectedDepartment">All Departments</span>
+          <span id="selectedDepartment" data-i18n="dash_deptAll">All Departments</span>
           <i class="bi bi-chevron-down dropdown-icon"></i>
         </button>
 
         <div class="custom-dropdown" id="departmentDropdown">
-          <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'All Departments')">All Departments</button>
-          <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'Backend & Infrastructure')">Backend & Infrastructure</button>
-          <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'Frontend & UX')">Frontend & UX</button>
-          <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'Operations & Growth')">Operations & Growth</button>
+          <button data-i18n="dash_deptAll" onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'All Departments')">All Departments</button>
+          <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'Backend & Infrastructure')">Backend &amp; Infrastructure</button>
+          <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'Frontend & UX')">Frontend &amp; UX</button>
+          <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'Operations & Growth')">Operations &amp; Growth</button>
           <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'Quality Assurance')">Quality Assurance</button>
           <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'Security')">Security</button>
         </div>
@@ -62,15 +62,15 @@
 
     <!-- STAFF FILTER -->
     <div class="filter-item">
-      <label>STAFF:</label>
+      <label data-i18n="dash_filterStaff">STAFF:</label>
       <div class="dropdown-wrapper">
         <button class="custom-filter-btn" onclick="toggleDropdown(event, 'staffDropdown')">
-          <span id="selectedStaff">All Members</span>
+          <span id="selectedStaff" data-i18n="dash_staffAll">All Members</span>
           <i class="bi bi-chevron-down dropdown-icon"></i>
         </button>
 
         <div class="custom-dropdown" id="staffDropdown">
-          <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', 'All Members')">All Members</button>
+          <button data-i18n="dash_staffAll" onclick="selectDropdownOption('selectedStaff', 'staffDropdown', 'All Members')">All Members</button>
           <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', 'Ali Ahmad')">Ali Ahmad</button>
           <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', 'John Tan')">John Tan</button>
           <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', 'Sarah Chen')">Sarah Chen</button>
@@ -84,12 +84,12 @@
 
     <!-- DATE RANGE FILTER -->
     <div class="filter-item date-filter-wrapper">
-      <label>DATE RANGE:</label>
+      <label data-i18n="dash_filterDateRange">DATE RANGE:</label>
       <div class="dropdown-wrapper">
         <button class="custom-filter-btn date-range-btn d-flex align-items-center" onclick="toggleCalendar(event)">
           <span class="filter-text d-flex align-items-center">
             <i class="bi bi-calendar-event me-1"></i>
-            <span id="selectedDateRange">Select Date Range</span>
+            <span id="selectedDateRange" data-i18n="dash_selectDateRange">Select Date Range</span>
           </span>
 
           <!-- Clear icon (NEW) -->
@@ -113,20 +113,20 @@
           </div>
 
           <div class="calendar-weekdays">
-            <span>Mon</span>
-            <span>Tue</span>
-            <span>Wed</span>
-            <span>Thu</span>
-            <span>Fri</span>
-            <span>Sat</span>
-            <span>Sun</span>
+            <span data-i18n="dash_calMon">Mon</span>
+            <span data-i18n="dash_calTue">Tue</span>
+            <span data-i18n="dash_calWed">Wed</span>
+            <span data-i18n="dash_calThu">Thu</span>
+            <span data-i18n="dash_calFri">Fri</span>
+            <span data-i18n="dash_calSat">Sat</span>
+            <span data-i18n="dash_calSun">Sun</span>
           </div>
 
           <div class="calendar-days" id="calendarDays"></div>
 
           <div class="calendar-actions">
-            <button class="btn btn-light btn-sm" onclick="cancelCalendar()">Cancel</button>
-            <button class="btn btn-primary btn-sm" onclick="chooseDate()">Choose Date</button>
+            <button class="btn btn-light btn-sm" data-i18n="dash_calCancel" onclick="cancelCalendar()">Cancel</button>
+            <button class="btn btn-primary btn-sm" data-i18n="dash_calChooseDate" onclick="chooseDate()">Choose Date</button>
           </div>
         </div>
       </div>
@@ -142,9 +142,9 @@
       <div class="summary-icon summary-neutral">
         <i class="bi bi-grid"></i>
       </div>
-      <span class="summary-badge badge-neutral">TOTAL</span>
+      <span class="summary-badge badge-neutral" data-i18n="dash_badgeTotal">TOTAL</span>
     </div>
-    <p class="summary-label">TOTAL KPIS</p>
+    <p class="summary-label" data-i18n="dash_labelTotalKpis">TOTAL KPIS</p>
     <h3 class="summary-number" id="managerTotalKpis">0</h3>
   </div>
 
@@ -153,9 +153,9 @@
       <div class="summary-icon summary-green">
         <i class="bi bi-hourglass-split"></i>
       </div>
-      <span class="summary-badge badge-green">ACTIVE</span>
+      <span class="summary-badge badge-green" data-i18n="dash_badgeActive">ACTIVE</span>
     </div>
-    <p class="summary-label">IN PROGRESS</p>
+    <p class="summary-label" data-i18n="dash_labelInProgress">IN PROGRESS</p>
     <h3 class="summary-number" id="managerInProgressKpis">0</h3>
   </div>
 
@@ -164,9 +164,9 @@
       <div class="summary-icon summary-yellow">
         <i class="bi bi-file-earmark-check"></i>
       </div>
-      <span class="summary-badge badge-yellow">REVIEW</span>
+      <span class="summary-badge badge-yellow" data-i18n="dash_badgeReview">REVIEW</span>
     </div>
-    <p class="summary-label">PENDING VERIFICATION</p>
+    <p class="summary-label" data-i18n="dash_labelPendingVerification">PENDING VERIFICATION</p>
     <h3 class="summary-number" id="managerPendingKpis">0</h3>
   </div>
 
@@ -175,9 +175,9 @@
       <div class="summary-icon summary-blue">
         <i class="bi bi-check-circle"></i>
       </div>
-      <span class="summary-badge badge-blue">DONE</span>
+      <span class="summary-badge badge-blue" data-i18n="dash_badgeDone">DONE</span>
     </div>
-    <p class="summary-label">COMPLETED</p>
+    <p class="summary-label" data-i18n="dash_labelCompleted">COMPLETED</p>
     <h3 class="summary-number" id="managerCompletedKpis">0</h3>
   </div>
 
@@ -186,9 +186,9 @@
       <div class="summary-icon summary-red">
         <i class="bi bi-exclamation-triangle"></i>
       </div>
-      <span class="summary-badge badge-red">ALERT</span>
+      <span class="summary-badge badge-red" data-i18n="dash_badgeAlert">ALERT</span>
     </div>
-    <p class="summary-label">OVERDUE</p>
+    <p class="summary-label" data-i18n="dash_labelOverdue">OVERDUE</p>
     <h3 class="summary-number" id="managerOverdueKpis">0</h3>
   </div>
 
@@ -199,10 +199,10 @@
 
   <!-- PERFORMANCE SUMMARY -->
   <div class="performance-summary-card">
-    <h3 class="performance-summary-title">PERFORMANCE SUMMARY</h3>
+    <h3 class="performance-summary-title" data-i18n="dash_performanceSummaryTitle">PERFORMANCE SUMMARY</h3>
 
     <div class="performance-score-block">
-      <p class="performance-label">AVERAGE KPI SCORE</p>
+      <p class="performance-label" data-i18n="dash_avgKpiScore">AVERAGE KPI SCORE</p>
 
       <div class="performance-score-row">
         <h2 class="performance-score" id="managerAverageScore">0%</h2>
@@ -215,7 +215,7 @@
     <div class="performance-staff-list">
       <div class="performance-staff-item">
         <div>
-          <p class="performance-label mb-1">TOP PERFORMING STAFF</p>
+          <p class="performance-label mb-1" data-i18n="dash_topPerformingStaff">TOP PERFORMING STAFF</p>
           <h4 id="managerTopStaff">-</h4>
         </div>
         <i class="bi bi-trophy-fill performance-icon"></i>
@@ -223,7 +223,7 @@
 
       <div class="performance-staff-item">
         <div>
-          <p class="performance-label mb-1">LOWEST PERFORMANCE</p>
+          <p class="performance-label mb-1" data-i18n="dash_lowestPerformance">LOWEST PERFORMANCE</p>
           <h4 id="managerLowestStaff">-</h4>
         </div>
         <i class="bi bi-exclamation-lg performance-icon text-danger"></i>
@@ -233,7 +233,7 @@
 
   <!-- KPI DISTRIBUTION -->
   <div class="kpi-distribution-card">
-    <h3 class="kpi-distribution-title">KPI DISTRIBUTION (%)</h3>
+    <h3 class="kpi-distribution-title" data-i18n="dash_kpiDistributionTitle">KPI DISTRIBUTION (%)</h3>
 
     <div class="kpi-distribution-content d-flex align-items-center justify-content-center gap-5">
       <div class="kpi-pie-chart">
@@ -243,7 +243,7 @@
       <div class="kpi-distribution-side">
         <div class="kpi-efficiency-box">
           <h2 id="overallEfficiency">89%</h2>
-          <p>OVERALL EFFICIENCY</p>
+          <p data-i18n="dash_overallEfficiency">OVERALL EFFICIENCY</p>
         </div>
 
         <div class="kpi-legend" id="kpiPieLegend"></div>
@@ -258,14 +258,14 @@
 
   <div class="kpi-trend-header">
     <div>
-      <h3>KPI Trend</h3>
+      <h3 data-i18n="dash_kpiTrendTitle">KPI Trend</h3>
 
       <div class="kpi-trend-legend">
         <div>
-          <span class="legend-box actual"></span> ACTUAL
+          <span class="legend-box actual"></span> <span data-i18n="dash_legendActual">ACTUAL</span>
         </div>
         <div>
-          <span class="legend-box target"></span> TARGET
+          <span class="legend-box target"></span> <span data-i18n="dash_legendTarget">TARGET</span>
         </div>
       </div>
     </div>

@@ -28,7 +28,8 @@ function showNotification() {
 function updateUnreadIndicator() {
   var badge = document.getElementById("unreadBadge");
   if (!badge) return;
-  badge.style.display = getUnreadCount() > 0 ? "block" : "none";
+  var alertsEnabled = localStorage.getItem("prefSystemAlerts") !== "false";
+  badge.style.display = (alertsEnabled && getUnreadCount() > 0) ? "block" : "none";
 }
 
 // Builds a single notification item element for the overlay list.

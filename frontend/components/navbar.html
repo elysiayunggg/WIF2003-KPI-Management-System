@@ -1,15 +1,16 @@
 <header class="topbar d-flex justify-content-between align-items-center px-4">
     <div class="search-wrapper">
       <i class="bi bi-search"></i>
-      <input 
-        type="text" 
-        class="form-control search-box" 
+      <input
+        type="text"
+        class="form-control search-box"
+        data-i18n-placeholder="searchPlaceholder"
         placeholder="Search..."
         onkeyup="searchKPI()"
         id="searchInput"
       />
     </div>
-  
+
     <div class="d-flex align-items-center gap-4">
       <div class="notification-wrapper position-relative">
         <button class="notification-btn" onclick="showNotification()" id="notificationBell">
@@ -17,17 +18,14 @@
           <span id="unreadBadge" style="display: none;"></span>
         </button>
 
-        <!-- Notification Overlay -->
         <div class="notification-overlay" id="notificationOverlay">
           <div class="notification-header">
-            <h6>Notifications</h6>
-            <button type="button" class="mark-all-read" onclick="markAllAsRead()">Mark all read</button>
+            <h6 data-i18n="notifHeader">Notifications</h6>
+            <button type="button" class="mark-all-read" onclick="markAllAsRead()" data-i18n="notifMarkAllRead">Mark all read</button>
           </div>
-          <div class="notification-list" id="notificationList">
-            <!-- Notifications injected by notification.js -->
-          </div>
+          <div class="notification-list" id="notificationList"></div>
           <div class="notification-footer">
-            <a href="#" onclick="changePage(event, 'Notifications')">View all notifications</a>
+            <a href="#" onclick="changePage(event, 'Notifications')" data-i18n="notifViewAll">View all notifications</a>
           </div>
         </div>
       </div>
@@ -36,4 +34,4 @@
         <img id="navbarAvatarImg" src="" alt="Profile" class="navbar-avatar-img">
       </button>
     </div>
-  </header>
+</header>

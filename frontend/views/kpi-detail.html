@@ -4,13 +4,13 @@
             <div>
                 <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'Staff Dashboard')">Staff Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Progress')">KPI Progress</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">KPI Detail</li>
+                        <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'Staff Dashboard')" data-i18n="kpiDetail_breadcrumbDashboard">Staff Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Progress')" data-i18n="kpiDetail_breadcrumbProgress">KPI Progress</a></li>
+                        <li class="breadcrumb-item active" aria-current="page" data-i18n="kpiDetail_breadcrumbCurrent">KPI Detail</li>
                     </ol>
                 </nav>
 
-                <h1 class="page-title mb-0" id="kpi-detail-page-heading">KPI Detail</h1>
+                <h1 class="page-title mb-0" id="kpi-detail-page-heading" data-i18n="kpiDetail_pageTitle">KPI Detail</h1>
             </div>
             <div class="d-flex align-items-center flex-wrap gap-2">
                 <div class="position-relative kpi-status-dropdown">
@@ -19,14 +19,14 @@
                         <span class="material-symbols-outlined ms-1">expand_more</span>
                     </button>
                     <div class="kpi-status-menu card shadow border-0 p-1" id="status-dropdown-menu">
-                        <button class="dropdown-item" type="button" data-status-label="In Progress" data-status-class="status-in-progress">In Progress</button>
-                        <button class="dropdown-item" type="button" data-status-label="Completed" data-status-class="status-completed">Completed</button>
-                        <button class="dropdown-item" type="button" data-status-label="Delayed" data-status-class="status-delayed">Delayed</button>
-                        <button class="dropdown-item" type="button" data-status-label="On Hold" data-status-class="status-on-hold">On Hold</button>
+                        <button class="dropdown-item" type="button" data-status-label="In Progress" data-status-class="status-in-progress" data-i18n="kpiDetail_statusInProgress">In Progress</button>
+                        <button class="dropdown-item" type="button" data-status-label="Completed" data-status-class="status-completed" data-i18n="kpiDetail_statusCompleted">Completed</button>
+                        <button class="dropdown-item" type="button" data-status-label="Delayed" data-status-class="status-delayed" data-i18n="kpiDetail_statusDelayed">Delayed</button>
+                        <button class="dropdown-item" type="button" data-status-label="On Hold" data-status-class="status-on-hold" data-i18n="kpiDetail_statusOnHold">On Hold</button>
                     </div>
                 </div>
-                <button class="btn kpi-btn-secondary"><span class="material-symbols-outlined">file_download</span>Export CSV</button>
-                <button class="btn kpi-btn-primary"><span class="material-symbols-outlined">description</span>Export PDF</button>
+                <button class="btn kpi-btn-secondary"><span class="material-symbols-outlined">file_download</span><span data-i18n="kpiDetail_exportCsv">Export CSV</span></button>
+                <button class="btn kpi-btn-primary"><span class="material-symbols-outlined">description</span><span data-i18n="kpiDetail_exportPdf">Export PDF</span></button>
             </div>
         </header>
 
@@ -40,11 +40,11 @@
                     <p class="kpi-subtext" id="kpi-detail-description">—</p>
                     <div class="d-flex justify-content-between align-items-end mt-4">
                         <div>
-                            <div class="kpi-label">Current Progress</div>
+                            <div class="kpi-label" data-i18n="kpiDetail_labelCurrentProgress">Current Progress</div>
                             <div class="kpi-progress-value" id="kpi-detail-progress-pct">0%</div>
                         </div>
                         <div class="text-end">
-                            <div class="kpi-label">Target</div>
+                            <div class="kpi-label" data-i18n="kpiDetail_labelTarget">Target</div>
                             <div class="kpi-target-value" id="kpi-detail-target">—</div>
                         </div>
                     </div>
@@ -56,11 +56,11 @@
             <div class="col-12 col-xl-4">
                 <aside class="kpi-card h-100">
                     <div class="mb-4">
-                        <div class="kpi-label">Deadline</div>
+                        <div class="kpi-label" data-i18n="kpiDetail_labelDeadline">Deadline</div>
                         <div class="kpi-meta-line" id="kpi-detail-deadline"><span class="material-symbols-outlined me-1">calendar_today</span>—</div>
                     </div>
                     <div class="mb-4">
-                        <div class="kpi-label">Primary Owner</div>
+                        <div class="kpi-label" data-i18n="kpiDetail_labelPrimaryOwner">Primary Owner</div>
                         <div class="d-flex align-items-center gap-2 mt-2">
                             <div class="kpi-avatar-lg d-flex align-items-center justify-content-center bg-secondary text-white fw-semibold" id="kpi-detail-owner-initials" style="width:40px;height:40px;border-radius:50%;font-size:0.85rem;">—</div>
                             <div>
@@ -70,7 +70,7 @@
                         </div>
                     </div>
                     <div>
-                        <div class="kpi-label">Department</div>
+                        <div class="kpi-label" data-i18n="kpiDetail_labelDepartment">Department</div>
                         <div class="kpi-meta-line mt-2" id="kpi-detail-department">—</div>
                     </div>
                 </aside>
@@ -80,65 +80,65 @@
         <section class="kpi-card mb-4" id="milestone-section">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                 <div>
-                    <h2 class="kpi-section-title mb-0">Project Milestones</h2>
+                    <h2 class="kpi-section-title mb-0" data-i18n="kpiDetail_milestonesTitle">Project Milestones</h2>
                     <p class="kpi-subtext small mb-0 mt-1" id="kpi-detail-milestone-caption"></p>
                 </div>
                 <div class="btn-group kpi-quarter-group">
-                    <button class="btn q-btn" id="btn-q1" data-quarter="q1" type="button">Q1</button>
-                    <button class="btn q-btn" id="btn-q2" data-quarter="q2" type="button">Q2</button>
-                    <button class="btn q-btn kpi-quarter-active" id="btn-q3" data-quarter="q3" type="button">Q3</button>
-                    <button class="btn q-btn" id="btn-q4" data-quarter="q4" type="button">Q4</button>
+                    <button class="btn q-btn" id="btn-q1" data-quarter="q1" type="button" data-i18n="kpiDetail_q1">Q1</button>
+                    <button class="btn q-btn" id="btn-q2" data-quarter="q2" type="button" data-i18n="kpiDetail_q2">Q2</button>
+                    <button class="btn q-btn kpi-quarter-active" id="btn-q3" data-quarter="q3" type="button" data-i18n="kpiDetail_q3">Q3</button>
+                    <button class="btn q-btn" id="btn-q4" data-quarter="q4" type="button" data-i18n="kpiDetail_q4">Q4</button>
                 </div>
             </div>
             <div class="quarter-content" id="content-q1">
-                <div class="kpi-milestone-header"><span>Milestone</span><span>January</span><span>February</span><span>March</span></div>
+                <div class="kpi-milestone-header"><span data-i18n="kpiDetail_milestoneColMilestone">Milestone</span><span data-i18n="kpiDetail_milestoneColJanuary">January</span><span data-i18n="kpiDetail_milestoneColFebruary">February</span><span data-i18n="kpiDetail_milestoneColMarch">March</span></div>
                 <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Initial Research</div>
+                    <div class="kpi-milestone-name" data-i18n="kpiDetail_milestoneInitialResearch">Initial Research</div>
                     <div class="kpi-track"><div class="kpi-fill" style="width: 100%"></div></div>
                 </div>
                 <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Stakeholder Mapping</div>
+                    <div class="kpi-milestone-name" data-i18n="kpiDetail_milestoneStakeholderMapping">Stakeholder Mapping</div>
                     <div class="kpi-track"><div class="kpi-fill" style="width: 48%; margin-left: 20%"></div></div>
                 </div>
             </div>
             <div class="quarter-content" id="content-q2">
-                <div class="kpi-milestone-header"><span>Milestone</span><span>April</span><span>May</span><span>June</span></div>
+                <div class="kpi-milestone-header"><span data-i18n="kpiDetail_milestoneColMilestone">Milestone</span><span data-i18n="kpiDetail_milestoneColApril">April</span><span data-i18n="kpiDetail_milestoneColMay">May</span><span data-i18n="kpiDetail_milestoneColJune">June</span></div>
                 <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Development Phase</div>
+                    <div class="kpi-milestone-name" data-i18n="kpiDetail_milestoneDevelopmentPhase">Development Phase</div>
                     <div class="kpi-track"><div class="kpi-fill" style="width: 100%"></div></div>
                 </div>
                 <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Beta Testing</div>
+                    <div class="kpi-milestone-name" data-i18n="kpiDetail_milestoneBetaTesting">Beta Testing</div>
                     <div class="kpi-track"><div class="kpi-fill" style="width: 20%; margin-left: 60%"></div></div>
                 </div>
             </div>
             <div class="quarter-content active" id="content-q3">
-                <div class="kpi-milestone-header"><span>Milestone</span><span>July</span><span>August</span><span>September</span></div>
+                <div class="kpi-milestone-header"><span data-i18n="kpiDetail_milestoneColMilestone">Milestone</span><span data-i18n="kpiDetail_milestoneColJuly">July</span><span data-i18n="kpiDetail_milestoneColAugust">August</span><span data-i18n="kpiDetail_milestoneColSeptember">September</span></div>
                 <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Regional Assessment</div>
+                    <div class="kpi-milestone-name" data-i18n="kpiDetail_milestoneRegionalAssessment">Regional Assessment</div>
                     <div class="kpi-track"><div class="kpi-fill" style="width: 30%"></div></div>
                 </div>
                 <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Supplier Onboarding</div>
+                    <div class="kpi-milestone-name" data-i18n="kpiDetail_milestoneSupplierOnboarding">Supplier Onboarding</div>
                     <div class="kpi-track"><div class="kpi-fill" style="width: 40%; margin-left: 25%"></div></div>
                 </div>
                 <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Retention Pilot Program</div>
+                    <div class="kpi-milestone-name" data-i18n="kpiDetail_milestoneRetentionPilot">Retention Pilot Program</div>
                     <div class="kpi-track"><div class="kpi-fill-pending" style="width: 40%; margin-left: 60%"></div></div>
                 </div>
             </div>
             <div class="quarter-content" id="content-q4">
-                <div class="kpi-milestone-header"><span>Milestone</span><span>October</span><span>November</span><span>December</span></div>
+                <div class="kpi-milestone-header"><span data-i18n="kpiDetail_milestoneColMilestone">Milestone</span><span data-i18n="kpiDetail_milestoneColOctober">October</span><span data-i18n="kpiDetail_milestoneColNovember">November</span><span data-i18n="kpiDetail_milestoneColDecember">December</span></div>
                 <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Final Evaluation</div>
+                    <div class="kpi-milestone-name" data-i18n="kpiDetail_milestoneFinalEvaluation">Final Evaluation</div>
                     <div class="kpi-track"><div class="kpi-fill" style="width: 40%"></div></div>
                 </div>
                 <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">System Deployment</div>
+                    <div class="kpi-milestone-name" data-i18n="kpiDetail_milestoneSystemDeployment">System Deployment</div>
                     <div class="kpi-track"><div class="kpi-fill" style="width: 40%; margin-left: 10%"></div></div>
                 </div>
                 <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Year-End Review</div>
+                    <div class="kpi-milestone-name" data-i18n="kpiDetail_milestoneYearEndReview">Year-End Review</div>
                     <div class="kpi-track"><div class="kpi-fill-pending" style="width: 30%; margin-left: 70%"></div></div>
                 </div>
             </div>
@@ -148,15 +148,20 @@
             <div class="col-12 col-xl-8">
                 <section class="kpi-card mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2 class="kpi-section-title mb-0">My Evidence</h2>
+                        <h2 class="kpi-section-title mb-0" data-i18n="kpiDetail_myEvidenceTitle">My Evidence</h2>
                         <button class="btn kpi-btn-primary" onclick="changePage(event, 'Submit Evidence')">
-                            <span class="material-symbols-outlined">add_circle</span>Add Evidence
+                            <span class="material-symbols-outlined">add_circle</span><span data-i18n="kpiDetail_addEvidenceBtn">Add Evidence</span>
                         </button>
                     </div>
                     <div class="table-responsive">
                         <table class="table align-middle kpi-table mb-0">
                             <thead>
-                                <tr><th style="width: 35%;">File Name</th><th>Date Uploaded</th><th>Status</th><th class="text-end">Actions</th></tr>
+                                <tr>
+                                    <th style="width: 35%;" data-i18n="kpiDetail_thFileName">File Name</th>
+                                    <th data-i18n="kpiDetail_thDateUploaded">Date Uploaded</th>
+                                    <th data-i18n="kpiDetail_thStatus">Status</th>
+                                    <th class="text-end" data-i18n="kpiDetail_thActions">Actions</th>
+                                </tr>
                             </thead>
                             <tbody id="kpi-detail-my-evidence-body">
                             </tbody>
@@ -165,11 +170,16 @@
                 </section>
 
                 <section class="kpi-card">
-                    <h2 class="kpi-section-title">Team Evidence</h2>
+                    <h2 class="kpi-section-title" data-i18n="kpiDetail_teamEvidenceTitle">Team Evidence</h2>
                     <div class="table-responsive">
                         <table class="table align-middle kpi-table mb-0">
                             <thead>
-                                <tr><th style="width: 35%;">Submitter</th><th style="width: 35%;">Document</th><th>Status</th><th class="text-end">Actions</th></tr>
+                                <tr>
+                                    <th style="width: 35%;" data-i18n="kpiDetail_thSubmitter">Submitter</th>
+                                    <th style="width: 35%;" data-i18n="kpiDetail_thDocument">Document</th>
+                                    <th data-i18n="kpiDetail_thStatus">Status</th>
+                                    <th class="text-end" data-i18n="kpiDetail_thActions">Actions</th>
+                                </tr>
                             </thead>
                             <tbody id="kpi-detail-team-evidence-body">
                             </tbody>
@@ -180,7 +190,7 @@
 
             <div class="col-12 col-xl-4">
                 <aside class="kpi-card">
-                    <h2 class="kpi-section-title">Activity Timeline</h2>
+                    <h2 class="kpi-section-title" data-i18n="kpiDetail_activityTimelineTitle">Activity Timeline</h2>
                     <div class="kpi-timeline" id="kpi-detail-timeline">
                     </div>
                     <!-- <button class="btn w-100 mt-3 kpi-btn-outline">View Full History</button> -->

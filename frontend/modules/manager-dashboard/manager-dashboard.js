@@ -162,7 +162,7 @@ function cancelCalendar() {
   selectedDashboardStartDate = null;
   selectedDashboardEndDate = null;
 
-  document.getElementById("selectedDateRange").textContent = "Select Date Range";
+  document.getElementById("selectedDateRange").textContent = typeof t === "function" ? t("dash_selectDateRange") : "Select Date Range";
 
   renderManagerDashboard(getFilteredManagerData());
   closeAllDashboardDropdowns();
@@ -204,7 +204,7 @@ function clearDashboardDateFilter(event) {
   selectedDashboardStartDate = null;
   selectedDashboardEndDate = null;
 
-  document.getElementById("selectedDateRange").textContent = "Select Date Range";
+  document.getElementById("selectedDateRange").textContent = typeof t === "function" ? t("dash_selectDateRange") : "Select Date Range";
 
   // hide x icon again
   document.querySelector(".clear-date-icon").classList.add("d-none");
@@ -365,7 +365,7 @@ function updateManagerDashboardFilterOptions() {
       .filter(department => department !== "All Departments")
       .sort();
     departmentDropdown.innerHTML = `
-      <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', 'All Departments')">All Departments</button>
+      <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', '${t ? t('dash_deptAll') : 'All Departments'}')">${t ? t('dash_deptAll') : 'All Departments'}</button>
       ${departments.map(department => `
         <button onclick="selectDropdownOption('selectedDepartment', 'departmentDropdown', '${escapeDashboardAttribute(department)}')">${escapeDashboardHtml(department)}</button>
       `).join("")}
@@ -379,7 +379,7 @@ function updateManagerDashboardFilterOptions() {
       .filter(staff => staff !== "Unassigned")
       .sort();
     staffDropdown.innerHTML = `
-      <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', 'All Members')">All Members</button>
+      <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', '${t ? t('staff_staffAll') : 'All Members'}')">${t ? t('staff_staffAll') : 'All Members'}</button>
       ${staffNames.map(staff => `
         <button onclick="selectDropdownOption('selectedStaff', 'staffDropdown', '${escapeDashboardAttribute(staff)}')">${escapeDashboardHtml(staff)}</button>
       `).join("")}

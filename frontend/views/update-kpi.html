@@ -3,23 +3,23 @@
   <!-- Breadcrumb -->
   <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
     <ol class="breadcrumb mb-0">
-      <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Management')">KPI Management</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Update KPI</li>
+      <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Management')" data-i18n="updateKpi_breadcrumbParent">KPI Management</a></li>
+      <li class="breadcrumb-item active" aria-current="page" data-i18n="updateKpi_breadcrumbCurrent">Update KPI</li>
     </ol>
   </nav>
 
  <!-- Header -->
   <div class="d-flex justify-content-between align-items-start mb-4">
     <div>
-      <h1 class="page-title">Update Strategic KPI</h1>
-      <p class="page-subtitle mt-2">
+      <h1 class="page-title" data-i18n="updateKpi_pageTitle">Update Strategic KPI</h1>
+      <p class="page-subtitle mt-2" data-i18n="updateKpi_pageSubtitle">
         Modify the parameters, targets, and deadlines for the existing performance indicator.
       </p>
     </div>
 
     <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" onclick="changePage(event, 'KPI Management')">Discard</button>
-      <button id="updateKpiBtn" class="btn create-btn">Update KPI</button>
+      <button class="btn btn-outline-secondary" onclick="changePage(event, 'KPI Management')" data-i18n="updateKpi_discardBtn">Discard</button>
+      <button id="updateKpiBtn" class="btn create-btn" data-i18n="updateKpi_updateKpiBtn">Update KPI</button>
     </div>
   </div>
 
@@ -33,17 +33,17 @@
         <div class="card-body p-4">
 
           <h5 class="fw-semibold mb-3">
-            <i class="bi bi-pencil-square me-2"></i> General Information
+            <i class="bi bi-pencil-square me-2"></i> <span data-i18n="updateKpi_generalInfoTitle">General Information</span>
           </h5>
 
           <div class="mb-3">
-            <label class="form-label">KPI Name</label>
+            <label class="form-label" data-i18n="updateKpi_kpiNameLabel">KPI Name</label>
             <input id="kpiName" type="text" class="form-control"
               value="Quarterly Revenue Growth">
           </div>
 
           <div>
-            <label class="form-label">Description</label>
+            <label class="form-label" data-i18n="updateKpi_descriptionLabel">Description</label>
             <textarea id="kpiDesc" class="form-control" rows="4">
 This KPI tracks the gross revenue increase across all enterprise software service lines, focusing on SaaS recurring revenue and implementation consulting fees.
             </textarea>
@@ -57,40 +57,40 @@ This KPI tracks the gross revenue increase across all enterprise software servic
         <div class="card-body p-4">
 
           <h5 class="fw-semibold mb-3">
-            <i class="bi bi-bullseye me-2"></i> Target Metrics
+            <i class="bi bi-bullseye me-2"></i> <span data-i18n="updateKpi_targetMetricsTitle">Target Metrics</span>
           </h5>
 
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label class="form-label">Target Value</label>
+              <label class="form-label" data-i18n="updateKpi_targetValueLabel">Target Value</label>
               <input id="kpiTarget" type="text" class="form-control" value="$ 2.4M">
             </div>
 
             <div class="col-md-6 mb-3">
-              <label class="form-label">Measurement Unit</label>
+              <label class="form-label" data-i18n="updateKpi_measurementUnitLabel">Measurement Unit</label>
               <select id="kpiUnit" class="form-select">
-                <option selected>Currency (RM)</option>
-                <option>Percentage (%)</option>
-                <option>Time (Hours)</option>
+                <option selected data-i18n="updateKpi_unitCurrency">Currency (RM)</option>
+                <option data-i18n="updateKpi_unitPercentage">Percentage (%)</option>
+                <option data-i18n="updateKpi_unitTime">Time (Hours)</option>
               </select>
             </div>
           </div>
 
           <!-- STATUS -->
-          <label class="form-label mt-2">Current Status</label>
+          <label class="form-label mt-2" data-i18n="updateKpi_currentStatusLabel">Current Status</label>
           <div class="d-flex gap-2 flex-wrap">
 
-            <button class="status-btn pending" data-status="PENDING VERIFICATION">Pending</button>
+            <button class="status-btn pending" data-status="PENDING VERIFICATION" data-i18n="updateKpi_statusPending">Pending</button>
 
-            <button class="status-btn progress active" data-status="IN PROGRESS">
+            <button class="status-btn progress active" data-status="IN PROGRESS" data-i18n="updateKpi_statusInProgress">
               In Progress
             </button>
 
-            <button class="status-btn completed" data-status="COMPLETED">
+            <button class="status-btn completed" data-status="COMPLETED" data-i18n="updateKpi_statusCompleted">
               Completed
             </button>
 
-            <button class="status-btn overdue" data-status="OVERDUE">
+            <button class="status-btn overdue" data-status="OVERDUE" data-i18n="updateKpi_statusOverdue">
               Overdue
             </button>
 
@@ -108,15 +108,15 @@ This KPI tracks the gross revenue increase across all enterprise software servic
       <div class="card border-0 shadow-sm mb-4">
         <div class="card-body p-4">
 
-          <h6 class="fw-semibold mb-3">Timeline</h6>
+          <h6 class="fw-semibold mb-3" data-i18n="updateKpi_timelineTitle">Timeline</h6>
 
-          <small class="text-muted fw-semibold">TARGET DEADLINE</small>
+          <small class="text-muted fw-semibold" data-i18n="updateKpi_targetDeadlineLabel">TARGET DEADLINE</small>
           <input id="kpiDeadline" type="date" class="form-control mt-2 mb-3" value="2024-12-31">
 
-          <small class="text-muted fw-semibold">REVIEW FREQUENCY</small>
+          <small class="text-muted fw-semibold" data-i18n="updateKpi_reviewFrequencyLabel">REVIEW FREQUENCY</small>
 <div class="d-flex gap-2 mt-2">
-  <button id="biWeeklyBtn" class="toggle-btn active">Bi-Weekly</button>
-  <button id="monthlyBtn" class="toggle-btn">Monthly</button>
+  <button id="biWeeklyBtn" class="toggle-btn active" data-i18n="updateKpi_biWeeklyBtn">Bi-Weekly</button>
+  <button id="monthlyBtn" class="toggle-btn" data-i18n="updateKpi_monthlyBtn">Monthly</button>
 </div>
 
         </div>
@@ -127,8 +127,8 @@ This KPI tracks the gross revenue increase across all enterprise software servic
         <div class="card-body p-4">
 
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-semibold mb-0">Assigned Staff</h6>
-            <small class="text-primary">Manage Staff</small>
+            <h6 class="fw-semibold mb-0" data-i18n="updateKpi_assignedStaffTitle">Assigned Staff</h6>
+            <small class="text-primary" data-i18n="updateKpi_manageStaffLink">Manage Staff</small>
           </div>
 
           <div class="person-card d-flex align-items-center gap-3 p-2 rounded selected">
@@ -139,7 +139,7 @@ This KPI tracks the gross revenue increase across all enterprise software servic
             </div>
           </div>
 
-          <div class="border border-dashed rounded text-center mt-3 p-2 text-muted">
+          <div class="border border-dashed rounded text-center mt-3 p-2 text-muted" data-i18n="updateKpi_addStakeholdersBtn">
             Add Stakeholders
           </div>
 
@@ -151,7 +151,7 @@ This KPI tracks the gross revenue increase across all enterprise software servic
         <div class="card-body p-4">
 
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <small>Current Progress</small>
+            <small data-i18n="updateKpi_currentProgressLabel">Current Progress</small>
             <span id="updateKpiProgressBadge" class="badge bg-light text-dark">—</span>
           </div>
 

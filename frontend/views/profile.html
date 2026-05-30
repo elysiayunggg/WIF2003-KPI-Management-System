@@ -1,22 +1,19 @@
 <section class="p-4 profile-section">
 
-  <!-- Breadcrumb -->
   <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
     <ol class="breadcrumb mb-0">
-      <li class="breadcrumb-item">Account</li>
-      <li class="breadcrumb-item active" aria-current="page">Profile</li>
+      <li class="breadcrumb-item" data-i18n="breadAccount">Account</li>
+      <li class="breadcrumb-item active" aria-current="page" data-i18n="breadProfile">Profile</li>
     </ol>
   </nav>
 
-  <!-- Title and Description -->
   <div class="mb-4">
-    <h1 class="page-title">Profile Management</h1>
-    <p class="page-subtitle mt-2">
+    <h1 class="page-title" data-i18n="profileTitle">Profile Management</h1>
+    <p class="page-subtitle mt-2" data-i18n="profileSubtitle">
       Manage your professional identity and security settings within Trackify KPI.
     </p>
   </div>
 
-  <!-- User Profile Header Card -->
   <div class="card border-0 shadow-sm mb-4 profile-header-card">
     <div class="card-body p-4 d-flex align-items-center gap-4">
       <div class="position-relative">
@@ -41,68 +38,65 @@
     </div>
   </div>
 
-  <!-- Main Content: Tabs + Form Area -->
   <div class="row g-4">
 
-    <!-- Left Sidebar Tabs -->
     <div class="col-lg-3">
       <div class="profile-tabs">
         <button class="profile-tab active" onclick="switchProfileTab('general', this)">
           <i class="bi bi-person"></i>
-          General Details
+          <span data-i18n="tabGeneral">General Details</span>
         </button>
         <button class="profile-tab" onclick="switchProfileTab('password', this)">
           <i class="bi bi-shield-lock"></i>
-          Update Password
+          <span data-i18n="tabPassword">Update Password</span>
         </button>
         <button class="profile-tab" onclick="switchProfileTab('preferences', this)">
           <i class="bi bi-bell"></i>
-          Preferences
+          <span data-i18n="tabPreferences">Preferences</span>
         </button>
       </div>
     </div>
 
-    <!-- Right Content Area -->
     <div class="col-lg-9">
 
-      <!-- ===== General Details Tab ===== -->
+      <!-- General Details Tab -->
       <div id="tab-general" class="profile-tab-content active">
         <div class="card border-0 shadow-sm mb-4">
           <div class="card-body p-4">
-            <h5 class="fw-bold mb-4">General Details</h5>
+            <h5 class="fw-bold mb-4" data-i18n="formGeneralTitle">General Details</h5>
 
             <form id="generalDetailsForm" onsubmit="event.preventDefault(); saveGeneralDetails();">
               <div class="row g-3 mb-3">
                 <div class="col-md-6">
-                  <label class="form-label profile-label">FULL NAME</label>
+                  <label class="form-label profile-label" data-i18n="labelFullName">FULL NAME</label>
                   <input type="text" class="form-control profile-input" id="profileFullName"
-                         placeholder="Enter your full name">
+                         data-i18n-placeholder="phFullName" placeholder="Enter your full name">
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label profile-label">EMPLOYEE ID</label>
+                  <label class="form-label profile-label" data-i18n="labelEmployeeId">EMPLOYEE ID</label>
                   <input type="text" class="form-control profile-input" id="profileEmployeeId"
-                         placeholder="e.g. ATR-9921">
+                         data-i18n-placeholder="phEmployeeId" placeholder="e.g. ATR-9921">
                 </div>
               </div>
 
               <div class="mb-3">
-                <label class="form-label profile-label">EMAIL ADDRESS</label>
+                <label class="form-label profile-label" data-i18n="labelEmail">EMAIL ADDRESS</label>
                 <input type="email" class="form-control profile-input" id="profileEmail"
-                       placeholder="Enter your email address">
+                       data-i18n-placeholder="phEmail" placeholder="Enter your email address">
               </div>
 
               <div class="mb-3">
-                <label class="form-label profile-label">ROLE</label>
+                <label class="form-label profile-label" data-i18n="labelRole">ROLE</label>
                 <select class="form-select profile-input" id="profileRole">
-                  <option value="manager">Manager</option>
-                  <option value="staff">Staff</option>
+                  <option value="manager" data-i18n="optionManager">Manager</option>
+                  <option value="staff" data-i18n="optionStaff">Staff</option>
                 </select>
               </div>
 
               <div class="mb-3">
-                <label class="form-label profile-label">DEPARTMENT</label>
+                <label class="form-label profile-label" data-i18n="labelDepartment">DEPARTMENT</label>
                 <select class="form-select profile-input" id="profileDepartment">
-                  <option value="">Select Department</option>
+                  <option value="" data-i18n="optionSelectDept">Select Department</option>
                   <option value="Software Development">Software Development</option>
                   <option value="Quality Assurance (QA)">Quality Assurance (QA)</option>
                   <option value="DevOps / Infrastructure">DevOps / Infrastructure</option>
@@ -120,13 +114,12 @@
               </div>
 
               <div class="d-flex justify-content-end mt-4">
-                <button type="submit" class="btn profile-save-btn">Save Changes</button>
+                <button type="submit" class="btn profile-save-btn" data-i18n="btnSaveChanges">Save Changes</button>
               </div>
             </form>
           </div>
         </div>
 
-        <!-- Delete Account Section -->
         <div class="card border-0 shadow-sm delete-account-card">
           <div class="card-body p-4">
             <div class="d-flex gap-3">
@@ -134,14 +127,14 @@
                 <i class="bi bi-exclamation-triangle-fill"></i>
               </div>
               <div class="flex-grow-1">
-                <h5 class="fw-bold mb-2" style="color:#9f403d;">Delete Account</h5>
-                <p class="text-muted small mb-3">
+                <h5 class="fw-bold mb-2" style="color:#9f403d;" data-i18n="deleteAccountTitle">Delete Account</h5>
+                <p class="text-muted small mb-3" data-i18n="deleteAccountDesc">
                   Once you delete your account, there is no going back. All submitted
                   evidence and KPI history will be permanently archived and unlinked
                   from your identity.
                 </p>
                 <button type="button" class="btn profile-delete-btn"
-                        onclick="showDeleteAccountModal()">
+                        onclick="showDeleteAccountModal()" data-i18n="btnDeleteAccount">
                   Delete Account
                 </button>
               </div>
@@ -150,38 +143,39 @@
         </div>
       </div>
 
-      <!-- ===== Update Password Tab ===== -->
+      <!-- Update Password Tab -->
       <div id="tab-password" class="profile-tab-content">
         <div class="card border-0 shadow-sm">
           <div class="card-body p-4">
-            <h5 class="fw-bold mb-4">Update Password</h5>
+            <h5 class="fw-bold mb-4" data-i18n="formPasswordTitle">Update Password</h5>
 
-            <!-- Current Password + Verify -->
             <div class="mb-4">
-              <label class="form-label profile-label">Current Password</label>
+              <label class="form-label profile-label" data-i18n="labelCurrentPw">Current Password</label>
               <div class="d-flex gap-2 align-items-stretch">
                 <div class="position-relative flex-grow-1">
                   <input type="password" class="form-control profile-input pe-5"
-                         id="pwCurrentInput" placeholder="Enter current password">
+                         id="pwCurrentInput"
+                         data-i18n-placeholder="phCurrentPw"
+                         placeholder="Enter current password">
                   <button type="button" class="pw-eye-btn" id="pwEyeCurrent"
                           onclick="profileTogglePassword('pwCurrentInput', this)">
                     <i class="bi bi-eye-slash"></i>
                   </button>
                 </div>
                 <button class="btn pw-verify-btn" id="pwVerifyBtn"
-                        onclick="profileVerifyPassword()">Verify</button>
+                        onclick="profileVerifyPassword()" data-i18n="btnVerify">Verify</button>
               </div>
               <div class="pw-hint-row mt-2" id="pwCurrentHint">
                 <i class="bi bi-info-circle"></i>
-                Verify your current password to set a new one.
+                <span data-i18n="pwHintDefault">Verify your current password to set a new one.</span>
               </div>
             </div>
 
-            <!-- New Password (locked until verified) -->
             <div class="mb-3">
-              <label class="form-label profile-label">New Password</label>
+              <label class="form-label profile-label" data-i18n="labelNewPw">New Password</label>
               <div class="position-relative">
                 <input type="password" class="form-control profile-input pe-5" id="pwNewInput"
+                       data-i18n-placeholder="phNewPw"
                        placeholder="Enter new password" disabled
                        oninput="profileCheckStrength()">
                 <button type="button" class="pw-eye-btn" id="pwEyeNew"
@@ -190,44 +184,42 @@
                 </button>
               </div>
 
-              <!-- Strength meter -->
               <div class="mt-2">
                 <div class="d-flex justify-content-between align-items-center mb-1">
-                  <span class="pw-meta-label">Password Strength</span>
+                  <span class="pw-meta-label" data-i18n="labelPwStrength">Password Strength</span>
                   <span class="pw-meta-label" id="pwStrengthLabel">--</span>
                 </div>
                 <div class="pw-strength-track">
                   <div class="pw-strength-fill" id="pwStrengthBar" style="width:0%"></div>
                 </div>
-                <!-- Checklist — hidden until current password is verified -->
                 <div id="pwChecklist" class="pw-checklist" style="display:none">
                   <div class="pw-check-item" id="pwck-length">
-                    <i class="bi bi-check-circle-fill"></i> 8 to 64 characters
+                    <i class="bi bi-check-circle-fill"></i> <span data-i18n="pwck_length">8 to 64 characters</span>
                   </div>
                   <div class="pw-check-item" id="pwck-upper">
-                    <i class="bi bi-check-circle-fill"></i> At least 1 uppercase letter
+                    <i class="bi bi-check-circle-fill"></i> <span data-i18n="pwck_upper">At least 1 uppercase letter</span>
                   </div>
                   <div class="pw-check-item" id="pwck-lower">
-                    <i class="bi bi-check-circle-fill"></i> At least 1 lowercase letter
+                    <i class="bi bi-check-circle-fill"></i> <span data-i18n="pwck_lower">At least 1 lowercase letter</span>
                   </div>
                   <div class="pw-check-item" id="pwck-number">
-                    <i class="bi bi-check-circle-fill"></i> At least 1 number
+                    <i class="bi bi-check-circle-fill"></i> <span data-i18n="pwck_number">At least 1 number</span>
                   </div>
                   <div class="pw-check-item" id="pwck-symbol">
-                    <i class="bi bi-check-circle-fill"></i> At least 1 special character
+                    <i class="bi bi-check-circle-fill"></i> <span data-i18n="pwck_symbol">At least 1 special character</span>
                   </div>
                   <div class="pw-check-item" id="pwck-nospace">
-                    <i class="bi bi-check-circle-fill"></i> No spaces
+                    <i class="bi bi-check-circle-fill"></i> <span data-i18n="pwck_nospace">No spaces</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Confirm New Password (locked until verified) -->
             <div class="mb-4">
-              <label class="form-label profile-label">Confirm New Password</label>
+              <label class="form-label profile-label" data-i18n="labelConfirmPw">Confirm New Password</label>
               <div class="position-relative">
                 <input type="password" class="form-control profile-input pe-5" id="pwConfirmInput"
+                       data-i18n-placeholder="phConfirmPw"
                        placeholder="Confirm new password" disabled>
                 <button type="button" class="pw-eye-btn" id="pwEyeConfirm"
                         onclick="profileTogglePassword('pwConfirmInput', this)">
@@ -236,33 +228,27 @@
               </div>
             </div>
 
-            <!-- Submit -->
             <div class="d-flex justify-content-end">
               <button class="btn profile-save-btn" id="pwUpdateBtn"
-                      onclick="profileUpdatePassword()" disabled>
-                Update Password
-              </button>
+                      onclick="profileUpdatePassword()" disabled
+                      data-i18n="btnUpdatePassword">Update Password</button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ===== Preferences Tab ===== -->
+      <!-- Preferences Tab -->
       <div id="tab-preferences" class="profile-tab-content">
 
-        <!-- Title -->
         <div class="mb-4">
-          <h3 class="fw-bold mb-1">Preferences</h3>
-          <p class="text-muted small mb-0">Customize your workspace experience and system defaults.</p>
+          <h3 class="fw-bold mb-1" data-i18n="prefTitle">Preferences</h3>
+          <p class="text-muted small mb-0" data-i18n="prefDesc">Customize your workspace experience and system defaults.</p>
         </div>
 
-        <!-- Appearance -->
         <div class="card border-0 shadow-sm mb-4">
           <div class="card-body p-4">
-            <h6 class="fw-semibold mb-3">Appearance</h6>
+            <h6 class="fw-semibold mb-3" data-i18n="prefAppearanceTitle">Appearance</h6>
             <div class="row g-3">
-
-              <!-- Light Mode -->
               <div class="col-6">
                 <div class="pref-appearance-card pref-card-selected" id="prefCardLight"
                      onclick="profileSelectAppearance('light')">
@@ -272,12 +258,10 @@
                   <div class="pref-appearance-icon pref-icon-light">
                     <i class="bi bi-brightness-high"></i>
                   </div>
-                  <div class="fw-semibold mt-3 mb-1">Light Mode</div>
-                  <div class="pref-appearance-desc">Default clean and bright interface.</div>
+                  <div class="fw-semibold mt-3 mb-1" data-i18n="prefLightMode">Light Mode</div>
+                  <div class="pref-appearance-desc" data-i18n="prefLightModeDesc">Default clean and bright interface.</div>
                 </div>
               </div>
-
-              <!-- Dark Mode -->
               <div class="col-6">
                 <div class="pref-appearance-card pref-card-dark" id="prefCardDark"
                      onclick="profileSelectAppearance('dark')">
@@ -287,22 +271,20 @@
                   <div class="pref-appearance-icon pref-icon-dark">
                     <i class="bi bi-moon-stars-fill"></i>
                   </div>
-                  <div class="fw-semibold mt-3 mb-1">Dark Mode</div>
-                  <div class="pref-appearance-desc">Reduced eye strain for low-light environments.</div>
+                  <div class="fw-semibold mt-3 mb-1" data-i18n="prefDarkMode">Dark Mode</div>
+                  <div class="pref-appearance-desc" data-i18n="prefDarkModeDesc">Reduced eye strain for low-light environments.</div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
 
-        <!-- Localization -->
         <div class="card border-0 shadow-sm mb-4">
           <div class="card-body p-4">
-            <h6 class="fw-semibold mb-3">Localization</h6>
+            <h6 class="fw-semibold mb-3" data-i18n="prefLocalizationTitle">Localization</h6>
             <div class="row g-3">
               <div class="col-md-6">
-                <label class="form-label profile-label">DISPLAY LANGUAGE</label>
+                <label class="form-label profile-label" data-i18n="prefLanguageLabel">DISPLAY LANGUAGE</label>
                 <select class="form-select profile-input" id="prefLanguage">
                   <option value="en-GB">English (United Kingdom)</option>
                   <option value="zh-CN">简体中文 (Simplified Chinese)</option>
@@ -310,8 +292,8 @@
                 </select>
               </div>
               <div class="col-md-6">
-                <label class="form-label profile-label">TIMEZONE</label>
-                <select class="form-select profile-input" id="prefTimezone">
+                <label class="form-label profile-label" data-i18n="prefTimezoneLabel">TIMEZONE</label>
+                <select class="form-select profile-input" id="prefTimezone" onchange="onTimezoneChange()">
                   <option value="UTC-12">(GMT-12:00) International Date Line West</option>
                   <option value="UTC-8">(GMT-08:00) Pacific Time (US &amp; Canada)</option>
                   <option value="UTC-7">(GMT-07:00) Mountain Time (US &amp; Canada)</option>
@@ -329,57 +311,50 @@
                   <option value="UTC+10">(GMT+10:00) Australian Eastern Time</option>
                   <option value="UTC+12">(GMT+12:00) New Zealand Standard Time</option>
                 </select>
+                <div id="prefTimezoneDisplay" class="text-muted small mt-1" style="min-height:1.2em;"></div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Communication -->
         <div class="card border-0 shadow-sm mb-4">
           <div class="card-body p-4">
-            <h6 class="fw-semibold mb-3">Communication</h6>
-
+            <h6 class="fw-semibold mb-3" data-i18n="prefCommunicationTitle">Communication</h6>
             <div class="pref-toggle-row">
               <div>
-                <div class="pref-toggle-title">System Alerts</div>
-                <div class="text-muted small">Receive notifications for system updates and maintenance.</div>
+                <div class="pref-toggle-title" data-i18n="prefSystemAlertsTitle">System Alerts</div>
+                <div class="text-muted small" data-i18n="prefSystemAlertsDesc">Receive notifications for system updates and maintenance.</div>
               </div>
               <input class="pref-toggle" type="checkbox" id="prefSystemAlerts" checked>
             </div>
-
             <div class="pref-toggle-row">
               <div>
-                <div class="pref-toggle-title">Weekly Digest</div>
-                <div class="text-muted small">A summary of your analytics and platform usage.</div>
+                <div class="pref-toggle-title" data-i18n="prefWeeklyDigestTitle">Weekly Digest</div>
+                <div class="text-muted small" data-i18n="prefWeeklyDigestDesc">A summary of your analytics and platform usage.</div>
               </div>
               <input class="pref-toggle" type="checkbox" id="prefWeeklyDigest" checked>
             </div>
-
             <div class="pref-toggle-row pref-toggle-last">
               <div>
-                <div class="pref-toggle-title">Marketing Communications</div>
-                <div class="text-muted small">Newsletters, feature announcements, and promotions.</div>
+                <div class="pref-toggle-title" data-i18n="prefMarketingTitle">Marketing Communications</div>
+                <div class="text-muted small" data-i18n="prefMarketingDesc">Newsletters, feature announcements, and promotions.</div>
               </div>
               <input class="pref-toggle" type="checkbox" id="prefMarketing">
             </div>
-
           </div>
         </div>
 
-        <!-- Actions -->
         <div class="d-flex justify-content-end gap-2 pb-2">
           <button type="button" class="btn pref-discard-btn"
-                  onclick="profileDiscardPreferences()">Discard Changes</button>
+                  onclick="profileDiscardPreferences()" data-i18n="prefDiscardBtn">Discard Changes</button>
           <button type="button" class="btn profile-save-btn"
-                  onclick="profileSavePreferences()">Save Preferences</button>
+                  onclick="profileSavePreferences()" data-i18n="prefSaveBtn">Save Preferences</button>
         </div>
 
       </div>
-
     </div>
   </div>
 
-  <!-- Delete Account Confirmation Modal -->
   <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content profile-modal-content">
@@ -388,19 +363,17 @@
             <div class="delete-modal-icon">
               <i class="bi bi-exclamation-triangle-fill"></i>
             </div>
-            <h5 class="fw-bold mb-0">Delete Account</h5>
+            <h5 class="fw-bold mb-0" data-i18n="deleteModalTitle">Delete Account</h5>
           </div>
-          <p class="text-muted small mb-4">
+          <p class="text-muted small mb-4" data-i18n="deleteModalDesc">
             Are you sure you want to delete your account? This action cannot be undone
             and all your data, including evidence submissions, will be permanently removed.
           </p>
           <div class="d-flex justify-content-end gap-2">
-            <button type="button" class="btn profile-modal-cancel" data-bs-dismiss="modal">
-              Cancel
-            </button>
-            <button type="button" class="btn profile-modal-confirm" onclick="confirmDeleteAccount()">
-              Confirm
-            </button>
+            <button type="button" class="btn profile-modal-cancel"
+                    data-bs-dismiss="modal" data-i18n="btnCancel">Cancel</button>
+            <button type="button" class="btn profile-modal-confirm"
+                    onclick="confirmDeleteAccount()" data-i18n="btnConfirm">Confirm</button>
           </div>
         </div>
       </div>

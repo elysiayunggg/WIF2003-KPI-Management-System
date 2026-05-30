@@ -5,5 +5,6 @@ node_modules/
 .env
 backend/.env
 backend/node_modules/
+selenium-tests/node_modules/
 backend/uploads/*
 !backend/uploads/.gitkeep

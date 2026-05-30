@@ -2,20 +2,20 @@
 
   <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
     <ol class="breadcrumb mb-0">
-      <li class="breadcrumb-item active" aria-current="page">Staff Dashboard</li>
+      <li class="breadcrumb-item active" aria-current="page" data-i18n="staff_breadcrumb">Staff Dashboard</li>
     </ol>
   </nav>
 
-  <h1 class="page-title mb-0">Staff Dashboard</h1>
-  <p class="page-subtitle mt-1">Track your assigned KPIs, progress, and upcoming deadlines</p>
+  <h1 class="page-title mb-0" data-i18n="staff_pageTitle">Staff Dashboard</h1>
+  <p class="page-subtitle mt-1" data-i18n="staff_pageSubtitle">Track your assigned KPIs, progress, and upcoming deadlines</p>
 
-  <!-- ALERT (cannot click yet) --> 
+  <!-- ALERT (cannot click yet) -->
   <div class="staff-alert-box mt-3">
     <div class="staff-alert-left">
       <i class="bi bi-exclamation-triangle"></i>
       <span>
-        <strong>Upcoming Deadline:</strong>
-        Loading your next KPI deadline...
+        <strong data-i18n="staff_alertUpcomingDeadline">Upcoming Deadline:</strong>
+        <span data-i18n="staff_alertLoading">Loading your next KPI deadline...</span>
       </span>
     </div>
 
@@ -30,9 +30,9 @@
       <div class="summary-icon summary-neutral">
         <i class="bi bi-grid"></i>
       </div>
-      <span class="summary-badge badge-neutral">TOTAL</span>
+      <span class="summary-badge badge-neutral" data-i18n="staff_badgeTotal">TOTAL</span>
     </div>
-    <p class="summary-label">TOTAL KPIS</p>
+    <p class="summary-label" data-i18n="staff_labelTotalKpis">TOTAL KPIS</p>
     <h3 class="summary-number">24</h3>
   </div>
 
@@ -41,9 +41,9 @@
       <div class="summary-icon summary-green">
         <i class="bi bi-hourglass-split"></i>
       </div>
-      <span class="summary-badge badge-green">ACTIVE</span>
+      <span class="summary-badge badge-green" data-i18n="staff_badgeActive">ACTIVE</span>
     </div>
-    <p class="summary-label">IN PROGRESS</p>
+    <p class="summary-label" data-i18n="staff_labelInProgress">IN PROGRESS</p>
     <h3 class="summary-number">8</h3>
   </div>
 
@@ -52,9 +52,9 @@
       <div class="summary-icon summary-yellow">
         <i class="bi bi-file-earmark-check"></i>
       </div>
-      <span class="summary-badge badge-yellow">REVIEW</span>
+      <span class="summary-badge badge-yellow" data-i18n="staff_badgeReview">REVIEW</span>
     </div>
-    <p class="summary-label">AWAITING REVIEW</p>
+    <p class="summary-label" data-i18n="staff_labelAwaitingReview">AWAITING REVIEW</p>
     <h3 class="summary-number">5</h3>
   </div>
 
@@ -63,9 +63,9 @@
       <div class="summary-icon summary-blue">
         <i class="bi bi-check-circle"></i>
       </div>
-      <span class="summary-badge badge-blue">DONE</span>
+      <span class="summary-badge badge-blue" data-i18n="staff_badgeDone">DONE</span>
     </div>
-    <p class="summary-label">COMPLETED</p>
+    <p class="summary-label" data-i18n="staff_labelCompleted">COMPLETED</p>
     <h3 class="summary-number">12</h3>
   </div>
 
@@ -74,9 +74,9 @@
       <div class="summary-icon summary-red">
         <i class="bi bi-exclamation-triangle"></i>
       </div>
-      <span class="summary-badge badge-red">ALERT</span>
+      <span class="summary-badge badge-red" data-i18n="staff_badgeAlert">ALERT</span>
     </div>
-    <p class="summary-label">OVERDUE</p>
+    <p class="summary-label" data-i18n="staff_labelOverdue">OVERDUE</p>
     <h3 class="summary-number">2</h3>
   </div>
 
@@ -92,25 +92,25 @@
     <div class="staff-chart-header">
 
       <div class="d-flex align-items-center gap-2">
-        <h3>Performance Trends</h3>
+        <h3 data-i18n="staff_performanceTrendsTitle">Performance Trends</h3>
 
         <div class="dropdown-wrapper trend-filter-wrapper">
           <button class="custom-filter-btn staff-trend-btn" onclick="toggleStaffDropdown(event, 'trendDropdown')">
-            <span id="selectedTrend">Last 7 Days</span>
+            <span id="selectedTrend" data-i18n="staff_trendLast7Days">Last 7 Days</span>
             <i class="bi bi-chevron-down dropdown-icon"></i>
           </button>
 
           <div class="custom-dropdown" id="trendDropdown">
-            <button onclick="selectTrend('7', 'Last 7 Days')">Last 7 Days</button>
-            <button onclick="selectTrend('30', 'Last 30 Days')">Last 30 Days</button>
-            <button onclick="selectTrend('90', 'Last 90 Days')">Last 90 Days</button>
+            <button data-i18n="staff_trendLast7Days" onclick="selectTrend('7', 'Last 7 Days')">Last 7 Days</button>
+            <button data-i18n="staff_trendLast30Days" onclick="selectTrend('30', 'Last 30 Days')">Last 30 Days</button>
+            <button data-i18n="staff_trendLast90Days" onclick="selectTrend('90', 'Last 90 Days')">Last 90 Days</button>
           </div>
         </div>
       </div>
 
       <div class="staff-chart-legend">
-        <span><span class="legend-dot actual-dot"></span> Actual</span>
-        <span><span class="legend-dot target-dot"></span> Target</span>
+        <span><span class="legend-dot actual-dot"></span> <span data-i18n="staff_legendActual">Actual</span></span>
+        <span><span class="legend-dot target-dot"></span> <span data-i18n="staff_legendTarget">Target</span></span>
       </div>
 
     </div>
@@ -122,7 +122,7 @@
 
   <!-- COMPLETION BREAKDOWN -->
   <div class="staff-chart-card staff-breakdown-card">
-    <h3>Completion Breakdown</h3>
+    <h3 data-i18n="staff_completionBreakdownTitle">Completion Breakdown</h3>
 
     <div class="staff-doughnut-wrapper">
       <canvas id="staffCompletionBreakdownChart"></canvas>
@@ -130,22 +130,22 @@
 
     <div class="staff-breakdown-legend">
       <div>
-        <span><span class="legend-dot completed-dot"></span> Completed</span>
+        <span><span class="legend-dot completed-dot"></span> <span data-i18n="staff_breakdownCompleted">Completed</span></span>
         <strong>50%</strong>
       </div>
 
       <div>
-        <span><span class="legend-dot progress-dot"></span> In Progress</span>
+        <span><span class="legend-dot progress-dot"></span> <span data-i18n="staff_breakdownInProgress">In Progress</span></span>
         <strong>33%</strong>
       </div>
 
       <div>
-        <span><span class="legend-dot pending-dot"></span> Awaiting Review</span>
+        <span><span class="legend-dot pending-dot"></span> <span data-i18n="staff_breakdownAwaitingReview">Awaiting Review</span></span>
         <strong>13%</strong>
       </div>
 
       <div>
-        <span><span class="legend-dot overdue-dot"></span> Overdue</span>
+        <span><span class="legend-dot overdue-dot"></span> <span data-i18n="staff_breakdownOverdue">Overdue</span></span>
         <strong>4%</strong>
       </div>
     </div>
@@ -155,8 +155,8 @@
 
   <!-- SECTION TITLE -->
   <div class="mb-3 mt-4">
-    <h5 class="staff-table-title mb-1">Active Performance Tasks</h5>
-    <p class="staff-table-subtitle mb-0">
+    <h5 class="staff-table-title mb-1" data-i18n="staff_activeTasksTitle">Active Performance Tasks</h5>
+    <p class="staff-table-subtitle mb-0" data-i18n="staff_activeTasksSubtitle">
       Manage and track your assigned KPIs for this period
     </p>
   </div>
@@ -165,30 +165,30 @@
   <div class="filter-row report-filter-row mt-4 mb-4">
 
     <div class="filter-item">
-      <label>STATUS:</label>
+      <label data-i18n="staff_filterStatus">STATUS:</label>
       <div class="dropdown-wrapper">
         <button class="custom-filter-btn" onclick="toggleStaffDropdown(event, 'staffStatusDropdown')">
-          <span id="staffSelectedStatus">All Status</span>
+          <span id="staffSelectedStatus" data-i18n="staff_statusAll">All Status</span>
           <i class="bi bi-chevron-down dropdown-icon"></i>
         </button>
 
         <div class="custom-dropdown" id="staffStatusDropdown">
-          <button onclick="selectStaffDropdownOption('staffSelectedStatus', 'staffStatusDropdown', 'All Status')">All Status</button>
-          <button onclick="selectStaffDropdownOption('staffSelectedStatus', 'staffStatusDropdown', 'In Progress')">In Progress</button>
-          <button onclick="selectStaffDropdownOption('staffSelectedStatus', 'staffStatusDropdown', 'Awaiting Review')">Awaiting Review</button>
-          <button onclick="selectStaffDropdownOption('staffSelectedStatus', 'staffStatusDropdown', 'Completed')">Completed</button>
-          <button onclick="selectStaffDropdownOption('staffSelectedStatus', 'staffStatusDropdown', 'Overdue')">Overdue</button>
+          <button data-i18n="staff_statusAll" onclick="selectStaffDropdownOption('staffSelectedStatus', 'staffStatusDropdown', 'All Status')">All Status</button>
+          <button data-i18n="staff_statusInProgress" onclick="selectStaffDropdownOption('staffSelectedStatus', 'staffStatusDropdown', 'In Progress')">In Progress</button>
+          <button data-i18n="staff_statusAwaitingReview" onclick="selectStaffDropdownOption('staffSelectedStatus', 'staffStatusDropdown', 'Awaiting Review')">Awaiting Review</button>
+          <button data-i18n="staff_statusCompleted" onclick="selectStaffDropdownOption('staffSelectedStatus', 'staffStatusDropdown', 'Completed')">Completed</button>
+          <button data-i18n="staff_statusOverdue" onclick="selectStaffDropdownOption('staffSelectedStatus', 'staffStatusDropdown', 'Overdue')">Overdue</button>
         </div>
       </div>
     </div>
 
     <div class="filter-item date-filter-wrapper">
-      <label>DATE RANGE:</label>
+      <label data-i18n="staff_filterDateRange">DATE RANGE:</label>
       <div class="dropdown-wrapper">
         <button class="custom-filter-btn date-range-btn d-flex align-items-center" onclick="toggleStaffCalendar(event)">
           <span class="filter-text d-flex align-items-center">
             <i class="bi bi-calendar-event me-1"></i>
-            <span id="staffSelectedDateRange">Select Date Range</span>
+            <span id="staffSelectedDateRange" data-i18n="staff_selectDateRange">Select Date Range</span>
           </span>
 
           <i class="bi bi-x-circle clear-staff-date-icon d-none ms-2" onclick="clearStaffDateFilter(event)"></i>
@@ -210,14 +210,14 @@
           </div>
 
           <div class="calendar-weekdays">
-            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+            <span data-i18n="staff_calMon">Mon</span><span data-i18n="staff_calTue">Tue</span><span data-i18n="staff_calWed">Wed</span><span data-i18n="staff_calThu">Thu</span><span data-i18n="staff_calFri">Fri</span><span data-i18n="staff_calSat">Sat</span><span data-i18n="staff_calSun">Sun</span>
           </div>
 
           <div class="calendar-days" id="staffCalendarDays"></div>
 
           <div class="calendar-actions">
-            <button class="btn btn-light btn-sm" onclick="cancelStaffCalendar()">Cancel</button>
-            <button class="btn btn-primary btn-sm" onclick="chooseStaffDate()">Choose Date</button>
+            <button class="btn btn-light btn-sm" data-i18n="staff_calCancel" onclick="cancelStaffCalendar()">Cancel</button>
+            <button class="btn btn-primary btn-sm" data-i18n="staff_calChooseDate" onclick="chooseStaffDate()">Choose Date</button>
           </div>
         </div>
       </div>
@@ -226,12 +226,12 @@
     <div class="report-export-actions ms-auto">
       <button class="report-export-pdf" onclick="exportStaffPDF()">
         <i class="bi bi-filetype-pdf"></i>
-        <span>Export PDF</span>
+        <span data-i18n="staff_exportPdf">Export PDF</span>
       </button>
 
       <button class="report-export-csv" onclick="exportStaffCSV()">
         <i class="bi bi-filetype-csv"></i>
-        <span>Export CSV</span>
+        <span data-i18n="staff_exportCsv">Export CSV</span>
       </button>
     </div>
 
@@ -243,12 +243,12 @@
       <table class="table table-borderless align-middle mb-0">
         <thead>
           <tr>
-            <th>KPI NAME</th>
-            <th>TARGET VALUE</th>
-            <th>PROGRESS</th>
-            <th>STATUS</th>
-            <th>DEADLINE</th>
-            <th class="text-center">Action</th>
+            <th data-i18n="staff_thKpiName">KPI NAME</th>
+            <th data-i18n="staff_thTargetValue">TARGET VALUE</th>
+            <th data-i18n="staff_thProgress">PROGRESS</th>
+            <th data-i18n="staff_thStatus">STATUS</th>
+            <th data-i18n="staff_thDeadline">DEADLINE</th>
+            <th class="text-center" data-i18n="staff_thAction">Action</th>
           </tr>
         </thead>
 
@@ -258,7 +258,7 @@
 
   <div class="report-view-all">
     <button onclick="viewAllStaffTasks()">
-      Show More <i class="bi bi-chevron-down"></i>
+      <span data-i18n="staff_showMore">Show More</span> <i class="bi bi-chevron-down"></i>
     </button>
   </div>
 

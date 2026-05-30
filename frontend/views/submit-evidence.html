@@ -2,16 +2,16 @@
     <div class="container-fluid kpi-container">
         <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'Staff Dashboard')">Staff Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Progress')">KPI Progress</a></li>
-                <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Detail')">KPI Detail</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Submit Evidence</li>
+                <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'Staff Dashboard')" data-i18n="evidence_breadcrumbDashboard">Staff Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Progress')" data-i18n="evidence_breadcrumbProgress">KPI Progress</a></li>
+                <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Detail')" data-i18n="evidence_breadcrumbDetail">KPI Detail</a></li>
+                <li class="breadcrumb-item active" aria-current="page" data-i18n="evidence_breadcrumbCurrent">Submit Evidence</li>
             </ol>
         </nav>
 
         <header class="mb-4">
-            <h1 class="page-title mb-2" id="page-title">Submit Evidence</h1>
-            <p class="page-subtitle mb-0" id="page-desc">
+            <h1 class="page-title mb-2" id="page-title" data-i18n="evidence_pageTitle">Submit Evidence</h1>
+            <p class="page-subtitle mb-0" id="page-desc" data-i18n="evidence_pageSubtitle">
                 Securely upload documents, metrics, and supporting files for KPI verification.
             </p>
         </header>
@@ -22,21 +22,21 @@
                     <div class="card-body">
                         <div class="evidence-section-title">
                             <span class="material-symbols-outlined">description</span>
-                            <h2>Submission Details</h2>
+                            <h2 data-i18n="evidence_submissionDetailsTitle">Submission Details</h2>
                         </div>
 
                         <div class="mb-3">
-                            <label for="evidence-title" class="form-label evidence-label">SUBMISSION TITLE</label>
-                            <input id="evidence-title" type="text" class="form-control evidence-input" placeholder="e.g., Q3 Operational Efficiency Report" />
+                            <label for="evidence-title" class="form-label evidence-label" data-i18n="evidence_labelSubmissionTitle">SUBMISSION TITLE</label>
+                            <input id="evidence-title" type="text" class="form-control evidence-input" placeholder="e.g., Q3 Operational Efficiency Report" data-i18n-placeholder="evidence_placeholderSubmissionTitle" />
                         </div>
 
                         <div class="mb-3">
-                            <label for="evidence-desc" class="form-label evidence-label">DESCRIPTION / CONTEXT</label>
-                            <textarea id="evidence-desc" rows="4" class="form-control evidence-input" placeholder="Provide detailed context for the uploaded evidence..."></textarea>
+                            <label for="evidence-desc" class="form-label evidence-label" data-i18n="evidence_labelDescription">DESCRIPTION / CONTEXT</label>
+                            <textarea id="evidence-desc" rows="4" class="form-control evidence-input" placeholder="Provide detailed context for the uploaded evidence..." data-i18n-placeholder="evidence_placeholderDescription"></textarea>
                         </div>
 
                         <div class="mb-2 d-flex justify-content-between align-items-end">
-                            <span class="evidence-label">INDICATE TASK PROGRESS (%)</span>
+                            <span class="evidence-label" data-i18n="evidence_labelTaskProgress">INDICATE TASK PROGRESS (%)</span>
                             <span class="evidence-progress-val" id="progress-val">0%</span>
                         </div>
                         <div class="evidence-slider-wrapper mb-4">
@@ -48,24 +48,24 @@
                         <section id="upload-section">
                             <div class="evidence-section-title">
                                 <span class="material-symbols-outlined">cloud_upload</span>
-                                <h2>File Upload</h2>
+                                <h2 data-i18n="evidence_fileUploadTitle">File Upload</h2>
                             </div>
                             <div class="evidence-dropzone" id="drop-zone">
                                 <div class="evidence-dropzone__icon">
                                     <span class="material-symbols-outlined">upload_file</span>
                                 </div>
-                                <p class="evidence-dropzone__title mb-1">Click to upload or drag and drop</p>
-                                <p class="evidence-dropzone__hint mb-0">PDF, DOCX, XLSX or images up to 10MB each</p>
+                                <p class="evidence-dropzone__title mb-1" data-i18n="evidence_dropzoneTitle">Click to upload or drag and drop</p>
+                                <p class="evidence-dropzone__hint mb-0" data-i18n="evidence_dropzoneHint">PDF, DOCX, XLSX or images up to 10MB each</p>
                                 <input type="file" id="file-input" hidden multiple />
                             </div>
                         </section>
 
                         <div class="d-flex flex-wrap align-items-center gap-3 pt-4" id="action-buttons">
-                            <button type="button" class="btn kpi-btn-primary evidence-submit-btn" id="submit-btn">Submit Evidence</button>
+                            <button type="button" class="btn kpi-btn-primary evidence-submit-btn" id="submit-btn" data-i18n="evidence_submitBtn">Submit Evidence</button>
                             <button type="button" class="btn kpi-btn-secondary evidence-cancel-btn" onclick="changePage(event, 'KPI Detail')">
-                                <span class="d-block w-100 text-center">Cancel</span>
+                                <span class="d-block w-100 text-center" data-i18n="evidence_cancelBtn">Cancel</span>
                             </button>
-                    
+
                         </div>
                     </div>
                 </section>
@@ -75,7 +75,7 @@
                 <section class="card kpi-card evidence-aside h-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h2 class="kpi-section-title mb-0">Staged Files</h2>
+                            <h2 class="kpi-section-title mb-0" data-i18n="evidence_stagedFilesTitle">Staged Files</h2>
                             <span class="evidence-file-badge" id="file-count-badge">0 FILES</span>
                         </div>
 
@@ -84,8 +84,8 @@
                         <div class="evidence-warning mt-4">
                             <span class="material-symbols-outlined evidence-warning__icon">warning</span>
                             <div class="evidence-warning__body">
-                                <p class="evidence-warning__title mb-1">Awaiting review</p>
-                                <p class="mb-0">Files will be verified by a supervisor after submission.</p>
+                                <p class="evidence-warning__title mb-1" data-i18n="evidence_warningTitle">Awaiting review</p>
+                                <p class="mb-0" data-i18n="evidence_warningBody">Files will be verified by a supervisor after submission.</p>
                             </div>
                         </div>
                     </div>
