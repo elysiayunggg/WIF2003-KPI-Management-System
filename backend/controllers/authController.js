@@ -103,6 +103,26 @@ exports.forgotPassword = async (req, res) => {
   });
 };
 
+exports.getCurrentUser = async (req, res) => {
+  res.json({
+    user: {
+      id: req.user._id,
+      name: req.user.name,
+      email: req.user.email,
+      role: req.user.role,
+      employeeId: req.user.employeeId,
+      department: req.user.department,
+      avatar: req.user.avatar,
+      preferences: req.user.preferences,
+      lastLogin: req.user.lastLogin
+    }
+  });
+};
+
+exports.logout = async (req, res) => {
+  res.json({ message: "Logout successful" });
+};
+
 exports.getUsers = async (req, res) => {
   try {
     const filter = {};
