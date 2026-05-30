@@ -162,6 +162,7 @@ if (loginForm) {
         localStorage.setItem("userName", data.user.name);
         localStorage.setItem("userEmail", data.user.email);
         localStorage.setItem("role", data.user.role);
+        localStorage.setItem("token", data.token || "");
         localStorage.setItem("activePage", "Dashboard");
         window.location.href = "shell.html";
       } else if (loginError) {

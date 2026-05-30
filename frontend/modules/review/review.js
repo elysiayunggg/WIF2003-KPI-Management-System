@@ -1,4 +1,22 @@
-// Hardcoded KPI submission data for review — in Phase 2 this gets replaced with fetch() from backend.
+let backendData = null;
+
+function getAuthHeaders() {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+async function loadReviewDataFromBackend(kpiId) {
+  if (!kpiId || !/^[a-f\d]{24}$/i.test(String(kpiId))) return;
+  try {
+    const res = await authFetch(`http://127.0.0.1:5050/api/kpis/${kpiId}/review-data`);
+    if (!res.ok) return;
+    backendData = await res.json();
+  } catch {
+    backendData = null;
+  }
+}
+
+// Fallback hardcoded data — used when the backend is unreachable or KPI id is unavailable.
 const kpiReviewData = {
   kpiName: "Sales Growth Rate - Q1 2026",
   assignedTo: "Johnathan Smith",
@@ -32,7 +50,7 @@ function enrichQueueRow(row) {
   if (!row) return null;
   const out = { ...row };
   if (row.status === "approved" || row.status === "rejected") {
-    out.reviewedBy = row.reviewedBy || "Jordan Lee (KPI Reviewer)";
+    out.reviewedBy = row.reviewedBy || localStorage.getItem("userName") || "Unknown Reviewer";
     out.reviewedAt = row.reviewedAt || row.submissionTime;
   }
   return out;
@@ -60,6 +78,16 @@ function readReviewContext() {
 function getDisplayData() {
   const ctx = readReviewContext();
   const sub = ctx.submission;
+
+  if (backendData) {
+    return {
+      ...backendData,
+      staff: backendData.staff || kpiReviewData.staff,
+      contextMode: ctx.mode,
+      queueRow: sub
+    };
+  }
+
   if (!sub) {
     return { ...kpiReviewData, contextMode: ctx.mode, queueRow: null };
   }
@@ -185,22 +213,29 @@ function renderEvidenceAttachments() {
   const container = document.getElementById("evidenceAttachments");
   if (!container) return;
   container.innerHTML = "";
-  const fileItems = d.evidence.map(file => `
+  const fileItems = d.evidence.map(file => {
+    const hasRealFile = file.evidenceId != null && file.fileIndex != null;
+    const downloadAttr = hasRealFile
+      ? `onclick="downloadEvidenceFile(event, '${file.evidenceId}', ${file.fileIndex}, '${escapeHtml(file.name)}')"`
+      : "";
+    const href = hasRealFile ? "#" : "#";
+    return `
     <div class="file-item d-flex align-items-center justify-content-between p-3 mb-2 rounded-3 border">
       <div class="d-flex align-items-center gap-3">
         <div class="icon-box bg-opacity-10 rounded-2 p-2" style="background-color: rgba(0,0,0,0.05);">
           <i class="bi ${getFileIcon(file.type)} fs-5"></i>
         </div>
         <div>
-          <h6 class="fw-semibold mb-0">${file.name}</h6>
-          <small class="text-muted">${file.size} • Uploaded ${file.uploadDate}</small>
+          <h6 class="fw-semibold mb-0">${escapeHtml(file.name)}</h6>
+          <small class="text-muted">${escapeHtml(file.size)} • Uploaded ${escapeHtml(file.uploadDate)}</small>
         </div>
       </div>
-      <a href="#" class="btn btn-outline-primary btn-sm">
+      <a href="${href}" class="btn btn-outline-primary btn-sm" ${downloadAttr}>
         <i class="bi bi-download"></i>
       </a>
     </div>
-  `).join("");
+  `;
+  }).join("");
 
   container.innerHTML = `
     <h5 class="fw-bold mb-3">Evidence Attachments</h5>
@@ -305,7 +340,8 @@ async function saveReviewDecision() {
     const response = await authFetch(`http://127.0.0.1:5050/api/kpis/${kpiId}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        ...getAuthHeaders()
       },
       body: JSON.stringify({
         status: decision === "approve" ? "approved" : "rejected",
@@ -347,16 +383,19 @@ function renderReviewSidePanel() {
   if (!verifyCard || !decisionCard || !decisionBody) return;
 
   const sub = ctx.submission;
-  const showDecision =
-    ctx.mode === "details" &&
-    sub &&
-    (sub.status === "approved" || sub.status === "rejected");
+
+  const resolvedStatus = backendData?.status?.toLowerCase() || sub?.status?.toLowerCase() || "";
+  const isDecided = resolvedStatus === "approved" || resolvedStatus === "rejected";
+  const showDecision = ctx.mode === "details" && isDecided;
+
+  const reviewedByName = backendData?.reviewedBy || sub?.reviewedBy || "—";
+  const reviewedAtStr = backendData?.reviewedAt || sub?.reviewedAt || "—";
 
   if (showDecision) {
     verifyCard.classList.add("d-none");
     decisionCard.classList.remove("d-none");
 
-    const approved = sub.status === "approved";
+    const approved = resolvedStatus === "approved";
     const verb = approved ? "Approved" : "Rejected";
     const boxClass = approved
       ? "border border-success-subtle bg-success-subtle"
@@ -371,14 +410,39 @@ function renderReviewSidePanel() {
           <strong class="fs-6">${verb}</strong>
         </div>
         <p class="mb-1 small text-muted">${verb} by</p>
-        <p class="mb-2 fw-semibold">${escapeHtml(sub.reviewedBy)}</p>
-        <p class="mb-0 small text-muted"><i class="bi bi-calendar3 me-1"></i>${escapeHtml(sub.reviewedAt)}</p>
+        <p class="mb-2 fw-semibold">${escapeHtml(String(reviewedByName))}</p>
+        <p class="mb-0 small text-muted"><i class="bi bi-calendar3 me-1"></i>${escapeHtml(String(reviewedAtStr))}</p>
       </div>
     `;
   } else {
     verifyCard.classList.remove("d-none");
     decisionCard.classList.add("d-none");
     decisionBody.innerHTML = "";
+  }
+}
+
+async function downloadEvidenceFile(event, evidenceId, fileIndex, filename) {
+  event.preventDefault();
+  try {
+    const res = await authFetch(
+      `http://127.0.0.1:5050/api/evidence/${evidenceId}/files/${fileIndex}?disposition=attachment`,
+      {}
+    );
+    if (!res.ok) {
+      alert("Could not download file. Make sure you are logged in.");
+      return;
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename || "evidence-file";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch {
+    alert("Cannot connect to server. Please make sure the backend is running.");
   }
 }
 
@@ -393,7 +457,11 @@ function renderKPIReview() {
 }
 
 // Initialize the review view when called
-function initReviewView() {
+async function initReviewView() {
+  const ctx = readReviewContext();
+  const kpiId = ctx.submission?.kpiId || ctx.submission?.id || null;
+  backendData = null;
+  await loadReviewDataFromBackend(kpiId);
   renderKPIReview();
   setupReviewSubmit();
 }

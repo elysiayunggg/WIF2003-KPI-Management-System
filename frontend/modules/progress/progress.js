@@ -11,6 +11,12 @@ let progressCurrentFilter = "all";
 let progressPriorityFilter = "all";
 let progressSearchQuery = "";
 
+function getAuthHeaders() {
+    const token = localStorage.getItem("token");
+    if (!token) return {};
+    return { Authorization: `Bearer ${token}` };
+}
+
 function getProgressLoggedInUserId() {
     try {
         const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -25,9 +31,27 @@ function progressFormatTarget(kpi) {
     return `${kpi.targetValue}${kpi.unit ? ` ${kpi.unit}` : ""}`;
 }
 
+function resolveProgressWorkflowStatus(rawStatus, dueDate, progressPercent) {
+    const status = String(rawStatus || "").toLowerCase().trim();
+    const pct = Number(progressPercent) || 0;
+    const isApproved = status === "approved" || status === "completed";
+
+    if (isApproved) return status;
+    if (pct >= 100) return "pending verification";
+    if (dueDate) {
+        const due = new Date(dueDate);
+        if (!Number.isNaN(due.getTime()) && due < new Date()) return "overdue";
+    }
+    if (status === "rejected") return "in progress";
+    if (status === "not started") return "not started";
+    return "in progress";
+}
+
 function progressFormatStatus(status) {
     const value = String(status || "not started").toLowerCase();
     if (value === "pending verification") return "Awaiting Review";
+    if (value === "approved" || value === "completed") return "Completed";
+    if (value === "rejected") return "In Progress";
     return value
         .split(" ")
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -46,7 +70,13 @@ function progressFormatDate(dateString) {
 }
 
 function mapProgressApiKpi(kpi) {
-    const progress = kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0;
+    let progress = 0;
+    if (kpi.progressPercent != null && Number.isFinite(Number(kpi.progressPercent))) {
+        progress = Math.min(100, Math.max(0, Math.round(Number(kpi.progressPercent))));
+    } else if (kpi.targetValue) {
+        progress = Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100);
+    }
+    const effectiveStatus = resolveProgressWorkflowStatus(kpi.status, kpi.dueDate, progress);
 
     return {
         id: kpi._id,
@@ -60,7 +90,8 @@ function mapProgressApiKpi(kpi) {
         unit: kpi.unit || "",
         staff: localStorage.getItem("userName") || "Staff",
         progress,
-        status: progressFormatStatus(kpi.status),
+        apiStatus: effectiveStatus,
+        status: progressFormatStatus(effectiveStatus),
         deadline: progressFormatDate(kpi.dueDate)
     };
 }
@@ -73,13 +104,31 @@ async function loadProgressAssignedKpis() {
     }
 
     try {
-        const response = await authFetch("http://127.0.0.1:5050/api/kpis");
+        if (typeof reloadSharedKpiData === "function") {
+            await reloadSharedKpiData();
+            return;
+        }
+
+        const response = await authFetch(`http://127.0.0.1:5050/api/kpis/assigned/${userId}`, {
+            cache: "no-store"
+        });
         if (!response.ok) throw new Error("Failed to load assigned KPI progress");
 
         const kpis = await response.json();
-        window.kpiData = kpis
-            .filter(kpi => Array.isArray(kpi.assignedTo) && kpi.assignedTo.some(user => user._id === userId))
-            .map(mapProgressApiKpi);
+        window.kpiData = kpis.map((kpi) => mapProgressApiKpi({
+            _id: kpi.id || kpi._id,
+            title: kpi.title,
+            description: kpi.description,
+            department: kpi.department,
+            priority: kpi.priority,
+            targetValue: kpi.targetValue,
+            currentValue: kpi.currentValue,
+            unit: kpi.unit,
+            status: kpi.status,
+            dueDate: kpi.dueDate,
+            progressPercent: kpi.progressPercent,
+            assignedTo: kpi.assignedTo
+        }));
     } catch (error) {
         console.error(error);
     }
@@ -92,17 +141,22 @@ function kpiSharedPriorityTier(priority) {
     return "medium";
 }
 
-function kpiSharedStatusToStyleType(status) {
+function kpiSharedStatusToStyleType(status, progressPercent) {
     const s = (status || "").toLowerCase();
+    const pct = Number(progressPercent);
+
     if (s.includes("overdue")) return "overdue";
-    if (s.includes("completed")) return "completed";
+    if (s.includes("approved") || s.includes("completed")) return "completed";
+    if (Number.isFinite(pct) && pct >= 100) return "review";
+    if (s.includes("awaiting review") || s.includes("pending verification")) return "review";
     if (s.includes("pending") || s.includes("verification")) return "review";
-    if (s.includes("progress")) return "in-progress";
+    if (s.includes("rejected")) return "in-progress";
+    if (s.includes("in progress")) return "in-progress";
     return "not-started";
 }
 
 function mapSharedKpiRowToCardItem(row, sourceIndex) {
-    const styleType = kpiSharedStatusToStyleType(row.status);
+    const styleType = kpiSharedStatusToStyleType(row.apiStatus || row.status, row.progress);
     let dateIcon = "calendar_today";
     if (styleType === "overdue") dateIcon = "event_busy";
     if (styleType === "completed") dateIcon = "task_alt";
@@ -112,6 +166,7 @@ function mapSharedKpiRowToCardItem(row, sourceIndex) {
     const priorityTier = kpiSharedPriorityTier(row.priority);
 
     return {
+        kpiId: row.id || row._id || "",
         title: row.kpi,
         description: row.description,
         statusText: row.status,
@@ -124,12 +179,14 @@ function mapSharedKpiRowToCardItem(row, sourceIndex) {
         styleType,
         customClasses: styleDefaults.customClasses || "",
         dateFontWeight: styleDefaults.dateFontWeight || "",
-        kpiIndex: String(sourceIndex)
+        kpiIndex: String(sourceIndex),
+        menuHiddenClass: "",
+        actionButtonClass: "kpi-action-btn"
     };
 }
 
 function getFilteredProgressData() {
-    const raw = typeof window.getKpiDataArray === "function" ? window.getKpiDataArray() : window.kpiData || [];
+    const raw = Array.isArray(window.kpiData) ? window.kpiData : [];
     let list = raw.map((row, i) => mapSharedKpiRowToCardItem(row, i));
 
     const styles = PROGRESS_FILTER_TO_STYLES[progressCurrentFilter];
@@ -157,12 +214,16 @@ function renderProgressCards() {
 }
 
 async function initProgressView() {
+    if (typeof initArchiveKpi === "function") {
+        initArchiveKpi();
+    }
+
     await loadProgressAssignedKpis();
     renderProgressCards();
 
     const summary = document.getElementById("progress-data-summary");
     if (summary) {
-        const n = (typeof window.getKpiDataArray === "function" ? window.getKpiDataArray() : window.kpiData || []).length;
+        const n = (Array.isArray(window.kpiData) ? window.kpiData : []).length;
         summary.textContent = n ? `${n} KPIs from your assignment list.` : "No KPI data loaded.";
     }
 
@@ -229,3 +290,8 @@ async function initProgressView() {
         });
     }
 }
+
+window.mapProgressApiKpi = mapProgressApiKpi;
+window.mapSharedKpiRowToCardItem = mapSharedKpiRowToCardItem;
+window.loadProgressAssignedKpis = loadProgressAssignedKpis;
+window.renderProgressCards = renderProgressCards;

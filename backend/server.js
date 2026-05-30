@@ -6,6 +6,7 @@ const path = require("path");
 const authRoutes = require("./routes/authRoutes");
 const kpiRoutes = require("./routes/kpiRoutes");
 const evidenceRoutes = require("./routes/evidenceRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 dotenv.config();
 
@@ -13,13 +14,13 @@ const app = express();
 
 const corsOptions = {
   origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 };
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
 
   if (req.method === "OPTIONS") {
@@ -31,6 +32,8 @@ app.use((req, res, next) => {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+// Evidence files are served via GET /api/evidence/:evidenceId/files/:fileIndex (authenticated).
+app.use("/api/notifications", notificationRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/auth", authRoutes);
 app.use("/api/kpis", kpiRoutes);

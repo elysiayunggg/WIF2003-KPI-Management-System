@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "dev": "nodemon server.js",
-  "start": "node server.js"
-},
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "seed:sample": "node scripts/seedSampleData.js",
+    "seed:sample:clear": "node scripts/clearSampleData.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

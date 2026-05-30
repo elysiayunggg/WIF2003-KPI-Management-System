@@ -377,6 +377,46 @@
     font-weight: 600;
 }
 
+.evidence-progress-helper {
+    line-height: 1.45;
+}
+
+.submit-evidence-view #progress-helper.evidence-progress-helper--warn,
+#submit-evidence-root #progress-helper.evidence-progress-helper--warn {
+    color: #b45309 !important;
+    font-weight: 600;
+}
+
+.evidence-dropzone--active {
+    border-color: #4e5e82;
+    background-color: #f0f3fa;
+}
+
+.evidence-dropzone__required {
+    font-size: 0.8rem;
+}
+
+.evidence-file--readonly .evidence-file__progress {
+    display: none;
+}
+
+.evidence-file__link {
+    color: #4e5e82;
+    font-weight: 600;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.15rem;
+}
+
+.evidence-file__link:hover {
+    text-decoration: underline;
+    color: #3d4d6e;
+}
+
+.evidence-file__body .evidence-file-cell {
+    margin-bottom: 0.15rem;
+}
+
 /* --- Section title (sidebar) ----------------------------------------- */
 
 .evidence-aside .kpi-section-title {

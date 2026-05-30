@@ -19,14 +19,14 @@
                         <span class="material-symbols-outlined ms-1">expand_more</span>
                     </button>
                     <div class="kpi-status-menu card shadow border-0 p-1" id="status-dropdown-menu">
-                        <button class="dropdown-item" type="button" data-status-label="In Progress" data-status-class="status-in-progress">In Progress</button>
-                        <button class="dropdown-item" type="button" data-status-label="Completed" data-status-class="status-completed">Completed</button>
-                        <button class="dropdown-item" type="button" data-status-label="Delayed" data-status-class="status-delayed">Delayed</button>
-                        <button class="dropdown-item" type="button" data-status-label="On Hold" data-status-class="status-on-hold">On Hold</button>
+                        <button class="dropdown-item" type="button" data-status-label="In Progress" data-status-class="status-in-progress" data-api-status="in progress">In Progress</button>
+                        <button class="dropdown-item" type="button" data-status-label="Overdue" data-status-class="status-delayed" data-api-status="overdue">Overdue</button>
+                        <button class="dropdown-item" type="button" data-status-label="Awaiting Review" data-status-class="status-on-hold" data-api-status="pending verification">Awaiting Review</button>
+                        <button class="dropdown-item" type="button" data-status-label="Completed" data-status-class="status-completed" data-api-status="approved">Completed</button>
                     </div>
                 </div>
-                <button class="btn kpi-btn-secondary"><span class="material-symbols-outlined">file_download</span>Export CSV</button>
-                <button class="btn kpi-btn-primary"><span class="material-symbols-outlined">description</span>Export PDF</button>
+                <!-- <button class="btn kpi-btn-secondary"><span class="material-symbols-outlined">file_download</span>Export CSV</button> -->
+                <button type="button" class="btn kpi-btn-primary" id="kpi-detail-export-pdf-btn" aria-label="Print KPI detail page"><span class="material-symbols-outlined">description</span>Export PDF</button>
             </div>
         </header>
 
@@ -146,17 +146,17 @@
 
         <div class="row g-4">
             <div class="col-12 col-xl-8">
-                <section class="kpi-card mb-4">
+                <section class="kpi-card kpi-evidence-card mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h2 class="kpi-section-title mb-0">My Evidence</h2>
                         <button class="btn kpi-btn-primary" onclick="changePage(event, 'Submit Evidence')">
                             <span class="material-symbols-outlined">add_circle</span>Add Evidence
                         </button>
                     </div>
-                    <div class="table-responsive">
+                    <div class="table-responsive kpi-evidence-table-wrap">
                         <table class="table align-middle kpi-table mb-0">
                             <thead>
-                                <tr><th style="width: 35%;">File Name</th><th>Date Uploaded</th><th>Status</th><th class="text-end">Actions</th></tr>
+                                <tr><th style="width: 32%;">File Name</th><th>Date Time</th><th>Progress</th><th>Status</th><th class="text-end">Actions</th></tr>
                             </thead>
                             <tbody id="kpi-detail-my-evidence-body">
                             </tbody>
@@ -164,12 +164,12 @@
                     </div>
                 </section>
 
-                <section class="kpi-card">
+                <section class="kpi-card kpi-evidence-card">
                     <h2 class="kpi-section-title">Team Evidence</h2>
-                    <div class="table-responsive">
+                    <div class="table-responsive kpi-evidence-table-wrap">
                         <table class="table align-middle kpi-table mb-0">
                             <thead>
-                                <tr><th style="width: 35%;">Submitter</th><th style="width: 35%;">Document</th><th>Status</th><th class="text-end">Actions</th></tr>
+                                <tr><th style="width: 32%;">File Name</th><th>Date Time</th><th>Progress</th><th>Status</th><th class="text-end">Actions</th></tr>
                             </thead>
                             <tbody id="kpi-detail-team-evidence-body">
                             </tbody>

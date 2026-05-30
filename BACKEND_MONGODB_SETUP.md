@@ -178,4 +178,92 @@ Teammates may also register their own manager or staff accounts through the Regi
 3. View assigned KPI.
 4. Submit evidence and update progress.
 
+## Sample Data Seed
 
+Optional: populate MongoDB with demo users, KPIs, evidence, assignments, and notifications for local testing. This does not replace the [Test Accounts](#test-accounts) section above; it adds richer sample data when you need it.
+
+### Prerequisites
+
+1. `backend/.env` exists and `MONGO_URI` is set (see [Backend Setup](#backend-setup)).
+2. Backend dependencies are installed (`npm install` in `backend`).
+
+### Seed the database
+
+From the `backend` folder:
+
+```bash
+cd backend
+npm run seed:sample
+```
+
+Expected output includes:
+
+```text
+Connected to MongoDB
+Sample seed completed.
+
+Logins (password for all: Password@123):
+  Manager:  manager@trackify.com
+  Staff A:  staff@trackify.com  (Operations)
+  Staff B:  staff2@trackify.com (Sales)
+  Staff C:  staff3@trackify.com (Customer Success)
+```
+
+The script is safe to run more than once. It removes previous sample records tagged with `[SAMPLE_SEED]` before inserting fresh data.
+
+### Clear sample data
+
+To remove only seeded sample records (KPIs, evidence, assignments, notifications, and sample users):
+
+```bash
+cd backend
+npm run seed:sample:clear
+```
+
+This does **not** delete KPIs or users you created manually through the app (unless they use the sample tag or the sample emails listed below).
+
+### What the seed creates
+
+| Collection        | Count (approx.) | Notes |
+|-------------------|-----------------|-------|
+| Users             | 4               | 1 manager, 3 staff |
+| KPIs              | 10              | Multiple statuses and priorities |
+| Evidence          | 13              | Approved, pending, and rejected |
+| KPI assignments   | 11              | Linked to assigned staff |
+| Notifications     | 8               | Assignment, review, and update alerts |
+
+**KPI status coverage:** not started, in progress, overdue, pending verification, approved, rejected, and archived (per-user hide on Progress).
+
+**Staff A (`staff@trackify.com`):** 5 active KPIs on KPI Progress, 1 archived KPI under **Archived KPIs** in the sidebar.
+
+**Staff C (`staff3@trackify.com`):** includes a rejected KPI and one archived KPI.
+
+Evidence progress is recalculated from non-rejected submissions so KPI `currentValue` and workflow status stay consistent with the app logic.
+
+### Additional sample logins
+
+All use password `Password@123`:
+
+```text
+Email: staff2@trackify.com
+Role: Staff (Sales)
+```
+
+```text
+Email: staff3@trackify.com
+Role: Staff (Customer Success)
+```
+
+### Suggested demo flow (with seed)
+
+1. Run `npm run seed:sample`, then login as `staff@trackify.com`.
+2. Open **KPI Progress** and confirm multiple status cards appear.
+3. Use card menu **View History**, **Share**, or **Archive**; check **Archived KPIs** for restore.
+4. Login as `manager@trackify.com` and review pending evidence on assigned KPIs.
+
+### Script locations
+
+| Script | Path |
+|--------|------|
+| Seed | `backend/scripts/seedSampleData.js` |
+| Clear | `backend/scripts/clearSampleData.js` |

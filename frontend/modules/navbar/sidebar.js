@@ -13,6 +13,7 @@ const pageRoutes = {
   "Assign KPI": "../views/assignment.html",
   "Review Submission": "../views/review.html",
   "KPI Progress": "../views/progress.html",              // staff
+  "Archived KPIs": "../views/archive.html",              // staff
   "KPI Detail": "../views/kpi-detail.html",              // staff
   "Submit Evidence": "../views/submit-evidence.html",    // staff
   "View Evidence": "../views/submit-evidence.html",      // staff
@@ -52,8 +53,9 @@ function renderSidebar(role) {
         </a>
       </div>
 
-      <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'Notifications')">
+      <a href="#" class="nav-link nav-section-title mt-3 position-relative" onclick="changePage(event, 'Notifications')">
         <i class="bi bi-bell"></i> Notifications
+        <span id="sidebarUnreadBadge" style="display:none;position:absolute;top:8px;right:10px;width:8px;height:8px;background-color:#dc3545;border-radius:50%;"></span>
       </a>
     `;
   } else {
@@ -69,16 +71,27 @@ function renderSidebar(role) {
         <a href="#" class="nav-link ms-3" onclick="changePage(event, 'View KPI List')">
           <i class="bi bi-list-ul"></i> View KPI List
         </a>
+        <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Archived KPIs')">
+          <i class="bi bi-archive"></i> Archived KPIs
+        </a>
       </div>
 
-      <a href="#" class="nav-link nav-section-title mt-3" onclick="changePage(event, 'Notifications')">
+      <a href="#" class="nav-link nav-section-title mt-3 position-relative" onclick="changePage(event, 'Notifications')">
         <i class="bi bi-bell"></i> Notifications
+        <span id="sidebarUnreadBadge" style="display:none;position:absolute;top:8px;right:10px;width:8px;height:8px;background-color:#dc3545;border-radius:50%;"></span>
       </a>
     `;
   }
 
   // After injecting nav links, mark the correct one as active
   setActiveLink();
+
+  // #sidebarUnreadBadge was just created above — sync its visibility with the
+  // current unread count so it reflects any notifications already in memory
+  // (e.g. fetchNotifications() completed before renderSidebar was called).
+  if (typeof updateUnreadIndicator === "function") {
+    updateUnreadIndicator();
+  }
 }
 
 // Reads which page is active from localStorage and applies the active class.
@@ -175,6 +188,8 @@ async function changePage(event, pageName) {
   }
 }
 
+window.changePage = changePage;
+
 // Maps page names to their initialisation functions.
 // When a view needs JS to run after it loads, add an entry here.
 // The function must be defined in a script loaded by shell.html.
@@ -198,6 +213,12 @@ const pageInits = {
   "KPI Progress": function () {
     if (typeof initProgressView === "function") {
       initProgressView();
+    }
+  },
+
+  "Archived KPIs": function () {
+    if (typeof initArchiveView === "function") {
+      initArchiveView();
     }
   },
 

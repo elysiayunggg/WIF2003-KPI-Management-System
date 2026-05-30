@@ -45,9 +45,24 @@ async function initLayout() {
   // Render sidebar based on role (manager or staff)
   renderSidebar(role);
 
-  // Step 3: Determine which page to load
-  // - If user has a previously active page, use it
-  // - Otherwise, default to Dashboard
+  // Step 3: Determine which page to load (URL params override for share links)
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlKpiId = urlParams.get("kpiId");
+  const urlPage = urlParams.get("page");
+
+  if (urlKpiId) {
+    sessionStorage.setItem("selectedKpiId", urlKpiId);
+  }
+
+  if (urlPage) {
+    const decodedPage = decodeURIComponent(urlPage);
+    localStorage.setItem("activePage", decodedPage);
+    const cleanUrl = new URL(window.location.href);
+    cleanUrl.searchParams.delete("kpiId");
+    cleanUrl.searchParams.delete("page");
+    window.history.replaceState({}, "", cleanUrl.pathname + cleanUrl.search);
+  }
+
   const activePage = localStorage.getItem("activePage") || "Dashboard";
 
   let destination = pageRoutes[activePage] || pageRoutes["Dashboard"];

@@ -371,6 +371,13 @@
     text-decoration: underline;
 }
 
+.kpi-timeline-highlight {
+    outline: 2px solid #0040a1;
+    outline-offset: 4px;
+    border-radius: 12px;
+    transition: outline-color 0.3s ease;
+}
+
 .kpi-timeline {
     position: relative;
     padding-left: 1.5rem;
@@ -465,6 +472,86 @@
     font-size: 17px;
 }
 
+.kpi-evidence-card {
+    min-height: 23rem;
+}
+
+.evidence-file-cell {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.5rem;
+}
+
+.evidence-file-cell__name {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.evidence-file-cell__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+}
+
+.evidence-file-cell__actions .btn-link {
+    color: #4e5e82;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.evidence-file-cell__actions .btn-link:hover {
+    color: #3d4d6e;
+    text-decoration: underline;
+}
+
+.kpi-evidence-table-wrap {
+    min-height: 16rem;
+    padding-bottom: 2.5rem;
+}
+
+@media print {
+    #sidebar-container,
+    #navbar-container {
+        display: none !important;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    body.kpi-detail-printing .kpi-detail-view .kpi-status-dropdown,
+    body.kpi-detail-printing #kpi-detail-export-pdf-btn,
+    body.kpi-detail-printing .kpi-quarter-group,
+    body.kpi-detail-printing .kpi-evidence-card .kpi-btn-primary,
+    body.kpi-detail-printing .evidence-view-btn,
+    body.kpi-detail-printing .evidence-edit-btn,
+    body.kpi-detail-printing .evidence-delete-btn,
+    body.kpi-detail-printing .kpi-table th:last-child,
+    body.kpi-detail-printing .kpi-table td:last-child {
+        display: none !important;
+    }
+
+    body.kpi-detail-printing .kpi-detail-view .quarter-content {
+        display: block !important;
+        page-break-inside: avoid;
+        margin-bottom: 1.5rem;
+    }
+
+    body.kpi-detail-printing .kpi-detail-view {
+        padding: 0 !important;
+    }
+
+    body.kpi-detail-printing .kpi-card {
+        box-shadow: none !important;
+        border: 1px solid #dee2e6;
+        break-inside: avoid;
+    }
+}
+
 @media (max-width: 992px) {
     .kpi-container {
         padding-left: 1rem;
@@ -482,5 +569,14 @@
     .kpi-milestone-row {
         grid-template-columns: 1fr;
         gap: 0.5rem;
+    }
+
+    .kpi-evidence-card {
+        min-height: 0;
+    }
+
+    .kpi-evidence-table-wrap {
+        min-height: 0;
+        padding-bottom: 1rem;
     }
 }

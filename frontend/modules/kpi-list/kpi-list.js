@@ -100,12 +100,12 @@ function renderKpiListRow(kpi) {
   row.className = "row align-items-center py-2 border-bottom px-2";
 
   row.innerHTML = `
-    <div class="col-3">
+    <div class="col-4">
       <div class="fw-semibold">${kpi.kpi}</div>
       <small class="text-muted">Owner: ${kpi.staff || "Unassigned"}</small>
     </div>
 
-    <div class="col-5">
+    <div class="col-4">
       <div class="d-flex align-items-center gap-2">
         <div class="progress flex-grow-1" style="height:6px;">
           <div class="progress-bar ${progressColor}" style="width:${progress}%"></div>
@@ -114,8 +114,8 @@ function renderKpiListRow(kpi) {
       </div>
     </div>
 
-    <div class="col-2 ps-4">
-      <span class="badge status-badge" style="${statusConfig.style}">
+    <div class="col-2">
+      <span class="badge" style="${statusConfig.style}">
         ${statusConfig.label}
       </span>
     </div>

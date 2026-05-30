@@ -199,6 +199,11 @@
     line-height: 1.4;
 }
 
+.progress-card .kpi-priority-pill {
+    font-size: 0.625rem;
+    padding: 0.3rem 0.6rem;
+}
+
 .progress-card__menu-btn {
     width: 28px;
     height: 28px;
@@ -259,13 +264,13 @@
     color: inherit;
 }
 
-.progress-card__menu-danger {
-    color: #b91c1c !important;
+.progress-card__menu-archive {
+    color: #856404 !important;
 }
 
-.progress-card__menu-danger:hover {
-    background-color: #fef2f2 !important;
-    color: #991b1b !important;
+.progress-card__menu-archive:hover {
+    background-color: #fffbeb !important;
+    color: #6d5203 !important;
 }
 
 /* Title / description */
@@ -560,13 +565,13 @@ html[data-bs-theme="dark"] .progress-card__menu .dropdown-item:hover {
     color: #fff !important;
 }
 
-html[data-bs-theme="dark"] .progress-card__menu-danger {
-    color: #f8a4a4 !important;
+html[data-bs-theme="dark"] .progress-card__menu-archive {
+    color: #fcd34d !important;
 }
 
-html[data-bs-theme="dark"] .progress-card__menu-danger:hover {
-    background-color: rgba(220, 53, 69, 0.25) !important;
-    color: #fecaca !important;
+html[data-bs-theme="dark"] .progress-card__menu-archive:hover {
+    background-color: rgba(251, 191, 36, 0.2) !important;
+    color: #fde68a !important;
 }
 
 html[data-bs-theme="dark"] .progress-view .kpi-link-btn {
