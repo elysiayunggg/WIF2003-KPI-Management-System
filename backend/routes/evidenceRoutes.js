@@ -5,6 +5,7 @@ const {
   createEvidence,
   getEvidence
 } = require("../controllers/evidenceController");
+const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -24,6 +25,8 @@ const upload = multer({
     fileSize: 10 * 1024 * 1024
   }
 });
+
+router.use(protect);
 
 router.get("/", getEvidence);
 router.post("/", upload.array("files", 5), createEvidence);

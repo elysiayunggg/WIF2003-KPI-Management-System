@@ -172,7 +172,8 @@ function mapApiKpi(kpi) {
     ownerRole: firstStaff?.role || "",
     progress: kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0,
     status: normalizeApiStatus(kpi.status),
-    deadline: kpi.dueDate
+    deadline: kpi.dueDate,
+    createdAt: kpi.createdAt
   };
 }
 
@@ -293,6 +294,27 @@ function renderPagination() {
   }
 }
 
+function calculateMonthGrowth(data) {
+  const now = new Date();
+  const thisMonth = now.getMonth();
+  const thisYear = now.getFullYear();
+  const lastMonth = thisMonth === 0 ? 11 : thisMonth - 1;
+  const lastMonthYear = thisMonth === 0 ? thisYear - 1 : thisYear;
+
+  const thisCount = data.filter(k => {
+    const d = new Date(k.createdAt);
+    return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+  }).length;
+
+  const lastCount = data.filter(k => {
+    const d = new Date(k.createdAt);
+    return d.getMonth() === lastMonth && d.getFullYear() === lastMonthYear;
+  }).length;
+
+  if (lastCount === 0) return thisCount > 0 ? 100 : null;
+  return Math.round(((thisCount - lastCount) / lastCount) * 100);
+}
+
 function updateSummary() {
   const total = kpiData.length;
   const completed = kpiData.filter(
@@ -303,6 +325,20 @@ function updateSummary() {
   document.getElementById("totalKPI").textContent = total;
   document.getElementById("completedKPI").textContent = completed;
   document.getElementById("completionRate").textContent = rate + "%";
+
+  const growth = calculateMonthGrowth(kpiData);
+  const badge = document.getElementById("totalKpiGrowth");
+  if (badge) {
+    if (growth === null) {
+      badge.textContent = "No data";
+      badge.className = "badge bg-secondary-subtle text-secondary";
+    } else {
+      badge.textContent = (growth >= 0 ? "+" : "") + growth + "%";
+      badge.className = growth >= 0
+        ? "badge bg-success-subtle text-success"
+        : "badge bg-danger-subtle text-danger";
+    }
+  }
 
   // FIXED pagination summary
   const start = total ? (currentPage - 1) * rowsPerPage + 1 : 0;

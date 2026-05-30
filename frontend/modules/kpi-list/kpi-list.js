@@ -125,7 +125,24 @@ function renderKpiListRow(kpi) {
     </div>
   `;
 
+  row.style.cursor = "pointer";
+  row.addEventListener("click", () => viewKpiListDetail(kpi.id));
+
   return row;
+}
+
+function viewKpiListDetail(id) {
+  const index = Array.isArray(window.kpiData)
+    ? window.kpiData.findIndex(item => item.id === id)
+    : -1;
+
+  if (index >= 0) {
+    window.selectedKpiDetailIndex = index;
+  }
+
+  if (typeof changePage === "function") {
+    changePage({ preventDefault() {} }, "KPI Detail");
+  }
 }
 
 function applyKpiListBreadcrumb() {
