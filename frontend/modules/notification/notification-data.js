@@ -62,14 +62,15 @@ function getLoggedInUserId() {
   }
 }
 
-// Maps the notification type string to the correct Bootstrap icon class.
-// This mirrors the notifIconMap in notification.js, but we only need
-// the icon name here since the colour is applied by the render modules.
-const _typeIconMap = {
-  assignment: "bi-person-check-fill",
-  request: "bi-people-fill",
-  update: "bi-graph-up-arrow",
-  verification: "bi-hourglass-split",
+// Canonical icon/colour/background for every notification type.
+// Used by transformNotification so both the overlay and the page always agree.
+const notifIconMap = {
+  assignment: { icon: "bi-person-check-fill",          color: "text-primary",   bg: "#e8f0ff" },
+  request:    { icon: "bi-file-earmark-arrow-up-fill", color: "text-success",   bg: "#e8f8f0" },
+  evidence:   { icon: "bi-clipboard2-check-fill",      color: "text-secondary", bg: "#f0f0f0" },
+  deadline:   { icon: "bi-alarm-fill",                 color: "text-danger",    bg: "#ffe8e8" },
+  approved:   { icon: "bi-check-circle-fill",          color: "text-success",   bg: "#e8f8f0" },
+  rejected:   { icon: "bi-x-circle-fill",              color: "text-danger",    bg: "#ffe8e8" },
 };
 
 // Converts a UTC ISO timestamp string (e.g. "2025-05-27T08:30:00.000Z")
@@ -107,24 +108,17 @@ function formatRelativeTime(isoString) {
 // DB shape:  { _id, userId, title, message, type, isRead, relatedKpiId, createdAt }
 // UI shape:  { id, title, message, type, time, unread, icon }
 function transformNotification(raw) {
+  var meta = notifIconMap[raw.type] || { icon: "bi-bell-fill", color: "text-secondary", bg: "#f0f0f0" };
   return {
-    // MongoDB uses _id; the UI uses id for element IDs and Set lookups.
-    id: raw._id,
-
-    title: raw.title,
+    id:      raw._id,
+    title:   raw.title,
     message: raw.message,
-    type: raw.type,
-
-    // The DB stores isRead (true/false). The UI tracks unread (true/false).
-    // So we invert: unread = not isRead.
-    unread: !raw.isRead,
-
-    // Convert the ISO createdAt timestamp to a human-readable relative string.
-    time: formatRelativeTime(raw.createdAt),
-
-    // Look up the Bootstrap icon class for this notification type.
-    // Falls back to a generic bell icon if the type is unrecognised.
-    icon: _typeIconMap[raw.type] || "bi-bell-fill",
+    type:    raw.type,
+    unread:  !raw.isRead,
+    time:    formatRelativeTime(raw.createdAt),
+    icon:    meta.icon,
+    color:   meta.color,
+    bg:      meta.bg,
   };
 }
 

@@ -131,7 +131,7 @@ body {
   z-index: 999;
 }
 
-/* Search Box */
+/* Search Box (used by assignment.html) */
 .search-box {
   width: 600px;
   border-radius: 50px;
@@ -150,6 +150,33 @@ body {
   top: 50%;
   transform: translateY(-50%);
   color: #6c757d;
+}
+
+/* Topbar search (navbar) */
+.topbar-search-wrapper {
+  margin-right: 1rem;
+}
+
+.topbar-search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #737785;
+  pointer-events: none;
+}
+
+.topbar-search-input {
+  padding-left: 2.5rem;
+  border-color: #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.topbar-search-input:focus {
+  border-color: #4e5e82;
+  box-shadow: 0 0 0 0.2rem rgba(78, 94, 130, 0.15);
 }
 
 /* Notification Button */
@@ -310,6 +337,16 @@ html[data-bs-theme="dark"] .search-box {
 
 html[data-bs-theme="dark"] .search-wrapper i {
   color: #adb5bd;
+}
+
+html[data-bs-theme="dark"] .topbar-search-icon {
+  color: #adb5bd;
+}
+
+html[data-bs-theme="dark"] .topbar-search-input {
+  background-color: #212529;
+  border-color: #495057;
+  color: #e9ecef;
 }
 
 html[data-bs-theme="dark"] .notification-btn {

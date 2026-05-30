@@ -60,7 +60,7 @@ function renderSidebar(role) {
     `;
   } else {
     menu.innerHTML = `
-      <a href="#" class="nav-link" onclick="changePage(event, 'Dashboard')">
+      <a href="#" class="nav-link nav-section-title" onclick="changePage(event, 'Dashboard')">
         <i class="bi bi-grid"></i> Dashboard
       </a>
 

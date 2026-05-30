@@ -55,19 +55,9 @@ const itemsPerPage = 5;
 let filteredVerificationData = [...verificationQueueData];
 let filteredAssignmentData = [...assignmentQueueData];
 
-// Returns the soft badge class for a given status
-/*function getStatusBadgeClass(status) {
-  switch (status) {
-    case "approved": return "badge-soft-success";
-    case "rejected":  return "badge-soft-danger";
-   case "pending":
-   default:          return "badge-soft-warning";
-}
-}*/ 
-
-/* function getStatusLabel(status) {
-  return status.charAt(0).toUpperCase() + status.slice(1);
-}*/
+// Active filter state
+let verificationFilters = { status: "all", sort: "latest",   staff: "all" };
+let assignmentFilters   = { sort: "earliest" };
 
 // Returns the action link HTML based on the item's current status.
 // Pending/new   → primary colour "Go to Verify" / "Assign Staff"
@@ -159,8 +149,7 @@ function createVerificationRow(item) {
   `;
   return tr;
 }
-//OLD status column removed 
-//<td><span class="badge ${getStatusBadgeClass(item.status)}">${getStatusLabel(item.status)}</span></td> 
+
 // Builds one <tr> for the assignment table
 function createAssignmentRow(item) {
   const tr = document.createElement("tr");
@@ -277,14 +266,82 @@ function renderAssignmentTable() {
   renderPageButtons("assignmentPageBtns", assignmentPage, filteredAssignmentData.length);
 }
 
+function setVerificationStatus(btn, status) {
+  verificationFilters.status = status;
+  document.querySelectorAll("#verificationStatusFilters .av-filter-pill").forEach(b =>
+    b.classList.toggle("av-filter-pill-active", b.dataset.status === status));
+  filterVerificationTable();
+}
+
+function setVerificationSort(btn, sort) {
+  verificationFilters.sort = sort;
+  document.querySelectorAll("#verificationSortFilters .av-filter-pill").forEach(b =>
+    b.classList.toggle("av-filter-pill-active", b.dataset.sort === sort));
+  filterVerificationTable();
+}
+
+function setVerificationStaff(value) {
+  verificationFilters.staff = value;
+  filterVerificationTable();
+}
+
+function setAssignmentSort(btn, sort) {
+  assignmentFilters.sort = sort;
+  document.querySelectorAll("#assignmentSortFilters .av-filter-pill").forEach(b =>
+    b.classList.toggle("av-filter-pill-active", b.dataset.sort === sort));
+  filterAssignmentTable();
+}
+
+function populateStaffDropdown() {
+  const select = document.getElementById("verificationStaffFilter");
+  if (!select) return;
+  const names = [...new Set(verificationQueueData.map(item => item.staff))].sort();
+  select.innerHTML = '<option value="all">All Staff</option>';
+  names.forEach(name => {
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name;
+    select.appendChild(opt);
+  });
+}
+
+function resetFilterUI() {
+  verificationFilters = { status: "all", sort: "latest", staff: "all" };
+  assignmentFilters   = { sort: "earliest" };
+
+  document.querySelectorAll("#verificationStatusFilters .av-filter-pill").forEach(b =>
+    b.classList.toggle("av-filter-pill-active", b.dataset.status === "all"));
+  document.querySelectorAll("#verificationSortFilters .av-filter-pill").forEach(b =>
+    b.classList.toggle("av-filter-pill-active", b.dataset.sort === "latest"));
+  document.querySelectorAll("#assignmentSortFilters .av-filter-pill").forEach(b =>
+    b.classList.toggle("av-filter-pill-active", b.dataset.sort === "earliest"));
+
+  const staffSel = document.getElementById("verificationStaffFilter");
+  if (staffSel) staffSel.value = "all";
+}
+
 function filterVerificationTable() {
-  const term = document.getElementById("verificationSearch")?.value.toLowerCase() || "";
-  filteredVerificationData = verificationQueueData.filter(item =>
-    item.kpiName.toLowerCase().includes(term)     ||
-    item.staff.toLowerCase().includes(term)        ||
-    item.department.toLowerCase().includes(term)   ||
-    item.status.toLowerCase().includes(term)
-  );
+  const term   = document.getElementById("verificationSearch")?.value.toLowerCase() || "";
+  const { status, sort, staff } = verificationFilters;
+
+  let result = verificationQueueData.filter(item => {
+    const matchesSearch = !term ||
+      item.kpiName.toLowerCase().includes(term)   ||
+      item.staff.toLowerCase().includes(term)      ||
+      item.department.toLowerCase().includes(term) ||
+      item.status.toLowerCase().includes(term);
+    const matchesStatus = status === "all" || item.status === status;
+    const matchesStaff  = staff  === "all" || item.staff  === staff;
+    return matchesSearch && matchesStatus && matchesStaff;
+  });
+
+  result.sort((a, b) => {
+    const ta = new Date(a.submissionTime).getTime();
+    const tb = new Date(b.submissionTime).getTime();
+    return sort === "latest" ? tb - ta : ta - tb;
+  });
+
+  filteredVerificationData = result;
   verificationPage = 1;
   renderVerificationTable();
 }
@@ -322,12 +379,22 @@ async function loadVerificationQueueFromApi() {
 
 function filterAssignmentTable() {
   const term = document.getElementById("assignmentSearch")?.value.toLowerCase() || "";
-  filteredAssignmentData = assignmentQueueData.filter(item =>
-    item.kpiName.toLowerCase().includes(term)            ||
-    item.recommendedStaff.toLowerCase().includes(term)   ||
-    item.department.toLowerCase().includes(term)         ||
+  const { sort } = assignmentFilters;
+
+  let result = assignmentQueueData.filter(item =>
+    item.kpiName.toLowerCase().includes(term)          ||
+    item.recommendedStaff.toLowerCase().includes(term) ||
+    item.department.toLowerCase().includes(term)       ||
     item.status.toLowerCase().includes(term)
   );
+
+  result.sort((a, b) => {
+    const ta = new Date(a.deadline).getTime();
+    const tb = new Date(b.deadline).getTime();
+    return sort === "earliest" ? ta - tb : tb - ta;
+  });
+
+  filteredAssignmentData = result;
   assignmentPage = 1;
   renderAssignmentTable();
 }
@@ -369,11 +436,6 @@ function navigateAssignmentPage(direction) {
   renderAssignmentTable();
 }
 
-// Action handlers — placeholder logic for Phase 2
-function goToVerify(id)          { console.log("Go to verify, ID:", id); }
-function viewReviewerDetails(id) { console.log("Reviewer details, ID:", id); }
-function assignStaff(id)         { console.log("Assign staff, ID:", id); }
-
 async function initAssignmentVerificationView() {
   sessionStorage.removeItem("reviewSubmissionContext");
 
@@ -395,13 +457,16 @@ async function initAssignmentVerificationView() {
     console.error(error);
   }
 
-  filteredAssignmentData   = [...assignmentQueueData];
+  filteredAssignmentData = [...assignmentQueueData];
 
-  // Clear search inputs in case the user navigated away mid-search
+  // Clear search inputs and reset all filter controls to their defaults
   const vs = document.getElementById("verificationSearch");
   const as = document.getElementById("assignmentSearch");
   if (vs) vs.value = "";
   if (as) as.value = "";
+
+  resetFilterUI();
+  populateStaffDropdown();
 
   renderVerificationTable();
   renderAssignmentTable();

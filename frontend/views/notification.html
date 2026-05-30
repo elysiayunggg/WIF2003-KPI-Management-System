@@ -14,14 +14,12 @@
 
   <!-- Row 1: Search + Mark all as read -->
   <div class="d-flex align-items-center gap-3 mb-3">
-    <div class="input-group flex-grow-1">
-      <span class="input-group-text notif-search-icon border-end-0">
-        <i class="bi bi-search text-muted"></i>
-      </span>
+    <div class="position-relative flex-grow-1">
+      <i class="bi bi-search notif-search-icon"></i>
       <input
         type="text"
         id="notifPageSearch"
-        class="form-control notif-search-input border-start-0 ps-0"
+        class="form-control notif-search-input"
         placeholder="Search activity details..."
         oninput="filterNotificationsBySearch(this.value)"
       />
@@ -35,14 +33,8 @@
     </button>
   </div>
 
-  <!-- Row 2: Filter Tabs -->
-  <div class="d-flex flex-wrap gap-2 mb-4" id="notifTabGroup">
-    <button class="btn notif-tab notif-tab-active" onclick="switchNotifTab(this, 'All Activities')">All Activities</button>
-    <button class="btn notif-tab" onclick="switchNotifTab(this, 'Submissions')">Submissions</button>
-    <button class="btn notif-tab" onclick="switchNotifTab(this, 'Approvals')">Approvals</button>
-    <button class="btn notif-tab" onclick="switchNotifTab(this, 'Deadlines')">Deadlines</button>
-    <button class="btn notif-tab" onclick="switchNotifTab(this, 'System')">System</button>
-  </div>
+  <!-- Row 2: Filter Tabs (injected by notification.js based on role) -->
+  <div class="d-flex flex-wrap gap-2 mb-4" id="notifTabGroup"></div>
 
   <!-- Notification Cards Container -->
   <div id="notificationPageList"></div>

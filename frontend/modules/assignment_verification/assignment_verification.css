@@ -1,35 +1,71 @@
-/*Search input */
-#verificationSearch,
-#assignmentSearch {
-  background-color: #f0f4f7;
-  border: 1px solid #e0e3e8;
-  padding-left: 38px;
-  border-radius: 8px;
+/* Filter panel */
+.av-filter-panel {
+  background-color: #f8fafc;
+  border: 1px solid #e9ecef;
+  border-radius: 0.6rem;
+  padding: 0.75rem 1rem;
+}
+
+.av-filter-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #54647a;
+  white-space: nowrap;
+}
+
+.av-filter-pill {
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 3px 12px;
+  border-radius: 999px;
+  border: 1px solid #dee2e6;
+  background-color: #ffffff;
+  color: #495057;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.av-filter-pill:hover:not(.av-filter-pill-active) {
+  background-color: #e9ecef;
+}
+
+.av-filter-pill.av-filter-pill-active {
+  background-color: #1b1f2e;
+  color: #ffffff;
+  border-color: #1b1f2e;
+}
+
+.av-staff-select {
+  font-size: 0.8rem;
+  border-color: #dee2e6;
+  border-radius: 0.4rem;
+  max-width: 180px;
+  max-height: 200px;
+}
+
+/* Search input */
+.av-search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #737785;
+  pointer-events: none;
+}
+
+.av-search-input {
+  padding-left: 2.5rem;
+  border-color: #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-#verificationSearch:focus,
-#assignmentSearch:focus {
+.av-search-input:focus {
   border-color: #4e5e82;
-  box-shadow: 0 0 0 3px rgba(78, 94, 130, 0.1);
+  box-shadow: 0 0 0 0.2rem rgba(78, 94, 130, 0.15);
   outline: none;
-}
-
-/*Filter button*/
-.av-filter-btn {
-  font-size: 13px;
-  color: #4e5e82;
-  text-decoration: none;
-  white-space: nowrap;
-  padding: 4px 2px;
-  border-bottom: 2px solid transparent;
-  transition: border-color 0.2s ease, color 0.2s ease;
-}
-
-.av-filter-btn:hover {
-  color: #2a3a5c;
-  border-bottom-color: #4e5e82;
-  text-decoration: none;
 }
 
 /*Table  */
@@ -195,4 +231,40 @@
     font-size: 10px;
     padding: 3px 8px;
   }
+}
+
+/* Dark mode */
+html[data-bs-theme="dark"] .av-filter-panel {
+  background-color: #2b3035 !important;
+  border-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] .av-filter-label {
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] .av-filter-pill:not(.av-filter-pill-active) {
+  background-color: #343a40 !important;
+  border-color: #495057 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] .av-filter-pill:hover:not(.av-filter-pill-active) {
+  background-color: #495057 !important;
+}
+
+html[data-bs-theme="dark"] .av-staff-select {
+  background-color: #212529 !important;
+  border-color: #495057 !important;
+  color: #e9ecef !important;
+}
+
+html[data-bs-theme="dark"] .av-search-icon {
+  color: #adb5bd !important;
+}
+
+html[data-bs-theme="dark"] .av-search-input {
+  background-color: #212529 !important;
+  border-color: #495057 !important;
+  color: #e9ecef !important;
 }

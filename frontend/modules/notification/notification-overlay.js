@@ -44,14 +44,9 @@ function createOverlayNotificationElement(notification) {
   var isUnread = notification.unread && !readNotifications.has(notification.id);
   div.className = "notification-item " + (isUnread ? "unread" : "read");
 
-  var iconColorClass = "text-primary";
-  if (notification.type === "request")      iconColorClass = "text-success";
-  if (notification.type === "update")       iconColorClass = "text-info";
-  if (notification.type === "verification") iconColorClass = "text-warning";
-
   div.innerHTML =
     '<div class="notification-icon">' +
-      '<i class="bi ' + notification.icon + " " + iconColorClass + ' fs-5"></i>' +
+      '<i class="bi ' + notification.icon + " " + notification.color + ' fs-5"></i>' +
     "</div>" +
     '<div class="notification-content flex-grow-1">' +
       '<div class="d-flex justify-content-between align-items-start mb-1">' +

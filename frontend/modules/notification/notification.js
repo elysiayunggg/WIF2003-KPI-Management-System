@@ -3,23 +3,27 @@
 // Depends on: notification-data.js (must be loaded first)
 // ============================================================
 
-// Maps tab labels to the "type" field in notificationsData.
-// null means "show all".
-var tabTypeMap = {
-  "All Activities": null,
-  "Submissions":    "request",
-  "Approvals":      "assignment",
-  "Deadlines":      "verification",
-  "System":         "update",
+// Role-based tab definitions. type: null = show all; array = match any listed type.
+// To add manager tabs, populate the manager array the same way.
+var tabConfig = {
+  manager: [],
+  staff: [
+    { label: "All Activities",   type: null },
+    { label: "Assignments",      type: "assignment" },
+    { label: "Deadlines",        type: "deadline" },
+    { label: "Evidence Results", type: ["approved", "rejected"] },
+  ],
 };
 
-// Icon, colour and icon-background for each notification type.
-var notifIconMap = {
-  assignment:   { icon: "bi-person-check-fill", color: "text-primary", bg: "#e8f0ff" },
-  request:      { icon: "bi-people-fill",        color: "text-success", bg: "#e8f8f0" },
-  update:       { icon: "bi-graph-up-arrow",     color: "text-info",    bg: "#e0f6ff" },
-  verification: { icon: "bi-hourglass-split",    color: "text-warning", bg: "#fff8e0" },
-};
+function getTabsForRole() {
+  var role = localStorage.getItem("role") || "staff";
+  return tabConfig[role] || tabConfig.staff;
+}
+
+function getTypeFilterForTab(tabLabel) {
+  var tab = getTabsForRole().find(function (t) { return t.label === tabLabel; });
+  return tab ? tab.type : null;
+}
 
 // Tracks the active tab for the current page visit.
 var activeNotifTab = "All Activities";
@@ -42,6 +46,33 @@ function switchNotifTab(btn, tabName) {
   renderNotificationCards(tabName, searchVal ? searchVal.value : "");
 }
 
+// ── Tab rendering ───────────────────────────────────────────
+
+function renderTabGroup() {
+  var container = document.getElementById("notifTabGroup");
+  if (!container) return;
+
+  var tabs = getTabsForRole();
+  container.innerHTML = "";
+
+  if (!tabs.length) {
+    container.style.display = "none";
+    activeNotifTab = "All Activities";
+    return;
+  }
+
+  container.style.display = "";
+  tabs.forEach(function (tab, i) {
+    var btn = document.createElement("button");
+    btn.className = "btn notif-tab" + (i === 0 ? " notif-tab-active" : "");
+    btn.textContent = tab.label;
+    btn.onclick = function () { switchNotifTab(btn, tab.label); };
+    container.appendChild(btn);
+  });
+
+  activeNotifTab = tabs[0].label;
+}
+
 // ── Search ──────────────────────────────────────────────────
 
 function filterNotificationsBySearch(query) {
@@ -51,10 +82,6 @@ function filterNotificationsBySearch(query) {
 // ── Card builder ────────────────────────────────────────────
 
 function createNotificationCard(notification) {
-  var meta = notifIconMap[notification.type] || {
-    icon: "bi-bell-fill", color: "text-secondary", bg: "#f0f0f0",
-  };
-
   var isUnread = notification.unread && !readNotifications.has(notification.id);
 
   var card = document.createElement("div");
@@ -66,8 +93,8 @@ function createNotificationCard(notification) {
     (isUnread ? '<span class="notif-page-red-dot"></span>' : "") +
     '<div class="d-flex gap-3 align-items-start">' +
       '<div class="flex-shrink-0 rounded-circle d-flex align-items-center justify-content-center"' +
-           ' style="width:42px;height:42px;background-color:' + meta.bg + '">' +
-        '<i class="bi ' + meta.icon + " " + meta.color + ' fs-5"></i>' +
+           ' style="width:42px;height:42px;background-color:' + notification.bg + '">' +
+        '<i class="bi ' + notification.icon + " " + notification.color + ' fs-5"></i>' +
       "</div>" +
       '<div class="flex-grow-1" style="min-width:0">' +
         '<div class="fw-bold mb-1 notif-page-title">' + notification.title + "</div>" +
@@ -98,11 +125,12 @@ function renderNotificationCards(tabName, searchQuery) {
 
   container.innerHTML = "";
 
-  var typeFilter = tabTypeMap[tabName];
+  var typeFilter = getTypeFilterForTab(tabName);
   var query      = searchQuery.toLowerCase().trim();
 
   var filtered = notificationsData.filter(function (n) {
-    var matchesTab    = !typeFilter || n.type === typeFilter;
+    var matchesTab = !typeFilter ||
+      (Array.isArray(typeFilter) ? typeFilter.indexOf(n.type) !== -1 : n.type === typeFilter);
     var matchesSearch = !query ||
       n.title.toLowerCase().indexOf(query)   !== -1 ||
       n.message.toLowerCase().indexOf(query) !== -1;
@@ -143,18 +171,10 @@ function deleteAllNotificationsPage() {
 
 function initNotificationPageView() {
   if (typeof fetchNotifications === "function") fetchNotifications();
-  activeNotifTab = "All Activities";
 
-  // Reset tab highlight to "All Activities".
-  document.querySelectorAll(".notif-tab").forEach(function (t) {
-    t.classList.remove("notif-tab-active");
-  });
-  var firstTab = document.querySelector(".notif-tab");
-  if (firstTab) firstTab.classList.add("notif-tab-active");
+  // Render tabs for the current role and set activeNotifTab to the first tab.
+  renderTabGroup();
 
-  // Remove the previous page listener before registering a new one.
-  // Without this, every visit to the Notifications page adds another copy of
-  // the listener to _notifListeners, causing redundant re-renders.
   if (_notifPageListener) {
     unregisterNotifChangeListener(_notifPageListener);
   }
@@ -166,5 +186,5 @@ function initNotificationPageView() {
   };
   registerNotifChangeListener(_notifPageListener);
 
-  renderNotificationCards("All Activities");
+  renderNotificationCards(activeNotifTab);
 }

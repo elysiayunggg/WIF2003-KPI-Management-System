@@ -566,7 +566,7 @@ exports.updateKpi = async (req, res) => {
             userId: staffId,
             title: titleText,
             message: messageText,
-            type: "verification",
+            type: req.body.status === "approved" ? "approved" : "rejected",
             relatedKpiId: kpi._id,
             relatedEvidenceId: latestEvidence?._id
           });

@@ -170,7 +170,7 @@ exports.createEvidence = async (req, res) => {
           userId: managerId,
           title: "New Evidence Submitted",
           message: `Staff submitted evidence for KPI: "${kpi.title}". Current progress: ${submittedPct}%.`,
-          type: "verification",
+          type: "evidence",
           relatedKpiId: kpi._id,
           relatedEvidenceId: evidence._id
         });
@@ -269,7 +269,7 @@ exports.updateEvidence = async (req, res) => {
             userId: managerId,
             title: "KPI Evidence Updated",
             message: `Staff updated evidence for KPI: "${kpi.title}". Current progress: ${pctValue}%.`,
-            type: "update",
+            type: "evidence",
             relatedKpiId: kpi._id,
             relatedEvidenceId: evidence._id
           });

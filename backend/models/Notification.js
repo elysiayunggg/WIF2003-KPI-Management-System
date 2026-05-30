@@ -22,7 +22,7 @@ const notificationSchema = new mongoose.Schema(
 
     type: {
       type: String,
-      enum: ["assignment", "request", "update", "verification"],
+      enum: ["assignment", "request", "evidence", "deadline", "approved", "rejected"],
       required: true
     },
 

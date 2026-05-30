@@ -7,6 +7,7 @@ const authRoutes = require("./routes/authRoutes");
 const kpiRoutes = require("./routes/kpiRoutes");
 const evidenceRoutes = require("./routes/evidenceRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const { checkDeadlines } = require("./jobs/deadlineNotifier");
 
 dotenv.config();
 
@@ -45,6 +46,11 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.get("/", (req, res) => {
   res.send("Trackify KPI Backend Running");
+});
+
+app.get("/api/dev/check-deadlines", async (req, res) => {
+  await checkDeadlines();
+  res.json({ message: "Deadline check triggered" });
 });
 
 const PORT = process.env.PORT || 5050;

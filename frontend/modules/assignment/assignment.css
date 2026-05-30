@@ -1,3 +1,37 @@
+/* Search bar */
+.assign-search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #737785;
+  pointer-events: none;
+}
+
+.assign-search-input {
+  padding-left: 2.5rem;
+  border-color: #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.assign-search-input:focus {
+  border-color: #4e5e82;
+  box-shadow: 0 0 0 0.2rem rgba(78, 94, 130, 0.15);
+  outline: none;
+}
+
+html[data-bs-theme="dark"] .assign-search-icon {
+  color: #adb5bd;
+}
+
+html[data-bs-theme="dark"] .assign-search-input {
+  background-color: #212529;
+  border-color: #495057;
+  color: #e9ecef;
+}
+
 /* Person Card Styles */
 .staff-card {
     background-color: #ffffff;
