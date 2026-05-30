@@ -316,7 +316,7 @@ function mapKpiToVerificationItem(kpi) {
 }
 
 async function loadVerificationQueueFromApi() {
-  const response = await fetch("http://127.0.0.1:5050/api/kpis");
+  const response = await authFetch("http://127.0.0.1:5050/api/kpis");
 
   if (!response.ok) {
     throw new Error("Failed to load verification queue");
@@ -355,7 +355,7 @@ function mapKpiToAssignmentItem(kpi) {
 }
 
 async function loadAssignmentQueueFromApi() {
-  const response = await fetch("http://127.0.0.1:5050/api/kpis");
+  const response = await authFetch("http://127.0.0.1:5050/api/kpis");
 
   if (!response.ok) {
     throw new Error("Failed to load assignment queue");

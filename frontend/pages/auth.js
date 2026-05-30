@@ -157,6 +157,7 @@ if (loginForm) {
       const data = await response.json();
 
       if (response.ok) {
+        localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("userName", data.user.name);
         localStorage.setItem("userEmail", data.user.email);

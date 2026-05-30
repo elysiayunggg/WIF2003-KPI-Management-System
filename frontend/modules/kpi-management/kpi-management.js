@@ -178,7 +178,7 @@ function mapApiKpi(kpi) {
 }
 
 async function loadKpisFromApi() {
-  const response = await fetch(KPI_API_BASE);
+  const response = await authFetch(KPI_API_BASE);
 
   if (!response.ok) {
     throw new Error("Failed to load KPIs");

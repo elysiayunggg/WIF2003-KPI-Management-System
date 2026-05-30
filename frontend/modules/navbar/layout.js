@@ -17,6 +17,11 @@ async function loadComponent(id, file) {
 
 // Main function to initialize the application layout
 async function initLayout() {
+  if (!getAuthToken()) {
+    window.location.href = "login.html";
+    return;
+  }
+
   const appearance = localStorage.getItem("prefAppearance") || "light";
   if (typeof applySystemAppearanceTheme === "function") {
     applySystemAppearanceTheme(appearance);
