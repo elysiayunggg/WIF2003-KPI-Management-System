@@ -6,8 +6,11 @@ const {
   updateKpi,
   deleteKpi
 } = require("../controllers/kpiController");
+const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
+
+router.use(protect);
 
 router.get("/", getKpis);
 router.post("/", createKpi);
