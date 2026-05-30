@@ -1003,10 +1003,32 @@ function ensureKPIDetailOutsideClickHandler() {
     kpiDetailOutsideClickBound = true;
 }
 
+function applyKpiDetailBreadcrumb(root) {
+    const ol = root.querySelector(".app-breadcrumb ol.breadcrumb");
+    if (!ol) return;
+
+    const source = sessionStorage.getItem("kpiDetailSource");
+
+    if (source === "kpi-list") {
+        ol.innerHTML = `
+            <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Management')">KPI Management</a></li>
+            <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'View KPI List')">KPI List</a></li>
+            <li class="breadcrumb-item active" aria-current="page">KPI Detail</li>
+        `;
+    } else {
+        ol.innerHTML = `
+            <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'Staff Dashboard')">Staff Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Progress')">KPI Progress</a></li>
+            <li class="breadcrumb-item active" aria-current="page">KPI Detail</li>
+        `;
+    }
+}
+
 async function initKPIDetailView() {
     const root = getKPIDetailRoot();
     if (!root) return;
 
+    applyKpiDetailBreadcrumb(root);
     await ensureKPIDetailDataLoaded();
 
     const selectedKpiId = sessionStorage.getItem("selectedKpiId");
