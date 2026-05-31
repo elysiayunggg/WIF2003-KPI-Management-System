@@ -30,11 +30,12 @@ exports.getNotifications = async (req, res) => {
 exports.markOneAsRead = async (req, res) => {
   try {
     // req.params.id is the value captured from the :id segment in the route.
-    // { new: true } tells Mongoose to return the updated document instead of
+    // returnDocument: "after" returns the updated document instead of
     // the old one. Without it, the returned object would still show isRead: false.
     const notification = await Notification.findByIdAndUpdate(
       req.params.id,
       { isRead: true },
+      { returnDocument: "after" }
     );
 
     if (!notification) {

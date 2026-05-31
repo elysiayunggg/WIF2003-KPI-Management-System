@@ -8,6 +8,7 @@ const kpiRoutes = require("./routes/kpiRoutes");
 const evidenceRoutes = require("./routes/evidenceRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const { checkDeadlines } = require("./jobs/deadlineNotifier");
+const profileRoutes = require("./routes/profileRoutes");
 
 dotenv.config();
 
@@ -36,9 +37,11 @@ app.use(express.json());
 // Evidence files are served via GET /api/evidence/:evidenceId/files/:fileIndex (authenticated).
 app.use("/api/notifications", notificationRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(express.static(path.join(__dirname, "../frontend")));
 app.use("/api/auth", authRoutes);
 app.use("/api/kpis", kpiRoutes);
 app.use("/api/evidence", evidenceRoutes);
+app.use("/api/profile", profileRoutes);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))

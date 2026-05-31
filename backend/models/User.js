@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema(
       },
       language: {
         type: String,
-        default: "en-US"
+        default: "en-GB"
       },
       timezone: {
         type: String,

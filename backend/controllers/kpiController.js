@@ -478,7 +478,7 @@ exports.updateKpi = async (req, res) => {
       : null;
 
     const kpi = await Kpi.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
+      returnDocument: "after",
       runValidators: true
     });
 

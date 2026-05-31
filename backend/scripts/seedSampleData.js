@@ -41,7 +41,7 @@ async function upsertUser({ name, email, password, role, department, employeeId 
       department,
       employeeId
     },
-    { new: true, upsert: true, setDefaultsOnInsert: true }
+    { returnDocument: "after", upsert: true, setDefaultsOnInsert: true }
   );
 }
 

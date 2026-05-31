@@ -35,6 +35,7 @@ async function initLayout() {
   // Step 1: Load sidebar and navbar once (persistent UI)
   await loadComponent("sidebar-container", "../components/sidebar.html");
   await loadComponent("navbar-container", "../components/navbar.html");
+  if (typeof applyI18n === "function") applyI18n();
   if (typeof syncNavbarAvatar === "function") syncNavbarAvatar();
 
   if (typeof initNotificationModule === "function") initNotificationModule();
@@ -83,11 +84,13 @@ async function initLayout() {
     // Inject the page content into the main container
     document.getElementById("page-content").innerHTML = html;
 
-    // Step 5: Run page-specific initialization function (if exists)
-    // Example: Dashboard → initDashboardView()
+    if (typeof applyI18n === "function") applyI18n();
+
     const initFn = pageInits[activePage];
     if (typeof initFn === "function") {
-      initFn();
+      Promise.resolve(initFn()).then(() => {
+        if (typeof applyI18n === "function") applyI18n();
+      });
     }
 
   } catch (err) {

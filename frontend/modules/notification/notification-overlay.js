@@ -30,10 +30,11 @@ function updateUnreadIndicator() {
   var hasUnread = getUnreadCount() > 0;
 
   var badge = document.getElementById("unreadBadge");
-  if (badge) badge.style.display = hasUnread ? "block" : "none";
+  var alertsEnabled = localStorage.getItem("prefSystemAlerts") !== "false";
+  if (badge) badge.style.display = (alertsEnabled && hasUnread) ? "block" : "none";
 
   var sidebarBadge = document.getElementById("sidebarUnreadBadge");
-  if (sidebarBadge) sidebarBadge.style.display = hasUnread ? "block" : "none";
+  if (sidebarBadge) sidebarBadge.style.display = (alertsEnabled && hasUnread) ? "block" : "none";
 }
 
 // Builds a single notification item element for the overlay list.
