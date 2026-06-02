@@ -6,6 +6,19 @@
     background-color: #eef1f4;
     border: 1px solid #dcdfe4;
     color: #495057;
+    font-size: 14px;
+}
+
+.create-kpi .form-label {
+    font-size: 14px;
+}
+
+.create-kpi .btn {
+    font-size: 14px;
+}
+
+.create-kpi small {
+    font-size: 12px;
 }
 
 /* Placeholder */
