@@ -6,6 +6,29 @@
   padding: 12px 16px;
 }
 
+.kpi-list-view .form-control {
+  font-size: 14px;
+}
+
+.kpi-list-view h6 {
+  font-size: 14px;
+}
+
+#kpiListContainer .fw-semibold {
+  font-size: 14px;
+}
+
+#kpiListContainer small {
+  font-size: 12px;
+}
+
+#kpiListContainer .badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
 /* Dark mode — faux table header is div-based, not thead/th */
 html[data-bs-theme="dark"] #page-content .kpi-list-header {
   background-color: #343a40 !important;
