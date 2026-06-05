@@ -80,69 +80,58 @@
         <section class="kpi-card mb-4" id="milestone-section">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                 <div>
-                    <h2 class="kpi-section-title mb-0">Project Milestones</h2>
+                    <h2 class="kpi-section-title mb-0" data-i18n="kpiDetail_milestonesTitle">Project Milestones</h2>
                     <p class="kpi-subtext small mb-0 mt-1" id="kpi-detail-milestone-caption"></p>
                 </div>
-                <div class="btn-group kpi-quarter-group">
-                    <button class="btn q-btn" id="btn-q1" data-quarter="q1" type="button">Q1</button>
-                    <button class="btn q-btn" id="btn-q2" data-quarter="q2" type="button">Q2</button>
-                    <button class="btn q-btn kpi-quarter-active" id="btn-q3" data-quarter="q3" type="button">Q3</button>
-                    <button class="btn q-btn" id="btn-q4" data-quarter="q4" type="button">Q4</button>
+                <div id="milestone-manager-actions" class="d-none">
+                    <button type="button" class="btn kpi-btn-secondary btn-sm" id="milestone-add-btn">
+                        <span class="material-symbols-outlined">add</span>
+                        <span data-i18n="kpiDetail_addMilestoneBtn">Add milestone</span>
+                    </button>
                 </div>
             </div>
-            <div class="quarter-content" id="content-q1">
-                <div class="kpi-milestone-header"><span>Milestone</span><span>January</span><span>February</span><span>March</span></div>
-                <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Initial Research</div>
-                    <div class="kpi-track"><div class="kpi-fill" style="width: 100%"></div></div>
+            <div class="kpi-milestone-timeline active" id="kpi-milestone-timeline">
+                <div class="kpi-milestone-header" id="kpi-milestone-month-header">
+                    <span data-i18n="kpiDetail_milestoneColMilestone">Milestone</span>
                 </div>
-                <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Stakeholder Mapping</div>
-                    <div class="kpi-track"><div class="kpi-fill" style="width: 48%; margin-left: 20%"></div></div>
-                </div>
-            </div>
-            <div class="quarter-content" id="content-q2">
-                <div class="kpi-milestone-header"><span>Milestone</span><span>April</span><span>May</span><span>June</span></div>
-                <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Development Phase</div>
-                    <div class="kpi-track"><div class="kpi-fill" style="width: 100%"></div></div>
-                </div>
-                <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Beta Testing</div>
-                    <div class="kpi-track"><div class="kpi-fill" style="width: 20%; margin-left: 60%"></div></div>
-                </div>
-            </div>
-            <div class="quarter-content active" id="content-q3">
-                <div class="kpi-milestone-header"><span>Milestone</span><span>July</span><span>August</span><span>September</span></div>
-                <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Regional Assessment</div>
-                    <div class="kpi-track"><div class="kpi-fill" style="width: 30%"></div></div>
-                </div>
-                <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Supplier Onboarding</div>
-                    <div class="kpi-track"><div class="kpi-fill" style="width: 40%; margin-left: 25%"></div></div>
-                </div>
-                <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Retention Pilot Program</div>
-                    <div class="kpi-track"><div class="kpi-fill-pending" style="width: 40%; margin-left: 60%"></div></div>
-                </div>
-            </div>
-            <div class="quarter-content" id="content-q4">
-                <div class="kpi-milestone-header"><span>Milestone</span><span>October</span><span>November</span><span>December</span></div>
-                <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Final Evaluation</div>
-                    <div class="kpi-track"><div class="kpi-fill" style="width: 40%"></div></div>
-                </div>
-                <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">System Deployment</div>
-                    <div class="kpi-track"><div class="kpi-fill" style="width: 40%; margin-left: 10%"></div></div>
-                </div>
-                <div class="kpi-milestone-row">
-                    <div class="kpi-milestone-name">Year-End Review</div>
-                    <div class="kpi-track"><div class="kpi-fill-pending" style="width: 30%; margin-left: 70%"></div></div>
-                </div>
+                <div class="milestone-timeline-body" id="milestone-timeline-body"></div>
             </div>
         </section>
+
+        <div id="milestoneModal" class="modal-overlay kpi-milestone-modal" aria-hidden="true">
+            <div class="modal-container kpi-milestone-modal__panel">
+                <h2 class="modal-title mb-3" id="milestone-modal-title">Add milestone</h2>
+                <form id="milestone-form" class="kpi-milestone-form">
+                    <input type="hidden" id="milestone-form-id" value="" />
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="milestone-form-name">Name</label>
+                        <input type="text" class="form-control" id="milestone-form-name" required maxlength="120" />
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold" for="milestone-form-start-date" data-i18n="milestone_colStart">Start date</label>
+                            <input type="date" class="form-control" id="milestone-form-start-date" required />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold" for="milestone-form-end-date" data-i18n="milestone_colEnd">End date</label>
+                            <input type="date" class="form-control" id="milestone-form-end-date" required />
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold" for="milestone-form-status">Status</label>
+                        <select class="form-select" id="milestone-form-status" required>
+                            <option value="in_progress">In progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-cancel" id="milestone-modal-cancel">Cancel</button>
+                        <button type="submit" class="btn kpi-btn-primary" id="milestone-modal-save">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
         <div class="row g-4">
             <div class="col-12 col-xl-8">

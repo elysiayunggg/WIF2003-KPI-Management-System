@@ -1,61 +1,216 @@
 
+const UPDATE_KPI_API = "http://127.0.0.1:5050/api";
+
+let updateKpiOriginalMilestoneIds = [];
+let updateKpiTimelineBounds = { timelineStart: null, timelineEnd: null };
 
 function initUpdateKpiView() {
   const container = document.querySelector(".update-kpi");
   if (!container) return;
-
-  console.log("Update KPI loaded");
 
   loadKpiData(container);
 
   setupStatusToggle(container);
   setupFrequencyToggle(container);
   setupStaffSelection(container);
+  setupUpdateMilestones(container);
   setupUpdateSubmit(container);
 }
 
 window.initUpdateKpiView = initUpdateKpiView;
 
+function getSelectedUpdateKpi() {
+  const index = window.selectedKpiIndex;
+  if (index === undefined || index === null) return null;
+  if (!window.kpiData || !Array.isArray(window.kpiData)) return null;
+  return window.kpiData[index] || null;
+}
 
+function buildUpdateKpiMilestoneRowHtml(milestone = {}) {
+  const id = milestone._id || milestone.id || "";
+  return MilestoneTimeline.buildMilestoneFormRowHtml({
+    rowClass: "update-kpi-milestone-row milestone-form-row",
+    id,
+    name: milestone.name || "",
+    startDate: milestone.startDate,
+    endDate: milestone.endDate,
+    status: milestone.status || "in_progress",
+    defaultStartDate: updateKpiTimelineBounds.timelineStart,
+    defaultEndDate: updateKpiTimelineBounds.timelineEnd
+  });
+}
+
+function renderUpdateKpiMilestones(milestones) {
+  const list = document.getElementById("updateKpiMilestonesList");
+  const empty = document.getElementById("updateKpiMilestonesEmpty");
+  if (!list) return;
+
+  updateKpiOriginalMilestoneIds = (milestones || [])
+    .map((m) => String(m._id || m.id || ""))
+    .filter(Boolean);
+
+  if (!milestones?.length) {
+    list.innerHTML = "";
+    if (empty) empty.classList.remove("d-none");
+    return;
+  }
+
+  list.innerHTML = milestones.map((m) => buildUpdateKpiMilestoneRowHtml(m)).join("");
+  if (empty) empty.classList.add("d-none");
+}
+
+function updateUpdateKpiMilestonesEmptyState() {
+  const list = document.getElementById("updateKpiMilestonesList");
+  const empty = document.getElementById("updateKpiMilestonesEmpty");
+  if (!list || !empty) return;
+  const count = list.querySelectorAll(".update-kpi-milestone-row").length;
+  empty.classList.toggle("d-none", count > 0);
+}
+
+async function loadMilestonesForUpdate(kpiId) {
+  if (!kpiId) {
+    renderUpdateKpiMilestones([]);
+    return;
+  }
+
+  try {
+    const response = await authFetch(`${UPDATE_KPI_API}/kpis/${encodeURIComponent(kpiId)}/milestones`);
+    if (!response.ok) {
+      renderUpdateKpiMilestones([]);
+      return;
+    }
+    const data = await response.json();
+    const payload = MilestoneTimeline.normalizeMilestoneApiResponse(data);
+    updateKpiTimelineBounds = {
+      timelineStart: payload.timelineStart,
+      timelineEnd: payload.timelineEnd
+    };
+    renderUpdateKpiMilestones(payload.milestones);
+  } catch (error) {
+    console.error("Failed to load milestones for update:", error);
+    renderUpdateKpiMilestones([]);
+  }
+}
+
+function setupUpdateMilestones() {
+  const addBtn = document.getElementById("updateKpiAddMilestoneBtn");
+  const list = document.getElementById("updateKpiMilestonesList");
+  if (!addBtn || !list) return;
+
+  addBtn.addEventListener("click", () => {
+    const kpiName = document.getElementById("kpiName")?.value?.trim() || "";
+    list.insertAdjacentHTML("beforeend", buildUpdateKpiMilestoneRowHtml({ name: kpiName }));
+    updateUpdateKpiMilestonesEmptyState();
+  });
+
+  list.addEventListener("click", (e) => {
+    const removeBtn = e.target.closest(".milestone-remove-btn");
+    if (!removeBtn) return;
+    removeBtn.closest(".update-kpi-milestone-row")?.remove();
+    updateUpdateKpiMilestonesEmptyState();
+  });
+}
+
+function collectUpdateKpiMilestonesFromForm() {
+  const list = document.getElementById("updateKpiMilestonesList");
+  const kpiName = document.getElementById("kpiName")?.value?.trim() || "";
+  return MilestoneTimeline.collectMilestonesFromList(list, { fallbackName: kpiName });
+}
+
+function validateUpdateMilestones(milestones) {
+  return MilestoneTimeline.validateMilestoneDates(
+    milestones,
+    updateKpiTimelineBounds.timelineStart,
+    updateKpiTimelineBounds.timelineEnd
+  );
+}
+
+async function syncUpdateKpiMilestones(kpiId, milestones) {
+  const currentIds = new Set(milestones.filter((m) => m.id).map((m) => String(m.id)));
+  const toDelete = updateKpiOriginalMilestoneIds.filter((id) => !currentIds.has(String(id)));
+
+  for (const milestoneId of toDelete) {
+    const response = await authFetch(
+      `${UPDATE_KPI_API}/kpis/${encodeURIComponent(kpiId)}/milestones/${encodeURIComponent(milestoneId)}`,
+      { method: "DELETE" }
+    );
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(result.message || "Failed to delete a milestone.");
+    }
+  }
+
+  for (const milestone of milestones) {
+    const body = {
+      name: milestone.name,
+      startDate: milestone.startDate,
+      endDate: milestone.endDate,
+      status: milestone.status,
+      sortOrder: milestone.sortOrder
+    };
+
+    if (milestone.id) {
+      const response = await authFetch(
+        `${UPDATE_KPI_API}/kpis/${encodeURIComponent(kpiId)}/milestones/${encodeURIComponent(milestone.id)}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        }
+      );
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(result.message || `Failed to update milestone "${milestone.name}".`);
+      }
+    } else {
+      const response = await authFetch(
+        `${UPDATE_KPI_API}/kpis/${encodeURIComponent(kpiId)}/milestones`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        }
+      );
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(result.message || `Failed to create milestone "${milestone.name}".`);
+      }
+    }
+  }
+}
 
 function setupStatusToggle(container) {
   const buttons = container.querySelectorAll(".status-btn");
 
-  buttons.forEach(btn => {
+  buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
-      buttons.forEach(b => b.classList.remove("active"));
+      buttons.forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
     });
   });
 }
-
-
 
 function setupFrequencyToggle(container) {
   const buttons = container.querySelectorAll(".toggle-btn");
 
-  buttons.forEach(btn => {
+  buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
-      buttons.forEach(b => b.classList.remove("active"));
+      buttons.forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
     });
   });
 }
 
-
-
-
 function setupStaffSelection(container) {
   const cards = container.querySelectorAll(".person-card");
 
-  cards.forEach(card => {
+  cards.forEach((card) => {
     card.addEventListener("click", () => {
-      cards.forEach(c => c.classList.remove("selected"));
+      cards.forEach((c) => c.classList.remove("selected"));
       card.classList.add("selected");
     });
   });
 }
-
 
 function getUpdateFormData(container) {
   return {
@@ -67,30 +222,25 @@ function getUpdateFormData(container) {
     status: container.querySelector(".status-btn.active")?.dataset.status,
     frequency: container.querySelector("#biWeeklyBtn")?.classList.contains("active")
       ? "BI-WEEKLY"
-      : "MONTHLY"
+      : "MONTHLY",
+    milestones: collectUpdateKpiMilestonesFromForm()
   };
 }
-
-
-
 
 function setupUpdateSubmit(container) {
   const btn = container.querySelector("#updateKpiBtn");
 
   if (!btn) return;
 
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", async () => {
     const data = getUpdateFormData(container);
 
-    console.log("Updated KPI Data:", data);
-
     if (!validateUpdate(data)) return;
+    if (!validateUpdateMilestones(data.milestones)) return;
 
-    updateKpi(data);
+    await updateKpi(data);
   });
 }
-
-
 
 function validateUpdate(data) {
   if (!data.kpi) {
@@ -111,31 +261,13 @@ function validateUpdate(data) {
   return true;
 }
 
-function loadKpiData(container) {
-  // get selected index safely
-  const index = window.selectedKpiIndex;
+async function loadKpiData(container) {
+  const kpi = getSelectedUpdateKpi();
 
-  if (index === undefined || index === null) {
+  if (!kpi) {
     console.warn("No KPI selected");
     return;
   }
-
-  // ensure global data exists
-  if (!window.kpiData || !Array.isArray(window.kpiData)) {
-    console.error("kpiData not available");
-    return;
-  }
-
-  const kpi = window.kpiData[index];
-
-  if (!kpi) {
-    console.error("Invalid KPI index:", index);
-    return;
-  }
-
-  console.log("Loading KPI:", kpi);
-
-  // FILL INPUT FIELDS
 
   const nameInput = container.querySelector("#kpiName");
   const descInput = container.querySelector("#kpiDesc");
@@ -150,38 +282,22 @@ function loadKpiData(container) {
   const unitSelect = container.querySelector("#kpiUnit");
   if (unitSelect) unitSelect.value = unitToSelectLabel(kpi.unit);
 
- 
-  // SET STATUS BUTTON
-
   const statusBtns = container.querySelectorAll(".status-btn");
-
-  statusBtns.forEach(btn => {
+  statusBtns.forEach((btn) => {
     btn.classList.remove("active");
-
     if (normalizeStatusForApi(btn.dataset.status) === normalizeStatusForApi(kpi.status)) {
       btn.classList.add("active");
     }
   });
 
-  
-  // SET STAFF SELECTION
   const staffCards = container.querySelectorAll(".person-card");
-
-  staffCards.forEach(card => {
+  staffCards.forEach((card) => {
     card.classList.remove("selected");
-
     if (card.dataset.name === kpi.staff) {
       card.classList.add("selected");
     }
   });
 
-
-  // OPTIONAL: HANDLE UNASSIGNED
-  if (!kpi.staff) {
-    console.log("KPI has no assigned staff");
-  }
-
-  // FILL PROGRESS CARD
   const progress = kpi.progress ?? 0;
   const currentVal = kpi.currentValue ?? 0;
   const targetVal = kpi.targetValue ?? 0;
@@ -201,7 +317,9 @@ function loadKpiData(container) {
   const progressNote = container.querySelector("#updateKpiProgressNote");
 
   if (progressPct) progressPct.textContent = `${progress}%`;
-  if (progressValue) progressValue.textContent = `${fmtVal(currentVal, unit)} / ${fmtVal(targetVal, unit)}`;
+  if (progressValue) {
+    progressValue.textContent = `${fmtVal(currentVal, unit)} / ${fmtVal(targetVal, unit)}`;
+  }
   if (progressBar) progressBar.style.width = `${Math.min(100, progress)}%`;
 
   const statusUpper = (kpi.status || "").toUpperCase();
@@ -212,17 +330,12 @@ function loadKpiData(container) {
   if (progressBadge) progressBadge.textContent = badgeText;
 
   if (progressNote) progressNote.textContent = `${progress}% of target achieved`;
+
+  await loadMilestonesForUpdate(kpi.id);
 }
 
 async function updateKpi(data) {
-  const index = window.selectedKpiIndex;
-
-  if (index === undefined) {
-    console.error("No KPI selected for update");
-    return;
-  }
-
-  const selectedKpi = window.kpiData?.[index];
+  const selectedKpi = getSelectedUpdateKpi();
 
   if (!selectedKpi?.id) {
     alert("Unable to update KPI because no database id was found.");
@@ -239,7 +352,7 @@ async function updateKpi(data) {
   };
 
   try {
-    const response = await authFetch(`http://127.0.0.1:5050/api/kpis/${selectedKpi.id}`, {
+    const response = await authFetch(`${UPDATE_KPI_API}/kpis/${selectedKpi.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
@@ -254,7 +367,17 @@ async function updateKpi(data) {
       return;
     }
 
-    alert("KPI Updated Successfully!");
+    try {
+      await syncUpdateKpiMilestones(selectedKpi.id, data.milestones || []);
+    } catch (milestoneError) {
+      alert(
+        milestoneError.message ||
+          "KPI was updated but milestone changes could not be saved."
+      );
+      return;
+    }
+
+    alert("KPI and milestones updated successfully!");
     changePage({ preventDefault() {} }, "KPI Management");
   } catch (error) {
     alert("Cannot connect to server. Please make sure the backend is running.");

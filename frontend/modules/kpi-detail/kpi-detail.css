@@ -174,15 +174,9 @@
     color: #d97706;
 }
 
-/* Hide quarters by default except active section. */
-.kpi-detail-view .quarter-content {
-    display: none;
+.kpi-detail-view .kpi-milestone-timeline {
     border-top: 1px solid #e4e7ee;
     padding-top: 1rem;
-}
-
-.kpi-detail-view .quarter-content.active {
-    display: block;
 }
 
 /* Status dropdown visibility states. */
@@ -307,7 +301,7 @@
 
 .kpi-milestone-header {
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    grid-template-columns: minmax(12rem, 1.4fr) repeat(var(--milestone-cols, 4), 1fr);
     gap: 1rem;
     color: #54647a;
     font-size: 0.72rem;
@@ -315,6 +309,11 @@
     text-transform: uppercase;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid #e5e7eb;
+}
+
+.kpi-milestone-dates {
+    font-weight: 500;
+    margin-top: 0.15rem;
 }
 
 .kpi-milestone-row {
@@ -346,6 +345,64 @@
 
 .kpi-fill-pending {
     background: #e5e7eb;
+}
+
+.kpi-milestone-name-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+.kpi-milestone-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    flex-shrink: 0;
+}
+
+.kpi-milestone-actions .btn-link {
+    padding: 0.1rem 0.25rem;
+    line-height: 1;
+}
+
+.kpi-milestone-actions .material-symbols-outlined {
+    font-size: 1.1rem;
+}
+
+.kpi-milestone-empty {
+    padding-left: 0.15rem;
+}
+
+.kpi-milestone-modal.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+    align-items: center;
+    justify-content: center;
+    background: rgba(33, 37, 41, 0.55);
+    padding: 1rem;
+}
+
+.kpi-milestone-modal.modal-overlay.is-open {
+    display: flex;
+}
+
+.kpi-milestone-modal__panel {
+    width: 100%;
+    max-width: 480px;
+    text-align: left;
+    border-radius: 16px;
+    padding: 1.5rem 1.35rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.kpi-milestone-form .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
 }
 
 .kpi-initials {
@@ -535,7 +592,7 @@
         display: none !important;
     }
 
-    body.kpi-detail-printing .kpi-detail-view .quarter-content {
+    body.kpi-detail-printing .kpi-detail-view .kpi-milestone-timeline {
         display: block !important;
         page-break-inside: avoid;
         margin-bottom: 1.5rem;

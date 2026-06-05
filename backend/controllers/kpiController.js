@@ -1,15 +1,18 @@
 const Kpi = require("../models/Kpi");
 const Evidence = require("../models/Evidence");
 const KpiAssignment = require("../models/KpiAssignment");
+const Milestone = require("../models/Milestone");
 const Notification = require("../models/Notification");
+const {
+  parseMilestonesArray,
+  parseMilestoneInput,
+  getKpiTimelineBounds,
+  buildDefaultProjectMilestone
+} = require("../utils/milestoneHelpers");
 const mongoose = require("mongoose");
 const { computeProgressPercent, resolveKpiWorkflowStatus } = require("../utils/kpiStatus");
 const { pushToUser } = require("../sse/sseClients");
-
-function isAssignedToUser(kpi, userId) {
-  if (!kpi || !Array.isArray(kpi.assignedTo) || !userId) return false;
-  return kpi.assignedTo.some((u) => String(u) === String(userId) || String(u._id) === String(userId));
-}
+const { isAssignedToUser } = require("../utils/kpiAccess");
 
 function clampProgress(progress) {
   return Math.min(100, Math.max(0, Number(progress)));
@@ -406,13 +409,30 @@ exports.createKpi = async (req, res) => {
       priority,
       startDate,
       dueDate,
-      assignedTo
+      assignedTo,
+      milestones
     } = req.body;
 
     const createdBy = req.user.id;
 
     if (!title || targetValue === undefined || !dueDate) {
       return res.status(400).json({ message: "Title, target value, and due date are required" });
+    }
+
+    const previewTimeline = getKpiTimelineBounds({
+      title,
+      startDate,
+      dueDate,
+      createdAt: new Date()
+    });
+
+    const parsedMilestones = parseMilestonesArray(milestones, previewTimeline);
+    if (parsedMilestones.error) {
+      return res.status(400).json({ message: parsedMilestones.error });
+    }
+
+    if (parsedMilestones.docs.length && req.user?.role !== "manager") {
+      return res.status(403).json({ message: "Only managers can add milestones when creating a KPI" });
     }
 
     const kpi = await Kpi.create({
@@ -458,9 +478,33 @@ exports.createKpi = async (req, res) => {
 
     // --- End notification block ---
 
+    const kpiTimeline = getKpiTimelineBounds(kpi);
+    let milestoneDocs = parsedMilestones.docs;
+
+    if (!milestoneDocs.length) {
+      const defaultParsed = parseMilestoneInput(
+        buildDefaultProjectMilestone(kpi.title, kpiTimeline),
+        0,
+        kpiTimeline
+      );
+      if (defaultParsed.doc) milestoneDocs = [defaultParsed.doc];
+    }
+
+    let createdMilestones = [];
+    if (milestoneDocs.length) {
+      createdMilestones = await Milestone.insertMany(
+        milestoneDocs.map((doc) => ({
+          ...doc,
+          kpiId: kpi._id,
+          createdBy
+        }))
+      );
+    }
+
     res.status(201).json({
       message: "KPI created successfully",
-      kpi
+      kpi,
+      milestones: createdMilestones
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });

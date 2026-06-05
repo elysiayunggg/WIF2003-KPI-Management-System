@@ -6,6 +6,7 @@ const User = require("../models/User");
 const Kpi = require("../models/Kpi");
 const Evidence = require("../models/Evidence");
 const KpiAssignment = require("../models/KpiAssignment");
+const Milestone = require("../models/Milestone");
 const Notification = require("../models/Notification");
 const { resolveKpiWorkflowStatus } = require("../utils/kpiStatus");
 
@@ -52,6 +53,7 @@ async function clearPreviousSampleData() {
   const sampleKpiIds = existingSampleKpis.map((k) => k._id);
 
   if (sampleKpiIds.length) {
+    await Milestone.deleteMany({ kpiId: { $in: sampleKpiIds } });
     await Evidence.deleteMany({ kpiId: { $in: sampleKpiIds } });
     await KpiAssignment.deleteMany({ kpiId: { $in: sampleKpiIds } });
     await Notification.deleteMany({
@@ -90,6 +92,119 @@ async function recalculateKpiFromEvidence(kpiId) {
   });
   await kpi.save();
   return kpi;
+}
+
+const {
+  getKpiTimelineBounds,
+  parseMilestoneInput
+} = require("../utils/milestoneHelpers");
+
+const FALLBACK_MILESTONE_DEFS = [
+  { name: "Project Kickoff", startFrac: 0, endFrac: 0.25, status: "completed" },
+  { name: "Execution Phase", startFrac: 0.2, endFrac: 0.55, status: "in_progress" },
+  { name: "Midpoint Review", startFrac: 0.5, endFrac: 0.75, status: "in_progress" },
+  { name: "Final Delivery", startFrac: 0.7, endFrac: 1, status: "pending" }
+];
+
+const MILESTONE_DEFS_BY_TITLE = {
+  "Improve On-Time Delivery": [
+    { name: "Route Planning Analysis", startFrac: 0, endFrac: 0.2, status: "completed" },
+    { name: "Carrier Performance Review", startFrac: 0.15, endFrac: 0.35, status: "completed" },
+    { name: "Warehouse Pick-Pack Optimization", startFrac: 0.3, endFrac: 0.5, status: "in_progress" },
+    { name: "Last-Mile Pilot", startFrac: 0.45, endFrac: 0.65, status: "in_progress" },
+    { name: "SLA Monitoring Setup", startFrac: 0.6, endFrac: 0.8, status: "in_progress" },
+    { name: "Mid-Month Checkpoint", startFrac: 0.72, endFrac: 0.9, status: "pending" },
+    { name: "Final Compliance Review", startFrac: 0.85, endFrac: 1, status: "pending" }
+  ],
+  "Reduce Support Ticket Resolution Time": [
+    { name: "Ticket Triage Workflow", startFrac: 0, endFrac: 0.25, status: "completed" },
+    { name: "Knowledge Base Refresh", startFrac: 0.2, endFrac: 0.45, status: "completed" },
+    { name: "Agent Training Sprint", startFrac: 0.4, endFrac: 0.65, status: "in_progress" },
+    { name: "Resolution SLA Dashboard", startFrac: 0.6, endFrac: 0.85, status: "in_progress" },
+    { name: "Verification & Handoff", startFrac: 0.8, endFrac: 1, status: "pending" }
+  ],
+  "Improve Delivery Performance": [
+    { name: "Baseline Metrics Capture", startFrac: 0, endFrac: 0.3, status: "completed" },
+    { name: "Route Optimization", startFrac: 0.25, endFrac: 0.55, status: "in_progress" },
+    { name: "Performance Tracking Go-Live", startFrac: 0.5, endFrac: 0.8, status: "pending" },
+    { name: "Month-End Review", startFrac: 0.75, endFrac: 1, status: "pending" }
+  ],
+  "Clear Backlog Shipments": [
+    { name: "Backlog Inventory Audit", startFrac: 0, endFrac: 0.2, status: "completed" },
+    { name: "Priority Shipment Wave 1", startFrac: 0.15, endFrac: 0.4, status: "completed" },
+    { name: "Priority Shipment Wave 2", startFrac: 0.35, endFrac: 0.65, status: "in_progress" },
+    { name: "Carrier Escalation Follow-up", startFrac: 0.6, endFrac: 0.85, status: "in_progress" },
+    { name: "Clearance Verification", startFrac: 0.8, endFrac: 1, status: "pending" }
+  ],
+  "Customer Satisfaction Score": [
+    { name: "Survey Instrument Design", startFrac: 0, endFrac: 0.2, status: "completed" },
+    { name: "Q1 Pulse Survey Launch", startFrac: 0.18, endFrac: 0.4, status: "completed" },
+    { name: "Feedback Analysis", startFrac: 0.35, endFrac: 0.6, status: "in_progress" },
+    { name: "Action Plan Rollout", startFrac: 0.55, endFrac: 0.8, status: "in_progress" },
+    { name: "Quarter Close Report", startFrac: 0.75, endFrac: 1, status: "pending" }
+  ],
+  "Quarterly Warehouse Safety Audit": [
+    { name: "Checklist Draft", startFrac: 0, endFrac: 0.25, status: "completed" },
+    { name: "Walkthrough Inspection", startFrac: 0.2, endFrac: 0.5, status: "in_progress" },
+    { name: "Corrective Actions", startFrac: 0.45, endFrac: 0.75, status: "in_progress" },
+    { name: "Safety Sign-off", startFrac: 0.7, endFrac: 1, status: "pending" }
+  ],
+  "Increase Regional Sales Conversion": [
+    { name: "Funnel Baseline Analysis", startFrac: 0, endFrac: 0.22, status: "completed" },
+    { name: "Regional Campaign Setup", startFrac: 0.18, endFrac: 0.4, status: "in_progress" },
+    { name: "A/B Offer Testing", startFrac: 0.35, endFrac: 0.58, status: "in_progress" },
+    { name: "Conversion Dashboard", startFrac: 0.52, endFrac: 0.75, status: "in_progress" },
+    { name: "Quarter Performance Review", startFrac: 0.7, endFrac: 1, status: "pending" }
+  ],
+  "Reduce Lead Response Time": [
+    { name: "Alert Routing Setup", startFrac: 0, endFrac: 0.3, status: "pending" },
+    { name: "Response Playbook", startFrac: 0.25, endFrac: 0.55, status: "pending" },
+    { name: "Team Calibration", startFrac: 0.5, endFrac: 0.8, status: "pending" },
+    { name: "SLA Validation", startFrac: 0.75, endFrac: 1, status: "pending" }
+  ],
+  "Renewal Rate Improvement": [
+    { name: "Cohort Data Pull", startFrac: 0, endFrac: 0.25, status: "completed" },
+    { name: "Renewal Campaign Design", startFrac: 0.2, endFrac: 0.5, status: "in_progress" },
+    { name: "Pilot Outreach", startFrac: 0.45, endFrac: 0.75, status: "in_progress" },
+    { name: "Results Review", startFrac: 0.7, endFrac: 1, status: "pending" }
+  ],
+  "Partner Onboarding SLA": [
+    { name: "Onboarding Playbook", startFrac: 0, endFrac: 0.3, status: "completed" },
+    { name: "Partner Portal Setup", startFrac: 0.25, endFrac: 0.55, status: "in_progress" },
+    { name: "SLA Tracking Rollout", startFrac: 0.5, endFrac: 0.8, status: "in_progress" },
+    { name: "Partner Sign-off", startFrac: 0.75, endFrac: 1, status: "pending" }
+  ]
+};
+
+function getMilestoneDefsForKpi(kpi) {
+  return MILESTONE_DEFS_BY_TITLE[kpi.title] || FALLBACK_MILESTONE_DEFS;
+}
+
+async function seedMilestonesForKpi(kpi, createdBy, milestoneDefs) {
+  const defs = milestoneDefs || getMilestoneDefsForKpi(kpi);
+  const timeline = getKpiTimelineBounds(kpi);
+  const span = timeline.timelineEnd.getTime() - timeline.timelineStart.getTime();
+  const docs = [];
+
+  defs.forEach((def, index) => {
+    const startDate = new Date(timeline.timelineStart.getTime() + span * def.startFrac);
+    const endDate = new Date(timeline.timelineStart.getTime() + span * def.endFrac);
+    const parsed = parseMilestoneInput(
+      { name: def.name, startDate, endDate, status: def.status, sortOrder: index },
+      index,
+      timeline
+    );
+    if (parsed.doc) {
+      docs.push({
+        kpiId: kpi._id,
+        createdBy,
+        ...parsed.doc
+      });
+    }
+  });
+
+  if (!docs.length) return [];
+  return Milestone.insertMany(docs);
 }
 
 async function createAssignment({
@@ -326,6 +441,8 @@ async function main() {
     kpiRenewal,
     kpiPartnerArchived
   ] = kpis;
+
+  await Promise.all(kpis.map((kpi) => seedMilestonesForKpi(kpi, manager._id)));
 
   const assignmentOnTimeA = await createAssignment({
     kpi: kpiOnTimeDelivery,
@@ -690,7 +807,7 @@ async function main() {
       userId: staffA._id,
       title: "Evidence Pending Review",
       message: `${SAMPLE_TAG} Your submission for "Reduce Support Ticket Resolution Time" is awaiting review.`,
-      type: "verification",
+      type: "evidence",
       isRead: false,
       relatedKpiId: kpiSupportSla._id,
       relatedEvidenceId: evidenceRows.find((e) => e.title === "Support SLA Revision")?._id
@@ -699,7 +816,7 @@ async function main() {
       userId: staffA._id,
       title: "KPI Overdue Reminder",
       message: `${SAMPLE_TAG} "Clear Backlog Shipments" is past its due date.`,
-      type: "update",
+      type: "deadline",
       isRead: true,
       relatedKpiId: kpiBacklog._id
     },
@@ -715,7 +832,7 @@ async function main() {
       userId: staffB._id,
       title: "Evidence Approved",
       message: `${SAMPLE_TAG} Your "Conversion Funnel Snapshot" evidence was approved.`,
-      type: "update",
+      type: "approved",
       isRead: true,
       relatedKpiId: kpiSalesConversion._id
     },
@@ -723,7 +840,7 @@ async function main() {
       userId: staffC._id,
       title: "Revision Required",
       message: `${SAMPLE_TAG} Manager requested changes on "Renewal Rate Improvement".`,
-      type: "verification",
+      type: "rejected",
       isRead: false,
       relatedKpiId: kpiRenewal._id
     },
@@ -767,6 +884,7 @@ async function main() {
   console.log(`  Evidence:      ${evidenceRows.length}`);
   const kpiIds = kpis.map((k) => k._id);
   console.log(`  Assignments:   ${await KpiAssignment.countDocuments({ kpiId: { $in: kpiIds } })}`);
+  console.log(`  Milestones:    ${await Milestone.countDocuments({ kpiId: { $in: kpiIds } })}`);
   console.log(`  Notifications: ${await Notification.countDocuments({ message: { $regex: SAMPLE_TAG } })}`);
   console.log("\nStaff A (staff@trackify.com) KPI Progress:");
   console.log(`  Active:   ${activeForStaffA}`);
