@@ -1,10 +1,12 @@
 
-function initCreateKpiView() {
-  console.log("Create KPI page loaded");
+const CREATE_KPI_API = "http://127.0.0.1:5050/api";
 
+function initCreateKpiView() {
   setupToggle();
   setupPriority();
+  setupMilestones();
   setupFormSubmit();
+  updateCreateKpiMilestonesEmptyState();
 }
 
 function setupToggle() {
@@ -39,6 +41,61 @@ function setupPriority() {
   });
 }
 
+function buildCreateKpiMilestoneRowHtml(milestone = {}) {
+  const bounds = MilestoneTimeline.getCreateKpiTimelineBounds();
+  const kpiName = document.getElementById("kpiName")?.value?.trim() || "";
+  return MilestoneTimeline.buildMilestoneFormRowHtml({
+    rowClass: "create-kpi-milestone-row milestone-form-row",
+    name: milestone.name || kpiName,
+    startDate: milestone.startDate,
+    endDate: milestone.endDate,
+    status: milestone.status || "in_progress",
+    defaultStartDate: bounds.timelineStart,
+    defaultEndDate: bounds.timelineEnd
+  });
+}
+
+function updateCreateKpiMilestonesEmptyState() {
+  const list = document.getElementById("createKpiMilestonesList");
+  const empty = document.getElementById("createKpiMilestonesEmpty");
+  if (!list || !empty) return;
+  const count = list.querySelectorAll(".create-kpi-milestone-row").length;
+  empty.classList.toggle("d-none", count > 0);
+}
+
+function setupMilestones() {
+  const addBtn = document.getElementById("createKpiAddMilestoneBtn");
+  const list = document.getElementById("createKpiMilestonesList");
+  if (!addBtn || !list) return;
+
+  addBtn.addEventListener("click", () => {
+    list.insertAdjacentHTML("beforeend", buildCreateKpiMilestoneRowHtml());
+    updateCreateKpiMilestonesEmptyState();
+  });
+
+  list.addEventListener("click", (e) => {
+    const removeBtn = e.target.closest(".milestone-remove-btn");
+    if (!removeBtn) return;
+    removeBtn.closest(".create-kpi-milestone-row")?.remove();
+    updateCreateKpiMilestonesEmptyState();
+  });
+}
+
+function collectMilestonesFromForm() {
+  const list = document.getElementById("createKpiMilestonesList");
+  const kpiName = document.getElementById("kpiName")?.value?.trim() || "";
+  return MilestoneTimeline.collectMilestonesFromList(list, { fallbackName: kpiName });
+}
+
+function validateMilestones(milestones) {
+  const bounds = MilestoneTimeline.getCreateKpiTimelineBounds();
+  return MilestoneTimeline.validateMilestoneDates(
+    milestones,
+    bounds.timelineStart,
+    bounds.timelineEnd
+  );
+}
+
 function getFormData() {
   return {
     name: document.getElementById("kpiName")?.value.trim(),
@@ -55,6 +112,7 @@ function getFormData() {
     priority:
       document.querySelector("#priorityGroup .priority-btn.active")?.dataset
         .priority || "",
+    milestones: collectMilestonesFromForm()
   };
 }
 
@@ -79,6 +137,10 @@ function validateForm(data) {
     return false;
   }
 
+  if (!validateMilestones(data.milestones)) {
+    return false;
+  }
+
   return true;
 }
 
@@ -88,8 +150,6 @@ function setupFormSubmit() {
 
   btn.addEventListener("click", async () => {
     const data = getFormData();
-
-    console.log("Form Data:", data);
 
     if (!validateForm(data)) return;
 
@@ -111,8 +171,12 @@ async function saveKpi(data) {
     department: "All Departments"
   };
 
+  if (data.milestones?.length) {
+    payload.milestones = data.milestones;
+  }
+
   try {
-    const response = await authFetch("http://127.0.0.1:5050/api/kpis", {
+    const response = await authFetch(`${CREATE_KPI_API}/kpis`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -127,7 +191,12 @@ async function saveKpi(data) {
       return;
     }
 
-    alert("KPI Created Successfully!");
+    const milestoneCount = Array.isArray(result.milestones) ? result.milestones.length : 0;
+    const milestoneNote =
+      milestoneCount > 0
+        ? ` ${milestoneCount} milestone${milestoneCount === 1 ? "" : "s"} on the timeline.`
+        : " A default project milestone spans the KPI timeline.";
+    alert(`KPI created successfully.${milestoneNote}`);
     resetForm();
   } catch (error) {
     alert("Cannot connect to server. Please make sure the backend is running.");
@@ -155,6 +224,10 @@ function resetForm() {
   document
     .querySelectorAll("#priorityGroup .priority-btn.active")
     .forEach((b) => b.classList.remove("active"));
+
+  const list = document.getElementById("createKpiMilestonesList");
+  if (list) list.innerHTML = "";
+  updateCreateKpiMilestonesEmptyState();
 }
 
 window.initCreateKpiView = initCreateKpiView;

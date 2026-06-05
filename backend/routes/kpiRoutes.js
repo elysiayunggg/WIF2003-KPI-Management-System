@@ -13,6 +13,12 @@ const {
   unarchiveKpi,
   patchKpiProgress
 } = require("../controllers/kpiController");
+const {
+  getMilestones,
+  createMilestone,
+  updateMilestone,
+  deleteMilestone
+} = require("../controllers/milestoneController");
 const { requireAuth } = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -23,6 +29,10 @@ router.get("/", getKpis);
 router.get("/assigned/:userId", getAssignedKpis);
 router.get("/archived/:userId", getArchivedKpis);
 router.get("/:id/assignments", getKpiAssignments);
+router.get("/:id/milestones", getMilestones);
+router.post("/:id/milestones", createMilestone);
+router.patch("/:id/milestones/:milestoneId", updateMilestone);
+router.delete("/:id/milestones/:milestoneId", deleteMilestone);
 router.get("/:id/review-data", getKpiReviewData);
 router.post("/", createKpi);
 router.post("/:id/archive", archiveKpi);

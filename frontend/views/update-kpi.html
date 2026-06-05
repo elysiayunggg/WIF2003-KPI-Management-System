@@ -99,6 +99,23 @@ This KPI tracks the gross revenue increase across all enterprise software servic
         </div>
       </div>
 
+      <!-- Project Milestones -->
+      <div class="card border-0 shadow-sm mt-4">
+        <div class="card-body p-4">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <div>
+              <h5 class="fw-semibold mb-0" data-i18n="updateKpi_milestonesTitle">Project Milestones</h5>
+              <small class="text-muted d-block" data-i18n="updateKpi_milestonesHint">Edit milestones along the KPI timeline (start to due date).</small>
+            </div>
+            <button type="button" class="btn btn-sm create-btn" id="updateKpiAddMilestoneBtn">
+              <i class="bi bi-plus-lg"></i> <span data-i18n="updateKpi_addMilestoneBtn">Add milestone</span>
+            </button>
+          </div>
+          <div id="updateKpiMilestonesList" class="update-kpi-milestones-list"></div>
+          <p id="updateKpiMilestonesEmpty" class="text-muted small mb-0 d-none" data-i18n="updateKpi_milestonesEmpty">No milestones for this KPI yet.</p>
+        </div>
+      </div>
+
     </div>
 
     <!-- RIGHT SECTION -->

@@ -111,6 +111,21 @@
 
           </div>
 
+          <!-- Project milestones (optional) -->
+          <div class="border rounded-3 p-3 mt-2 mb-3" id="create-kpi-milestones-section">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+              <div>
+                <label class="form-label fw-semibold mb-0" data-i18n="createKpi_milestonesTitle">Project Milestones</label>
+                <small class="text-muted d-block" data-i18n="createKpi_milestonesHint">Optional. Add milestones between KPI start and due date.</small>
+              </div>
+              <button type="button" class="btn btn-sm assign-btn" id="createKpiAddMilestoneBtn">
+                <i class="bi bi-plus-lg"></i> <span data-i18n="createKpi_addMilestoneBtn">Add milestone</span>
+              </button>
+            </div>
+            <div id="createKpiMilestonesList" class="create-kpi-milestones-list"></div>
+            <p id="createKpiMilestonesEmpty" class="text-muted small mb-0" data-i18n="createKpi_milestonesEmpty">No milestones added yet.</p>
+          </div>
+
           <!-- Buttons -->
           <div class="d-flex gap-2 mt-4">
             <button id="createKpiBtn" type="button" class="btn create-btn px-4">

@@ -291,6 +291,243 @@ async function loadKpiAssignmentsByKpi(kpiId) {
     }
 }
 
+function getKPIDetailLoggedInUser() {
+    try {
+        return JSON.parse(localStorage.getItem("user") || "{}");
+    } catch (error) {
+        return {};
+    }
+}
+
+function isKPIDetailManager() {
+    return getKPIDetailLoggedInUser().role === "manager";
+}
+
+async function loadMilestonesByKpi(kpiId) {
+    if (!kpiId) {
+        return MilestoneTimeline.normalizeMilestoneApiResponse(null);
+    }
+
+    try {
+        const response = await authFetch(
+            `${KPI_DETAIL_API_BASE}/kpis/${encodeURIComponent(kpiId)}/milestones`
+        );
+        if (!response.ok) return MilestoneTimeline.normalizeMilestoneApiResponse(null);
+        const data = await response.json();
+        return MilestoneTimeline.normalizeMilestoneApiResponse(data);
+    } catch (error) {
+        console.error("Failed to load milestones:", error);
+        return MilestoneTimeline.normalizeMilestoneApiResponse(null);
+    }
+}
+
+function escapeKpiDetailHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+}
+
+function buildMilestoneRowHtml(milestone, isManager) {
+    const fillClass = milestone.status === "pending" ? "kpi-fill-pending" : "kpi-fill";
+    const start = Number(milestone.startPercent) || 0;
+    const width = Number(milestone.widthPercent) || 0;
+    const id = milestone._id || milestone.id || "";
+    const dateRange = `${MilestoneTimeline.formatDisplayDate(milestone.startDate)} – ${MilestoneTimeline.formatDisplayDate(milestone.endDate)}`;
+    const managerActions = isManager
+        ? `<div class="kpi-milestone-actions">
+                <button type="button" class="btn btn-sm btn-link milestone-edit-btn" data-milestone-id="${escapeKpiDetailHtml(id)}" aria-label="Edit milestone">
+                    <span class="material-symbols-outlined">edit</span>
+                </button>
+                <button type="button" class="btn btn-sm btn-link text-danger milestone-delete-btn" data-milestone-id="${escapeKpiDetailHtml(id)}" aria-label="Delete milestone">
+                    <span class="material-symbols-outlined">delete</span>
+                </button>
+           </div>`
+        : "";
+
+    return `
+        <div class="kpi-milestone-row" data-milestone-id="${escapeKpiDetailHtml(id)}">
+            <div class="kpi-milestone-name-wrap">
+                <div>
+                    <div class="kpi-milestone-name">${escapeKpiDetailHtml(milestone.name)}</div>
+                    <div class="kpi-milestone-dates text-muted small">${escapeKpiDetailHtml(dateRange)}</div>
+                </div>
+                ${managerActions}
+            </div>
+            <div class="kpi-track">
+                <div class="${fillClass}" style="width: ${width}%; margin-left: ${start}%"></div>
+            </div>
+        </div>`;
+}
+
+function renderMilestoneTimeline(root, payload, options = {}) {
+    if (!root) return;
+
+    const isManager = options.isManager ?? isKPIDetailManager();
+    const milestones = payload?.milestones || [];
+    const monthLabels = payload?.monthLabels || [];
+
+    const header = root.querySelector("#kpi-milestone-month-header");
+    if (header) {
+        const colCount = Math.max(3, monthLabels.length || 3);
+        header.style.setProperty("--milestone-cols", String(colCount));
+        const monthSpans = monthLabels
+            .map((label) => `<span>${escapeKpiDetailHtml(label)}</span>`)
+            .join("");
+        header.innerHTML = `<span data-i18n="kpiDetail_milestoneColMilestone">Milestone</span>${monthSpans}`;
+    }
+
+    const body = root.querySelector("#milestone-timeline-body");
+    if (body) {
+        if (!milestones.length) {
+            body.innerHTML = `<p class="kpi-milestone-empty text-muted small mb-0 mt-3">No milestones on this timeline yet.</p>`;
+        } else {
+            body.innerHTML = milestones.map((row) => buildMilestoneRowHtml(row, isManager)).join("");
+        }
+    }
+
+    const cap = root.querySelector("#kpi-detail-milestone-caption");
+    if (cap && payload?.timelineStart && payload?.timelineEnd) {
+        cap.textContent = MilestoneTimeline.formatTimelineCaption(
+            payload.kpiTitle || options.kpiTitle || "",
+            payload.timelineStart,
+            payload.timelineEnd
+        );
+    }
+
+    const managerActions = root.querySelector("#milestone-manager-actions");
+    if (managerActions) {
+        managerActions.classList.toggle("d-none", !isManager);
+    }
+
+    root._kpiMilestonePayload = payload;
+    root._kpiMilestones = milestones;
+}
+
+function openMilestoneModal(root, milestone) {
+    const modal = root.querySelector("#milestoneModal");
+    if (!modal) return;
+
+    const titleEl = root.querySelector("#milestone-modal-title");
+    const idInput = root.querySelector("#milestone-form-id");
+    const nameInput = root.querySelector("#milestone-form-name");
+    const startDateInput = root.querySelector("#milestone-form-start-date");
+    const endDateInput = root.querySelector("#milestone-form-end-date");
+    const statusInput = root.querySelector("#milestone-form-status");
+    const payload = root._kpiMilestonePayload || {};
+
+    const isEdit = Boolean(milestone);
+    if (titleEl) titleEl.textContent = isEdit ? "Edit milestone" : "Add milestone";
+    if (idInput) idInput.value = isEdit ? (milestone._id || milestone.id || "") : "";
+    if (nameInput) nameInput.value = isEdit ? milestone.name || "" : "";
+    if (startDateInput) {
+        startDateInput.value = isEdit
+            ? MilestoneTimeline.toDateInputValue(milestone.startDate)
+            : MilestoneTimeline.toDateInputValue(payload.timelineStart);
+    }
+    if (endDateInput) {
+        endDateInput.value = isEdit
+            ? MilestoneTimeline.toDateInputValue(milestone.endDate)
+            : MilestoneTimeline.toDateInputValue(payload.timelineEnd);
+    }
+    if (statusInput) statusInput.value = isEdit ? milestone.status || "in_progress" : "in_progress";
+
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+}
+
+function closeMilestoneModal(root) {
+    const modal = root.querySelector("#milestoneModal");
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+}
+
+async function saveMilestoneFromModal(root, event) {
+    if (event) event.preventDefault();
+
+    const row = getSelectedKpiDetailRow();
+    if (!row?.id) {
+        alert("No KPI selected.");
+        return;
+    }
+
+    const idInput = root.querySelector("#milestone-form-id");
+    const nameInput = root.querySelector("#milestone-form-name");
+    const startDateInput = root.querySelector("#milestone-form-start-date");
+    const endDateInput = root.querySelector("#milestone-form-end-date");
+    const statusInput = root.querySelector("#milestone-form-status");
+
+    const payload = {
+        name: nameInput?.value?.trim(),
+        startDate: startDateInput?.value,
+        endDate: endDateInput?.value,
+        status: statusInput?.value
+    };
+
+    const timelinePayload = root._kpiMilestonePayload || {};
+    if (
+        !MilestoneTimeline.validateMilestoneDates(
+            [payload],
+            timelinePayload.timelineStart,
+            timelinePayload.timelineEnd
+        )
+    ) {
+        return;
+    }
+
+    const milestoneId = idInput?.value?.trim();
+    const isEdit = Boolean(milestoneId);
+    const url = isEdit
+        ? `${KPI_DETAIL_API_BASE}/kpis/${encodeURIComponent(row.id)}/milestones/${encodeURIComponent(milestoneId)}`
+        : `${KPI_DETAIL_API_BASE}/kpis/${encodeURIComponent(row.id)}/milestones`;
+
+    const response = await authFetch(url, {
+        method: isEdit ? "PATCH" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(result.message || "Failed to save milestone.");
+    }
+
+    closeMilestoneModal(root);
+    const milestonePayload = await loadMilestonesByKpi(row.id);
+    renderMilestoneTimeline(root, milestonePayload, {
+        isManager: true,
+        kpiTitle: row.title || row.kpi
+    });
+    showKPIDetailFeedback(root, isEdit ? "Milestone updated." : "Milestone added.", "success");
+}
+
+async function deleteKPIDetailMilestone(root, milestoneId) {
+    const row = getSelectedKpiDetailRow();
+    if (!row?.id || !milestoneId) return;
+
+    const ok = window.confirm("Delete this milestone?");
+    if (!ok) return;
+
+    const response = await authFetch(
+        `${KPI_DETAIL_API_BASE}/kpis/${encodeURIComponent(row.id)}/milestones/${encodeURIComponent(milestoneId)}`,
+        { method: "DELETE" }
+    );
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(result.message || "Failed to delete milestone.");
+    }
+
+    const milestonePayload = await loadMilestonesByKpi(row.id);
+    renderMilestoneTimeline(root, milestonePayload, {
+        isManager: true,
+        kpiTitle: row.title || row.kpi
+    });
+    showKPIDetailFeedback(root, "Milestone deleted.", "success");
+}
+
 function evidenceActionsDropdown(options = {}) {
     const { showDelete = true } = options;
     const deleteItem = showDelete
@@ -612,20 +849,21 @@ async function populateKpiDetailFromSharedData(root) {
     const ui = mapKpiRowStatusToDetailUI(row.apiStatus || row.status, row.progress);
     updateKPIDetailStatus(root, ui.label, ui.cls);
 
-    const cap = root.querySelector("#kpi-detail-milestone-caption");
-    if (cap) {
-        cap.textContent = `Tracking ${row.progress ?? 0}% complete toward target ${row.target || ""}.`;
-    }
-
     const myBody = root.querySelector("#kpi-detail-my-evidence-body");
     const teamBody = root.querySelector("#kpi-detail-team-evidence-body");
     const timeline = root.querySelector("#kpi-detail-timeline");
 
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const [evidenceList, assignmentList] = await Promise.all([
+    const user = getKPIDetailLoggedInUser();
+    const [evidenceList, assignmentList, milestonePayload] = await Promise.all([
         loadEvidenceByKpi(row.id),
-        loadKpiAssignmentsByKpi(row.id)
+        loadKpiAssignmentsByKpi(row.id),
+        loadMilestonesByKpi(row.id)
     ]);
+
+    renderMilestoneTimeline(root, milestonePayload, {
+        isManager: user.role === "manager",
+        kpiTitle: row.title || row.kpi
+    });
 
     const myRows = buildMyEvidenceRowsFromApi(evidenceList, user.id);
     if (myBody) {
@@ -880,28 +1118,6 @@ async function deleteKPIDetailEvidence(root, evidenceId) {
     showKPIDetailFeedback(root, message, "success");
 }
 
-function switchKPIDetailQuarter(root, quarter) {
-    if (!root) return;
-
-    root.querySelectorAll(".q-btn").forEach((btn) => {
-        btn.classList.remove("kpi-quarter-active");
-    });
-
-    const activeBtn = root.querySelector(`#btn-${quarter}`);
-    if (activeBtn) {
-        activeBtn.classList.add("kpi-quarter-active");
-    }
-
-    root.querySelectorAll(".quarter-content").forEach((content) => {
-        content.classList.remove("active");
-    });
-
-    const activeContent = root.querySelector(`#content-${quarter}`);
-    if (activeContent) {
-        activeContent.classList.add("active");
-    }
-}
-
 function printKPIDetailPage(root) {
     closeKPIDetailStatusDropdown(root);
     document.body.classList.add("kpi-detail-printing");
@@ -945,14 +1161,56 @@ function bindKPIDetailEvents(root) {
         });
     });
 
-    root.querySelectorAll(".q-btn[data-quarter]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-            switchKPIDetailQuarter(root, btn.getAttribute("data-quarter"));
+    const milestoneAddBtn = root.querySelector("#milestone-add-btn");
+    if (milestoneAddBtn) {
+        milestoneAddBtn.addEventListener("click", () => openMilestoneModal(root, null));
+    }
+
+    const milestoneForm = root.querySelector("#milestone-form");
+    if (milestoneForm) {
+        milestoneForm.addEventListener("submit", async (e) => {
+            try {
+                await saveMilestoneFromModal(root, e);
+            } catch (error) {
+                showKPIDetailFeedback(root, error.message || "Failed to save milestone.", "danger");
+            }
         });
-    });
+    }
+
+    const milestoneCancelBtn = root.querySelector("#milestone-modal-cancel");
+    if (milestoneCancelBtn) {
+        milestoneCancelBtn.addEventListener("click", () => closeMilestoneModal(root));
+    }
+
+    const milestoneModal = root.querySelector("#milestoneModal");
+    if (milestoneModal) {
+        milestoneModal.addEventListener("click", (e) => {
+            if (e.target === milestoneModal) closeMilestoneModal(root);
+        });
+    }
 
     // Delegated handler so actions still work after table HTML is re-rendered.
     root.addEventListener("click", async (e) => {
+        const editMilestoneBtn = e.target.closest(".milestone-edit-btn");
+        if (editMilestoneBtn) {
+            const milestoneId = editMilestoneBtn.getAttribute("data-milestone-id");
+            const milestone = (root._kpiMilestones || []).find(
+                (m) => String(m._id || m.id) === String(milestoneId)
+            );
+            if (milestone) openMilestoneModal(root, milestone);
+            return;
+        }
+
+        const deleteMilestoneBtn = e.target.closest(".milestone-delete-btn");
+        if (deleteMilestoneBtn) {
+            try {
+                await deleteKPIDetailMilestone(root, deleteMilestoneBtn.getAttribute("data-milestone-id"));
+            } catch (error) {
+                showKPIDetailFeedback(root, error.message || "Failed to delete milestone.", "danger");
+            }
+            return;
+        }
+
         const actionBtn = e.target.closest(".evidence-view-btn, .evidence-edit-btn, .evidence-delete-btn");
         if (!actionBtn) return;
 

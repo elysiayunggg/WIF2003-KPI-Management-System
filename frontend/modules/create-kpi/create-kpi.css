@@ -159,3 +159,15 @@
     color: #065f46;
     border-color: #34d399;
 }
+
+#create-kpi-milestones-section {
+    background-color: #f8f9fb;
+}
+
+.create-kpi-milestones-list .create-kpi-milestone-row {
+    background-color: #ffffff;
+}
+
+.create-kpi-milestones-list .create-kpi-milestone-row:last-child {
+    margin-bottom: 0 !important;
+}

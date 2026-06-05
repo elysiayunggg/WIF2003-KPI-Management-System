@@ -181,3 +181,11 @@
     margin-bottom: 4px;
     display: block;
 }
+
+.update-kpi-milestones-list .update-kpi-milestone-row {
+  background-color: #f8f9fb;
+}
+
+.update-kpi-milestones-list .update-kpi-milestone-row:last-child {
+  margin-bottom: 0 !important;
+}
