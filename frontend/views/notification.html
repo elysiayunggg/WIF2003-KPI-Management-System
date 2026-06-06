@@ -3,13 +3,13 @@
   <!-- Breadcrumb -->
   <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
     <ol class="breadcrumb mb-0">
-      <li class="breadcrumb-item active" aria-current="page">Notifications</li>
+      <li class="breadcrumb-item active" aria-current="page" data-i18n="notif_breadcrumbCurrent">Notifications</li>
     </ol>
   </nav>
 
   <!-- Title -->
   <div class="mb-4">
-    <h1 class="page-title mb-0">Recent Activities</h1>
+    <h1 class="page-title mb-0" data-i18n="notif_pageTitle">Recent Activities</h1>
   </div>
 
   <!-- Row 1: Search + Mark all as read -->
@@ -21,6 +21,7 @@
         id="notifPageSearch"
         class="form-control notif-search-input"
         placeholder="Search activity details..."
+        data-i18n-placeholder="notif_searchPlaceholder"
         oninput="filterNotificationsBySearch(this.value)"
       />
     </div>
@@ -29,7 +30,7 @@
       onclick="markAllAsRead(); renderNotificationCards(activeNotifTab)"
     >
       <i class="bi bi-check-all"></i>
-      <span>Mark all as read</span>
+      <span data-i18n="notif_markAllRead">Mark all as read</span>
     </button>
   </div>
 
@@ -47,7 +48,7 @@
       class="btn notif-delete-all-btn p-0"
       onclick="deleteAllNotificationsPage()"
     >
-      Delete all notifications
+      <span data-i18n="notif_deleteAllBtn">Delete all notifications</span>
     </button>
   </div>
 

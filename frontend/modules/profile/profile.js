@@ -135,7 +135,7 @@ async function saveGeneralDetails() {
   try {
     const res = await authFetch(`${PROFILE_API}/me`, {
       method: "PUT",
-      headers: getAuthHeaders(),
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, employeeId, department })
     });
 
@@ -216,10 +216,7 @@ async function confirmDeleteAccount() {
   }
 
   try {
-    const res = await authFetch(`${PROFILE_API}/me`, {
-      method: "DELETE",
-      headers: getAuthHeaders()
-    });
+    const res = await authFetch(`${PROFILE_API}/me`, { method: "DELETE" });
 
     if (!res.ok) {
       const data = await res.json();
@@ -310,7 +307,7 @@ async function profileSavePreferences() {
   try {
     const res = await authFetch(`${PROFILE_API}/preferences`, {
       method: "PUT",
-      headers: getAuthHeaders(),
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ appearance, language, timezone, systemAlerts, weeklyDigest, marketingCommunications })
     });
 
@@ -560,7 +557,7 @@ async function profileUpdatePassword() {
   try {
     const res = await authFetch(`${PROFILE_API}/change-password`, {
       method: "PUT",
-      headers: getAuthHeaders(),
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ currentPassword, newPassword })
     });
 
