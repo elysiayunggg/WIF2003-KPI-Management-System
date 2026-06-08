@@ -1,17 +1,16 @@
 const Notification = require("../models/Notification");
 const { addClient, removeClient } = require("../sse/sseClients");
+const mongoose = require("mongoose");
 
 // GET /api/notifications?userId=<id>
 // Returns all notifications for one user, newest first.
 // Called by notification-data.js on page load.
 exports.getNotifications = async (req, res) => {
   try {
-    // req.query holds the URL query parameters (?key=value).
-    // The frontend sends ?userId=<id>, so we read it from req.query.userId.
-    const { userId } = req.query;
+    const userId = req.user?.id;
 
     if (!userId) {
-      return res.status(400).json({ message: "userId query parameter is required" });
+      return res.status(401).json({ message: "Authentication required" });
     }
 
     const notifications = await Notification.find({ userId })
@@ -29,11 +28,21 @@ exports.getNotifications = async (req, res) => {
 // :id refers to the notification's MongoDB _id, passed as a URL segment.
 exports.markOneAsRead = async (req, res) => {
   try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(400).json({ message: "Invalid notification id" });
+    }
+
     // req.params.id is the value captured from the :id segment in the route.
     // returnDocument: "after" returns the updated document instead of
     // the old one. Without it, the returned object would still show isRead: false.
-    const notification = await Notification.findByIdAndUpdate(
-      req.params.id,
+    const notification = await Notification.findOneAndUpdate(
+      { _id: req.params.id, userId },
       { isRead: true },
       { returnDocument: "after" }
     );
@@ -52,10 +61,10 @@ exports.markOneAsRead = async (req, res) => {
 // Marks every notification belonging to this user as read in one operation.
 exports.markAllAsRead = async (req, res) => {
   try {
-    const { userId } = req.query;
+    const userId = req.user?.id;
 
     if (!userId) {
-      return res.status(400).json({ message: "userId query parameter is required" });
+      return res.status(401).json({ message: "Authentication required" });
     }
 
     // updateMany() updates every document that matches the filter in one DB call.
@@ -77,8 +86,8 @@ exports.markAllAsRead = async (req, res) => {
 // Opens a persistent SSE stream for the given user.
 // The browser EventSource API reconnects automatically if the connection drops.
 exports.subscribeNotifications = (req, res) => {
-  const { userId } = req.query;
-  if (!userId) return res.status(400).end();
+  const userId = req.user?.id;
+  if (!userId) return res.status(401).end();
 
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -96,10 +105,10 @@ exports.subscribeNotifications = (req, res) => {
 // Permanently deletes all notifications for this user.
 exports.deleteAllNotifications = async (req, res) => {
   try {
-    const { userId } = req.query;
+    const userId = req.user?.id;
 
     if (!userId) {
-      return res.status(400).json({ message: "userId query parameter is required" });
+      return res.status(401).json({ message: "Authentication required" });
     }
 
     // deleteMany() removes every document matching the filter in one DB call.

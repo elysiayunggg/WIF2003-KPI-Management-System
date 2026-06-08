@@ -71,7 +71,11 @@ async function createAssignmentsForUsers(kpi, userIds, assignedById) {
 
 exports.getKpis = async (req, res) => {
   try {
-    const kpis = await Kpi.find()
+    const filter = req.user?.role === "manager"
+      ? {}
+      : { assignedTo: req.user?.id };
+
+    const kpis = await Kpi.find(filter)
       .populate("createdBy", "name email role")
       .populate("assignedTo", "name email role")
       .sort({ createdAt: -1 });
@@ -517,11 +521,40 @@ exports.updateKpi = async (req, res) => {
       return res.status(400).json({ message: "Invalid KPI id" });
     }
 
-    const previousKpi = Array.isArray(req.body.assignedTo)
-      ? await Kpi.findById(req.params.id).select("assignedTo createdBy dueDate")
-      : null;
+    if (req.user?.role !== "manager") {
+      return res.status(403).json({ message: "Only managers can update KPIs" });
+    }
 
-    const kpi = await Kpi.findByIdAndUpdate(req.params.id, req.body, {
+    const allowedUpdateFields = [
+      "title",
+      "description",
+      "category",
+      "department",
+      "targetValue",
+      "currentValue",
+      "unit",
+      "status",
+      "priority",
+      "startDate",
+      "dueDate",
+      "assignedTo",
+      "reviewComments"
+    ];
+
+    const updates = {};
+    allowedUpdateFields.forEach((field) => {
+      if (Object.prototype.hasOwnProperty.call(req.body, field)) {
+        updates[field] = req.body[field];
+      }
+    });
+
+    const previousKpi = await Kpi.findById(req.params.id).select("assignedTo createdBy dueDate");
+
+    if (!previousKpi) {
+      return res.status(404).json({ message: "KPI not found" });
+    }
+
+    const kpi = await Kpi.findByIdAndUpdate(req.params.id, updates, {
       returnDocument: "after",
       runValidators: true
     });
@@ -531,14 +564,14 @@ exports.updateKpi = async (req, res) => {
     // Only run this block if the request body actually contains an assignedTo field.
     // If the manager only updated the title or dueDate, req.body.assignedTo would be
     // undefined, and we'd skip this entire block.
-    if (previousKpi && Array.isArray(req.body.assignedTo)) {
+    if (previousKpi && Array.isArray(updates.assignedTo)) {
 
       // Convert both lists to plain strings so we can compare them reliably.
       // MongoDB ObjectIds are objects, not strings — comparing them directly with
       // === or .includes() would always return false even if the values look the same.
       // .toString() converts each ObjectId to its 24-character hex string form.
       const oldAssignedIds = previousKpi.assignedTo.map((id) => id.toString());
-      const newAssignedIds = req.body.assignedTo.map((id) => id.toString());
+      const newAssignedIds = updates.assignedTo.map((id) => id.toString());
 
       // .filter() keeps only the IDs from the new list that do NOT appear in the old list.
       // These are the staff members being assigned for the first time in this update.
@@ -559,9 +592,9 @@ exports.updateKpi = async (req, res) => {
       }
     }
 
-    if (previousKpi && Array.isArray(req.body.assignedTo)) {
+    if (previousKpi && Array.isArray(updates.assignedTo)) {
       const previousIds = (previousKpi.assignedTo || []).map((id) => String(id));
-      const nextIds = req.body.assignedTo.map((id) => String(id));
+      const nextIds = updates.assignedTo.map((id) => String(id));
       const newlyAssigned = nextIds.filter((id) => !previousIds.includes(id));
 
       if (newlyAssigned.length) {
@@ -574,16 +607,16 @@ exports.updateKpi = async (req, res) => {
     }
 
     // Keep evidence review records aligned with manager decision on KPI.
-    if (req.body.status === "approved" || req.body.status === "rejected") {
+    if (updates.status === "approved" || updates.status === "rejected") {
       const latestEvidence = await Evidence.findOne({
         kpiId: kpi._id,
         status: "pending"
       }).sort({ createdAt: -1 });
 
       if (latestEvidence) {
-        latestEvidence.status = req.body.status;
-        if (typeof req.body.reviewComments === "string") {
-          latestEvidence.reviewerComments = req.body.reviewComments.trim();
+        latestEvidence.status = updates.status;
+        if (typeof updates.reviewComments === "string") {
+          latestEvidence.reviewerComments = updates.reviewComments.trim();
         }
         if (mongoose.isValidObjectId(req.user?.id)) {
           latestEvidence.reviewedBy = req.user.id;
@@ -595,11 +628,13 @@ exports.updateKpi = async (req, res) => {
       // Notify every staff member assigned to this KPI about the decision.
       try {
         const staffIds = Array.isArray(kpi.assignedTo) ? kpi.assignedTo : [];
-        const verb = req.body.status === "approved" ? "approved" : "rejected";
-        const titleText = req.body.status === "approved"
+        const verb = updates.status === "approved" ? "approved" : "rejected";
+        const titleText = updates.status === "approved"
           ? "KPI Evidence Approved"
           : "KPI Evidence Rejected";
-        const comment = req.body.reviewComments?.trim();
+        const comment = typeof updates.reviewComments === "string"
+          ? updates.reviewComments.trim()
+          : "";
         const messageText = comment
           ? `Your evidence for KPI "${kpi.title}" has been ${verb}. Reviewer comment: ${comment}`
           : `Your evidence for KPI "${kpi.title}" has been ${verb}.`;
@@ -610,7 +645,7 @@ exports.updateKpi = async (req, res) => {
             userId: staffId,
             title: titleText,
             message: messageText,
-            type: req.body.status === "approved" ? "approved" : "rejected",
+            type: updates.status === "approved" ? "approved" : "rejected",
             relatedKpiId: kpi._id,
             relatedEvidenceId: latestEvidence?._id
           });

@@ -22,7 +22,7 @@ function resolveKpiWorkflowStatus({ status, dueDate, progressPercent }) {
   if (raw === "rejected") return "rejected";
   if (pct >= 100) return "pending verification";
   if (isPastDue(dueDate)) return "overdue";
-  if (raw === "not started") return "not started";
+  if (raw === "not started" || pct <= 0) return "not started";
   return "in progress";
 }
 
