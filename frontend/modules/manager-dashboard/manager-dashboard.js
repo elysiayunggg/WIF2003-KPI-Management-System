@@ -284,7 +284,7 @@ function managerFormatStatus(status) {
 
   if (value === "pending verification") return "Pending Verification";
   if (value === "approved") return "Completed";
-  if (value === "rejected") return "Pending Verification";
+  if (value === "rejected") return "Rejected";
 
   return value
     .split(" ")
@@ -330,17 +330,19 @@ function mapManagerApiKpi(kpi) {
     priority: managerFormatStatus(kpi.priority || "medium"),
     target: managerFormatTarget(kpi),
     staff: firstStaff?.name || "Unassigned",
+    assignedStaff: assignedUsers.map(user => user.name).filter(Boolean),
     initials: managerInitials(firstStaff?.name),
     ownerRole: firstStaff?.role || "",
     progress,
     status: managerFormatStatus(kpi.status),
-    deadline: managerFormatDate(kpi.dueDate)
+    deadline: managerFormatDate(kpi.dueDate),
+    dueDateRaw: kpi.dueDate
   };
 }
 
 async function loadManagerKpisFromApi() {
   try {
-    const response = await authFetch("http://127.0.0.1:5050/api/kpis");
+    const response = await authFetch(apiUrl("/kpis"));
     if (!response.ok) throw new Error("Failed to load manager KPIs");
 
     const kpis = await response.json();
@@ -466,32 +468,83 @@ function updateManagerSummaryCards(data) {
 }
 
 function updateManagerPerformanceSummary(data) {
-  if (!data || data.length === 0) {
-    document.getElementById("managerAverageScore").textContent = "0%";
-    document.getElementById("managerTopStaff").textContent = "-";
-    document.getElementById("managerLowestStaff").textContent = "-";
+  const assignedData = Array.isArray(data)
+    ? data.filter(item => Array.isArray(item.assignedStaff) && item.assignedStaff.length > 0)
+    : [];
+  const topItem = document.getElementById("managerTopStaffItem");
+  const lowestItem = document.getElementById("managerLowestStaffItem");
+  const topStaff = document.getElementById("managerTopStaff");
+  const lowestStaff = document.getElementById("managerLowestStaff");
+  const topRate = document.getElementById("managerTopStaffRate");
+  const lowestRate = document.getElementById("managerLowestStaffRate");
+
+  if (!assignedData.length) {
+    topStaff.textContent = "-";
+    lowestStaff.textContent = "-";
+    topRate.textContent = "-";
+    lowestRate.textContent = "-";
+    topItem?.removeAttribute("data-tooltip");
+    lowestItem?.removeAttribute("data-tooltip");
     return;
   }
 
-  const average = Math.round(data.reduce((sum, item) => sum + item.progress, 0) / data.length);
-  document.getElementById("managerAverageScore").textContent = `${average}%`;
+  const staffResults = {};
 
-  const staffScores = {};
-
-  data.forEach(item => {
-    if (!staffScores[item.staff]) staffScores[item.staff] = [];
-    staffScores[item.staff].push(item.progress);
+  assignedData.forEach(item => {
+    item.assignedStaff.forEach(staff => {
+      if (!staffResults[staff]) {
+        staffResults[staff] = { completed: 0, rejected: 0, overdue: 0 };
+      }
+      if (item.status === "Completed") {
+        staffResults[staff].completed += 1;
+      } else if (item.status === "Rejected") {
+        staffResults[staff].rejected += 1;
+      } else if (item.status === "Overdue") {
+        staffResults[staff].overdue += 1;
+      }
+    });
   });
 
-  const staffAverages = Object.entries(staffScores).map(([staff, scores]) => ({
+  const staffAverages = Object.entries(staffResults).map(([staff, result]) => ({
     staff,
-    average: Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
-  }));
+    average: result.completed + result.rejected + result.overdue
+      ? Math.round((result.completed / (result.completed + result.rejected + result.overdue)) * 100)
+      : 0,
+    completed: result.completed,
+    rejected: result.rejected,
+    overdue: result.overdue,
+    count: result.completed + result.rejected + result.overdue
+  })).filter(result => result.count >= 2);
 
-  staffAverages.sort((a, b) => b.average - a.average);
+  staffAverages.sort((a, b) =>
+    b.average - a.average
+    || b.completed - a.completed
+    || a.rejected - b.rejected
+    || a.overdue - b.overdue
+    || a.staff.localeCompare(b.staff)
+  );
 
-  document.getElementById("managerTopStaff").textContent = staffAverages[0]?.staff || "-";
-  document.getElementById("managerLowestStaff").textContent = staffAverages[staffAverages.length - 1]?.staff || "-";
+  const top = staffAverages[0];
+  const lowest = staffAverages[staffAverages.length - 1];
+  topStaff.textContent = top?.staff || "Insufficient data";
+  lowestStaff.textContent = lowest?.staff || "Insufficient data";
+  topRate.textContent = top ? `${top.average}%` : "-";
+  lowestRate.textContent = lowest ? `${lowest.average}%` : "-";
+
+  if (topItem && top) {
+    const tooltip = `${top.staff}\nPerformance rate: ${top.average}%\nCompleted: ${top.completed} | Rejected: ${top.rejected} | Overdue: ${top.overdue}`;
+    topItem.dataset.tooltip = tooltip;
+    topItem.setAttribute("aria-label", tooltip.replace(/\n/g, ". "));
+  } else {
+    topItem?.removeAttribute("data-tooltip");
+  }
+  if (lowestItem && lowest) {
+    const tooltip = `${lowest.staff}\nPerformance rate: ${lowest.average}%\nCompleted: ${lowest.completed} | Rejected: ${lowest.rejected} | Overdue: ${lowest.overdue}`;
+    lowestItem.dataset.tooltip = tooltip;
+    lowestItem.setAttribute("aria-label", tooltip.replace(/\n/g, ". "));
+  } else {
+    lowestItem?.removeAttribute("data-tooltip");
+  }
 }
 
 function renderManagerDistributionChart(data) {
@@ -502,18 +555,25 @@ function renderManagerDistributionChart(data) {
   const pending = countByStatus(data, "Pending Verification");
   const inProgress = countByStatus(data, "In Progress");
   const overdue = countByStatus(data, "Overdue");
+  const rejected = countByStatus(data, "Rejected");
+  const notStarted = countByStatus(data, "Not Started");
 
-  const average = data.length
-    ? Math.round(data.reduce((sum, item) => sum + item.progress, 0) / data.length)
+  const completionRate = data.length
+    ? Math.round((completed / data.length) * 100)
     : 0;
 
-  document.getElementById("overallEfficiency").textContent = `${average}%`;
+  document.getElementById("overallEfficiency").textContent = `${completionRate}%`;
+  document.getElementById("overallEfficiencyLabel").textContent = "OVERALL KPI COMPLETION";
+  document.getElementById("overallEfficiencyDetail").textContent =
+    `${completed} of ${data.length} KPIs completed`;
 
   document.getElementById("kpiPieLegend").innerHTML = `
     <div><span class="legend-dot completed-dot"></span> COMPLETED (${completed})</div>
     <div><span class="legend-dot pending-dot"></span> PENDING VERIFICATION (${pending})</div>
     <div><span class="legend-dot progress-dot"></span> IN PROGRESS (${inProgress})</div>
     <div><span class="legend-dot overdue-dot"></span> OVERDUE (${overdue})</div>
+    <div><span class="legend-dot rejected-dot"></span> REJECTED (${rejected})</div>
+    <div><span class="legend-dot not-started-dot"></span> NOT STARTED (${notStarted})</div>
   `;
 
   if (managerDistributionChart) managerDistributionChart.destroy();
@@ -521,10 +581,10 @@ function renderManagerDistributionChart(data) {
   managerDistributionChart = new Chart(canvas, {
     type: "doughnut",
     data: {
-      labels: ["Completed", "Pending Verification", "In Progress", "Overdue"],
+      labels: ["Completed", "Pending Verification", "In Progress", "Overdue", "Rejected", "Not Started"],
       datasets: [{
-        data: [completed, pending, inProgress, overdue],
-        backgroundColor: ["#10b981", "#f59e0b", "#0056d2", "#ba1a1a"],
+        data: [completed, pending, inProgress, overdue, rejected, notStarted],
+        backgroundColor: ["#10b981", "#f59e0b", "#0056d2", "#ef4444", "#881337", "#98a2b3"],
         borderWidth: 0
       }]
     },
@@ -543,37 +603,38 @@ function renderManagerTrendChart(data) {
   const canvas = document.getElementById("managerKpiTrendChart");
   if (!canvas) return;
 
-  const monthOrder = {
-    Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
-    Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11
-  };
-
   const monthlyData = {};
 
   data.forEach(item => {
-    const parts = item.deadline.replace(",", "").split(" ");
-    const month = parts[1];
+    const date = new Date(item.dueDateRaw || item.deadline);
+    if (isNaN(date)) return;
 
-    if (!monthlyData[month]) {
-      monthlyData[month] = [];
+    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+    const monthLabel = date.toLocaleString("en-US", {
+      month: "short",
+      year: "numeric"
+    });
+
+    if (!monthlyData[monthKey]) {
+      monthlyData[monthKey] = {
+        label: monthLabel,
+        items: []
+      };
     }
 
-    monthlyData[month].push(item);
+    monthlyData[monthKey].items.push(item);
   });
 
-  const labels = Object.keys(monthlyData).sort(
-    (a, b) => monthOrder[a] - monthOrder[b]
-  );
+  const monthKeys = Object.keys(monthlyData).sort();
+  const labels = monthKeys.map(monthKey => monthlyData[monthKey].label);
 
-  const actualData = labels.map(month => {
-    const items = monthlyData[month];
+  const completedData = monthKeys.map(monthKey => {
+    const items = monthlyData[monthKey].items;
 
-    return Math.round(
-      items.reduce((sum, item) => sum + item.progress, 0) / items.length
-    );
+    return items.filter(item => item.status === "Completed").length;
   });
 
-  const targetData = labels.map(() => 90);
+  const totalData = monthKeys.map(monthKey => monthlyData[monthKey].items.length);
 
   if (managerTrendChart) managerTrendChart.destroy();
 
@@ -583,14 +644,14 @@ function renderManagerTrendChart(data) {
       labels,
       datasets: [
         {
-          label: "Actual",
-          data: actualData,
+          label: "Completed KPIs",
+          data: completedData,
           backgroundColor: "#4f8df5",
           borderRadius: 6
         },
         {
-          label: "Target",
-          data: targetData,
+          label: "Total KPIs",
+          data: totalData,
           backgroundColor: "#dfe5ea",
           borderRadius: 6
         }
@@ -605,7 +666,10 @@ function renderManagerTrendChart(data) {
       scales: {
         y: {
           beginAtZero: true,
-          max: 100
+          ticks: {
+            precision: 0,
+            stepSize: 1
+          }
         },
         x: {
           grid: { display: false }

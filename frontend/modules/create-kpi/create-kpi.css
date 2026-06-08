@@ -3,7 +3,7 @@
 .create-kpi select,
 .create-kpi .form-control,
 .create-kpi .form-select {
-    background-color: #eef1f4;
+    background-color: #ffffff;
     border: 1px solid #dcdfe4;
     color: #495057;
     font-size: 14px;
@@ -28,7 +28,7 @@
 }
 
 .create-kpi .date-input {
-    background-color: #e9ecef;
+    background-color: #ffffff;
 }
 
 .create-kpi .assign-btn {

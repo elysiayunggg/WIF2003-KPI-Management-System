@@ -6,11 +6,22 @@ const {
   markAllAsRead,
   deleteAllNotifications,
 } = require("../controllers/notificationController");
+const { requireAuth } = require("../middleware/authMiddleware");
 
 // express.Router() creates a mini Express app that handles just these routes.
 // server.js mounts it under /api/notifications, so every path here is
 // relative to that prefix (e.g. "/" becomes "/api/notifications/").
 const router = express.Router();
+
+function allowEventSourceToken(req, res, next) {
+  if (!req.headers.authorization && req.query.token) {
+    req.headers.authorization = `Bearer ${req.query.token}`;
+  }
+  next();
+}
+
+router.use(allowEventSourceToken);
+router.use(requireAuth);
 
 // GET /api/notifications?userId=<id>
 // Fetch all notifications for the logged-in user.

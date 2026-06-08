@@ -10,10 +10,7 @@
 // ── API config ──────────────────────────────────────────────
 
 // Base URL for the notifications endpoint on the Express backend.
-// NOTE: the backend route GET /api/notifications does not exist yet.
-// You must create notificationController.js and notificationRoutes.js
-// and register them in server.js before this fetch will return real data.
-const NOTIF_API_BASE = "http://127.0.0.1:5050/api/notifications";
+const NOTIF_API_BASE = apiUrl("/notifications");
 
 // ── Shared state ────────────────────────────────────────────
 
@@ -132,9 +129,7 @@ async function fetchNotifications() {
   if (!userId) return;
 
   try {
-    // ?userId=<id> filters the results to only this user's notifications.
-    // The backend GET /api/notifications handler reads req.query.userId.
-    const response = await fetch(NOTIF_API_BASE + "?userId=" + userId);
+    const response = await authFetch(NOTIF_API_BASE);
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -187,7 +182,7 @@ async function markAsRead(notificationId) {
   try {
     // Construct the URL to point to the specific notification ID
     // e.g., http://127.0.0.1:5050/api/notifications/66fce0...
-    const response = await fetch(NOTIF_API_BASE + "/" + notificationId + "/read", {
+    const response = await authFetch(NOTIF_API_BASE + "/" + notificationId + "/read", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json"
@@ -222,7 +217,7 @@ async function markAllAsRead() {
   try {
     // Construct the URL to point to the specific notification ID
     // e.g., http://127.0.0.1:5050/api/notifications/66fce0...
-    const response = await fetch(NOTIF_API_BASE + "/read-all" + "?userId=" + userId, {
+    const response = await authFetch(NOTIF_API_BASE + "/read-all", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json"
@@ -259,7 +254,7 @@ async function deleteAllNotifications() {
   if(!userId) return;
 
   try {
-    const response = await fetch(NOTIF_API_BASE +  "?userId=" + userId, {
+    const response = await authFetch(NOTIF_API_BASE, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
@@ -308,9 +303,13 @@ function getUnreadCount() {
 // The browser EventSource API handles reconnection automatically on drop.
 function subscribeToNotifications() {
   var userId = getLoggedInUserId();
+  var token = typeof getAuthToken === "function" ? getAuthToken() : null;
   if (!userId) return;
+  if (!token) return;
 
-  var source = new EventSource(NOTIF_API_BASE + "/subscribe?userId=" + userId);
+  var source = new EventSource(
+    NOTIF_API_BASE + "/subscribe?token=" + encodeURIComponent(token)
+  );
 
   source.onmessage = function (event) {
     try {

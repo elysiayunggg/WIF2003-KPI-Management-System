@@ -1,5 +1,5 @@
 
-const KPI_API_BASE = "http://127.0.0.1:5050/api/kpis";
+const KPI_API_BASE = apiUrl("/kpis");
 let currentPage = 1;
 const rowsPerPage = 5;
 // window.kpiData = [
@@ -85,6 +85,7 @@ const rowsPerPage = 5;
 //   }
 // ];
 let kpiData = [];
+let filteredManagementKpis = [];
 
 const STATUS_CONFIG = {
   COMPLETED: {
@@ -99,6 +100,10 @@ const STATUS_CONFIG = {
   "PENDING VERIFICATION": {
     label: "PENDING VERIFICATION",
     style: "background:#fff4c7; color:#d87e15;"
+  },
+  "NOT STARTED": {
+    label: "NOT STARTED",
+    style: "background:#eef1f5; color:#667085;"
   },
   OVERDUE: {
     label: "OVERDUE",
@@ -126,6 +131,16 @@ function getStatusConfig(status) {
     label: key || "UNKNOWN",
     class: "bg-secondary text-white"
   };
+}
+
+function getSharedStatusChipClass(status) {
+  const key = String(status || "").trim().toUpperCase();
+  if (key === "COMPLETED" || key === "APPROVED") return "kpi-status-chip--completed";
+  if (key === "PENDING" || key === "PENDING VERIFICATION") return "kpi-status-chip--pending";
+  if (key === "OVERDUE" || key === "REJECTED") return "kpi-status-chip--danger";
+  if (key === "INPROGRESS" || key === "IN PROGRESS") return "kpi-status-chip--in-progress";
+  if (key === "UNASSIGNED") return "kpi-status-chip--unassigned";
+  return "kpi-status-chip--not-started";
 }
 function formatDate(dateString) {
   const date = new Date(dateString);
@@ -156,6 +171,11 @@ function normalizeApiStatus(status) {
 function mapApiKpi(kpi) {
   const assignedUsers = Array.isArray(kpi.assignedTo) ? kpi.assignedTo : [];
   const firstStaff = assignedUsers[0];
+  const progress = kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0;
+  let status = normalizeApiStatus(kpi.status);
+  if (progress <= 0 && status === "In Progress") {
+    status = "Not Started";
+  }
 
   return {
     id: kpi._id,
@@ -170,8 +190,8 @@ function mapApiKpi(kpi) {
     staff: firstStaff?.name || null,
     initials: getInitials(firstStaff?.name),
     ownerRole: firstStaff?.role || "",
-    progress: kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0,
-    status: normalizeApiStatus(kpi.status),
+    progress,
+    status,
     deadline: kpi.dueDate,
     createdAt: kpi.createdAt
   };
@@ -186,7 +206,69 @@ async function loadKpisFromApi() {
 
   const apiKpis = await response.json();
   kpiData = apiKpis.map(mapApiKpi);
+  filteredManagementKpis = [...kpiData];
   window.kpiData = kpiData;
+}
+
+function populateManagementStaffFilter() {
+  const select = document.getElementById("kpiManagementStaff");
+  if (!select) return;
+  const names = [...new Set(kpiData.map(kpi => kpi.staff || "Unassigned"))].sort();
+  select.innerHTML = '<option value="">All Members</option>' +
+    names.map(name => `<option value="${name}">${name}</option>`).join("");
+}
+
+function applyManagementFilters() {
+  const keyword = document.getElementById("kpiManagementSearch")?.value.trim().toLowerCase() || "";
+  const status = document.getElementById("kpiManagementStatus")?.value || "";
+  const staff = document.getElementById("kpiManagementStaff")?.value || "";
+  const start = document.getElementById("kpiManagementStartDate")?.value || "";
+  const end = document.getElementById("kpiManagementEndDate")?.value || "";
+  const dateLabel = document.getElementById("kpiManagementDateLabel");
+  if (dateLabel) {
+    dateLabel.textContent = start || end
+      ? `${start || "Any"} - ${end || "Any"}`
+      : "Select Date Range";
+  }
+
+  filteredManagementKpis = kpiData.filter(kpi => {
+    const effectiveStatus = kpi.staff ? kpi.status : "Unassigned";
+    const haystack = [kpi.kpi, kpi.description, kpi.department, kpi.staff || "Unassigned"]
+      .join(" ").toLowerCase();
+    const due = kpi.deadline ? new Date(kpi.deadline) : null;
+    return (!keyword || haystack.includes(keyword)) &&
+      (!status || effectiveStatus === status) &&
+      (!staff || (kpi.staff || "Unassigned") === staff) &&
+      (!start || (due && due >= new Date(`${start}T00:00:00`))) &&
+      (!end || (due && due <= new Date(`${end}T23:59:59`)));
+  });
+}
+
+function setupManagementFilters() {
+  populateManagementStaffFilter();
+  const ids = [
+    "kpiManagementSearch",
+    "kpiManagementStatus",
+    "kpiManagementStaff",
+    "kpiManagementStartDate",
+    "kpiManagementEndDate"
+  ];
+  ids.forEach(id => {
+    document.getElementById(id)?.addEventListener("input", () => {
+      currentPage = 1;
+      applyManagementFilters();
+      renderManagementTable();
+    });
+  });
+  document.getElementById("clearKpiManagementFilters")?.addEventListener("click", () => {
+    ["kpiManagementStartDate", "kpiManagementEndDate"].forEach(id => {
+      const control = document.getElementById(id);
+      if (control) control.value = "";
+    });
+    currentPage = 1;
+    applyManagementFilters();
+    renderManagementTable();
+  });
 }
 
 function getInitials(name) {
@@ -199,7 +281,7 @@ function getInitials(name) {
     .toUpperCase();
 }
 
-function renderKpiRow(kpi, index) {
+function renderKpiRow(kpi) {
  const effectiveStatus = kpi.staff ? kpi.status : "UNASSIGNED";
  const statusConfig = getStatusConfig(effectiveStatus);
 
@@ -219,17 +301,18 @@ function renderKpiRow(kpi, index) {
     <td>
      ${
   kpi.staff
-    ? `<div class="d-flex align-items-center gap-2">
-         <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
-              style="width:30px;height:30px;font-size:12px;">
-           ${kpi.staff.split(" ").map(n => n[0]).join("")}
+    ? `<div class="kpi-staff-display">
+         <div class="kpi-staff-avatar">
+           ${kpi.initials}
          </div>
-         ${kpi.staff}
+         <span class="kpi-staff-name">${kpi.staff}</span>
        </div>`
     :  `
-      <div class="d-flex align-items-center gap-2">
-        <span class="text-danger fw-semibold">Unassigned</span>
-        <button class="btn btn-sm btn-light border assign-btn" data-index="${index}">
+      <div class="kpi-staff-display">
+        <span class="kpi-staff-avatar kpi-staff-avatar--unassigned">-</span>
+        <span class="kpi-staff-name">Unassigned</span>
+        <button class="btn btn-sm btn-light border assign-btn"
+          data-kpi-id="${kpi.id}">
           <i class="bi bi-person-plus"></i>
         </button>
       </div>
@@ -242,18 +325,18 @@ function renderKpiRow(kpi, index) {
     </td>
 
     <td>
-      <span class="badge status-badge" style="${statusConfig.style}">
+      <span class="kpi-status-chip ${getSharedStatusChipClass(effectiveStatus)}">
   ${statusConfig.label}
 </span>
     </td>
 
     <td>
       <button class="btn btn-sm btn-light edit-btn"
-  data-index="${index}">
+  data-kpi-id="${kpi.id}">
   <i class="bi bi-pencil"></i>
 </button>
       <button class="btn btn-sm btn-light text-danger delete-btn"
-        data-index="${index}"
+        data-kpi-id="${kpi.id}"
         data-name="${kpi.kpi}">
   <i class="bi bi-trash"></i>
 </button>
@@ -263,7 +346,7 @@ function renderKpiRow(kpi, index) {
   return row;
 }
 function renderPagination() {
-  const totalPages = Math.ceil(kpiData.length / rowsPerPage);
+  const totalPages = Math.ceil(filteredManagementKpis.length / rowsPerPage);
   const container = document.getElementById("pageNumbers");
 
   if (!container) return;
@@ -282,7 +365,7 @@ function renderPagination() {
 
     btn.addEventListener("click", () => {
       currentPage = i;
-      initKpiView();
+      renderManagementTable();
     });
     container.appendChild(btn);
   }
@@ -311,9 +394,10 @@ function calculateMonthGrowth(data) {
 
 function updateSummary() {
   const total = kpiData.length;
-  const completed = kpiData.filter(
-  k => k.status?.trim().toUpperCase() === "COMPLETED"
-).length;
+  const completedStatuses = new Set(["COMPLETED", "APPROVED"]);
+  const completed = kpiData.filter(k =>
+    completedStatuses.has(k.status?.trim().toUpperCase())
+  ).length;
   const rate = total ? Math.round((completed / total) * 100) : 0;
 
   document.getElementById("totalKPI").textContent = total;
@@ -335,12 +419,13 @@ function updateSummary() {
   }
 
   // FIXED pagination summary
-  const start = total ? (currentPage - 1) * rowsPerPage + 1 : 0;
-  const end = Math.min(currentPage * rowsPerPage, total);
+  const filteredTotal = filteredManagementKpis.length;
+  const start = filteredTotal ? (currentPage - 1) * rowsPerPage + 1 : 0;
+  const end = Math.min(currentPage * rowsPerPage, filteredTotal);
 
   const summary = document.getElementById("entrySummary");
   if (summary) {
-    summary.textContent = `Showing ${start} to ${end} of ${total} entries`;
+    summary.textContent = `Showing ${start} to ${end} of ${filteredTotal} entries`;
   }
 
   const bar = document.getElementById("completionBar");
@@ -350,23 +435,23 @@ function updateSummary() {
 }
 
 function nextPage() {
-  const totalPages = Math.ceil(kpiData.length / rowsPerPage);
+  const totalPages = Math.ceil(filteredManagementKpis.length / rowsPerPage);
 
   if (currentPage < totalPages) {
     currentPage++;
-    initKpiView();
+    renderManagementTable();
   }
 }
 
 function prevPage() {
   if (currentPage > 1) {
     currentPage--;
-    initKpiView();
+    renderManagementTable();
   }
 }
 
 function updatePaginationButtons() {
-  const totalPages = Math.ceil(kpiData.length / rowsPerPage);
+  const totalPages = Math.ceil(filteredManagementKpis.length / rowsPerPage);
 
   const prevBtn = document.getElementById("prevBtn");
   const nextBtn = document.getElementById("nextBtn");
@@ -380,6 +465,27 @@ function updatePaginationButtons() {
     nextBtn.disabled = currentPage === totalPages;
     nextBtn.onclick = nextPage;
   }
+}
+
+function renderManagementTable() {
+  const table = document.getElementById("kpiTableBody");
+  if (!table) return;
+  table.innerHTML = "";
+
+  const totalPages = Math.ceil(filteredManagementKpis.length / rowsPerPage);
+  if (totalPages && currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * rowsPerPage;
+  const rows = filteredManagementKpis.slice(start, start + rowsPerPage);
+
+  if (!rows.length) {
+    table.innerHTML = `<tr><td colspan="6" class="text-muted text-center py-4">No KPIs found for the selected filters.</td></tr>`;
+  } else {
+    rows.forEach(kpi => table.appendChild(renderKpiRow(kpi)));
+  }
+
+  updateSummary();
+  updatePaginationButtons();
+  renderPagination();
 }
 
 async function initKpiView() {
@@ -397,29 +503,9 @@ async function initKpiView() {
     return;
   }
 
-  table.innerHTML = "";
-
-  if (!kpiData.length) {
-    table.innerHTML = `<tr><td colspan="6" class="text-muted text-center py-4">No KPIs found. Create your first KPI to see it here.</td></tr>`;
-    updateSummary();
-    updatePaginationButtons();
-    renderPagination();
-    return;
-  }
-
-  const start = (currentPage - 1) * rowsPerPage;
-  const end = start + rowsPerPage;
-
-  const paginatedData = kpiData.slice(start, end);
-
-  paginatedData.forEach((kpi, i) => {
-    const actualIndex = start + i;
-    table.appendChild(renderKpiRow(kpi, actualIndex));
-  });
-
-  updateSummary();
-  updatePaginationButtons();
-  renderPagination();
+  setupManagementFilters();
+  applyManagementFilters();
+  renderManagementTable();
 
   // Prevent duplicate listener
   if (!table.dataset.listenerAttached) {
@@ -430,7 +516,7 @@ async function initKpiView() {
   // DELETE BUTTON
   const deleteBtn = e.target.closest(".delete-btn");
   if (deleteBtn) {
-    const index = Number(deleteBtn.dataset.index);
+    const index = kpiData.findIndex(kpi => kpi.id === deleteBtn.dataset.kpiId);
     const name = deleteBtn.dataset.name;
     openDeleteModal(index, name);
     return;
@@ -439,7 +525,7 @@ async function initKpiView() {
   // EDIT BUTTON
   const editBtn = e.target.closest(".edit-btn");
   if (editBtn) {
-    const index = Number(editBtn.dataset.index);
+    const index = kpiData.findIndex(kpi => kpi.id === editBtn.dataset.kpiId);
 
     // store selected KPI globally
    // window.selectedKpi = kpiData[index];
@@ -452,11 +538,10 @@ async function initKpiView() {
   // ASSIGN BUTTON
   const assignBtn = e.target.closest(".assign-btn");
   if (assignBtn) {
-    const index = Number(assignBtn.dataset.index);
-    const selectedKpi = kpiData[index];
+    const kpiId = assignBtn.dataset.kpiId;
 
-    if (selectedKpi?.id) {
-      sessionStorage.setItem("assignmentKpiId", selectedKpi.id);
+    if (kpiId) {
+      sessionStorage.setItem("assignmentKpiId", kpiId);
       changePage(e, "Assign KPI");
     }
   }

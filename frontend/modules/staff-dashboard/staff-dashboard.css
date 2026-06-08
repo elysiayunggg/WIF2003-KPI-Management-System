@@ -194,6 +194,29 @@
   color: #000;
 }
 
+.not-started-dot {
+  background-color: #98a2b3;
+}
+
+.rejected-dot {
+  background-color: #8b5cf6;
+}
+
+.staff-risk-subtitle {
+  margin: -4px 0 8px;
+  color: #667085;
+  font-size: 12px;
+}
+
+.staff-risk-chart-wrapper {
+  position: relative;
+  height: 330px;
+}
+
+html[data-bs-theme="dark"] #page-content .staff-risk-subtitle {
+  color: #adb5bd;
+}
+
 
 /* ================================
    ACTIVE PERFORMANCE TASK TITLE

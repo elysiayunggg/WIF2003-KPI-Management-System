@@ -18,11 +18,11 @@ function resolveKpiWorkflowStatus({ status, dueDate, progressPercent }) {
   const raw = String(status || "").toLowerCase().trim();
   const pct = Number(progressPercent) || 0;
 
-  if (raw === "approved" || raw === "completed") return "approved";
-  if (raw === "rejected") return "rejected";
+  if (raw === "approved" || raw === "completed") return "completed";
+  if (raw === "rejected" && pct >= 100) return "rejected";
   if (pct >= 100) return "pending verification";
   if (isPastDue(dueDate)) return "overdue";
-  if (raw === "not started") return "not started";
+  if (raw === "not started" || pct <= 0) return "not started";
   return "in progress";
 }
 

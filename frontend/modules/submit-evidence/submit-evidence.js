@@ -1,4 +1,15 @@
-const SUBMIT_EVIDENCE_API_BASE = "http://127.0.0.1:5050";
+const SUBMIT_EVIDENCE_API_BASE = apiOrigin();
+const ALLOWED_EVIDENCE_FILE_EXTENSIONS = [".pdf", ".docx", ".xlsx", ".csv", ".png", ".jpg", ".jpeg"];
+const ALLOWED_EVIDENCE_FILE_TYPES = new Set([
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "text/csv",
+    "application/csv",
+    "application/vnd.ms-excel",
+    "image/png",
+    "image/jpeg"
+]);
 
 /** New files picked for upload (submit / edit append). */
 let stagedFiles = [];
@@ -267,13 +278,35 @@ function updateFileCount(root) {
     badge.textContent = `${count} FILE${count === 1 ? "" : "S"}`;
 }
 
+function getFileExtension(fileName) {
+    const idx = String(fileName || "").lastIndexOf(".");
+    return idx >= 0 ? String(fileName).slice(idx).toLowerCase() : "";
+}
+
+function isAllowedEvidenceFile(file) {
+    const ext = getFileExtension(file?.name);
+    return ALLOWED_EVIDENCE_FILE_EXTENSIONS.includes(ext)
+        && ALLOWED_EVIDENCE_FILE_TYPES.has(file?.type);
+}
+
 function mergeFilesIntoStaged(incoming) {
+    const rejected = [];
+
     Array.from(incoming || []).forEach((file) => {
+        if (!isAllowedEvidenceFile(file)) {
+            rejected.push(file.name || "Unsupported file");
+            return;
+        }
+
         const duplicate = stagedFiles.some(
             (f) => f.name === file.name && f.size === file.size && f.lastModified === file.lastModified
         );
         if (!duplicate) stagedFiles.push(file);
     });
+
+    if (rejected.length) {
+        alert("Unsupported file type. Upload PDF, DOCX, XLSX, CSV, PNG, JPG, or JPEG files only.");
+    }
 }
 
 function applyLoadedEvidenceToForm(root, selectedEvidence) {

@@ -1,4 +1,4 @@
-const ARCHIVE_KPI_API_BASE = "http://127.0.0.1:5050/api";
+const ARCHIVE_KPI_API_BASE = apiUrl();
 
 let pendingArchiveKpiId = null;
 

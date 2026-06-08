@@ -54,8 +54,8 @@
 
 .update-kpi .form-control,
 .update-kpi .form-select {
-    background-color: #eef2f5 !important;
-    border: none !important;
+    background-color: #ffffff !important;
+    border: 1px solid #dcdfe4 !important;
     border-radius: 10px;
     padding: 12px;
     color: #333;

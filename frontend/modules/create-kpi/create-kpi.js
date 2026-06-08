@@ -1,10 +1,13 @@
 
-const CREATE_KPI_API = "http://127.0.0.1:5050/api";
+const CREATE_KPI_API = apiUrl("/kpis");
+let createKpiStaff = [];
+let pendingCreateKpiStaffId = "";
 
 function initCreateKpiView() {
   setupToggle();
   setupPriority();
   setupMilestones();
+  setupAssignStaff();
   setupFormSubmit();
   updateCreateKpiMilestonesEmptyState();
 }
@@ -157,6 +160,91 @@ function setupFormSubmit() {
   });
 }
 
+function setupAssignStaff() {
+  const btn = document.getElementById("createKpiAssignStaffBtn");
+  const search = document.getElementById("createKpiStaffSearch");
+  const confirmBtn = document.getElementById("confirmCreateKpiStaffBtn");
+  const assignLater = document.getElementById("assignLaterSwitch");
+  if (!btn || !search || !confirmBtn || !assignLater) return;
+
+  btn.addEventListener("click", async () => {
+    try {
+      if (!createKpiStaff.length) {
+        const response = await authFetch(apiUrl("/auth/users?role=staff"));
+        if (!response.ok) throw new Error("Failed to load staff");
+        createKpiStaff = await response.json();
+      }
+      renderCreateKpiStaffList("");
+      bootstrap.Modal.getOrCreateInstance(
+        document.getElementById("createKpiStaffModal")
+      ).show();
+    } catch (error) {
+      alert("Unable to load staff. Please make sure the backend is running.");
+    }
+  });
+
+  search.addEventListener("input", () => renderCreateKpiStaffList(search.value));
+
+  confirmBtn.addEventListener("click", () => {
+    if (!pendingCreateKpiStaffId) {
+      alert("Please select a staff member.");
+      return;
+    }
+    updateCreateKpiSelectedStaff();
+    document.getElementById("assignLaterSwitch").checked = false;
+    bootstrap.Modal.getInstance(document.getElementById("createKpiStaffModal"))?.hide();
+  });
+
+  assignLater.addEventListener("change", () => {
+    btn.disabled = assignLater.checked;
+    if (!assignLater.checked) return;
+
+    pendingCreateKpiStaffId = "";
+    const selectedStaff = document.getElementById("createKpiSelectedStaff");
+    selectedStaff?.classList.add("d-none");
+    if (selectedStaff) selectedStaff.innerHTML = "";
+  });
+}
+
+function renderCreateKpiStaffList(query) {
+  const list = document.getElementById("createKpiStaffList");
+  if (!list) return;
+  const term = String(query || "").trim().toLowerCase();
+  const rows = createKpiStaff.filter((staff) =>
+    !term ||
+    staff.name?.toLowerCase().includes(term) ||
+    staff.department?.toLowerCase().includes(term)
+  );
+
+  list.innerHTML = rows.length
+    ? rows.map((staff) => `
+      <button type="button"
+        class="staff-card w-100 mb-2 p-3 text-start ${String(staff._id) === pendingCreateKpiStaffId ? "selected" : ""}"
+        data-create-kpi-staff-id="${staff._id}">
+        <strong>${staff.name}</strong>
+        <div class="small text-muted">${staff.department || "General"}</div>
+      </button>
+    `).join("")
+    : '<p class="text-muted text-center py-3">No staff found.</p>';
+
+  list.querySelectorAll("[data-create-kpi-staff-id]").forEach((staffBtn) => {
+    staffBtn.addEventListener("click", () => {
+      pendingCreateKpiStaffId = staffBtn.dataset.createKpiStaffId;
+      renderCreateKpiStaffList(query);
+    });
+  });
+}
+
+function updateCreateKpiSelectedStaff() {
+  const container = document.getElementById("createKpiSelectedStaff");
+  const staff = createKpiStaff.find(
+    (item) => String(item._id) === pendingCreateKpiStaffId
+  );
+  if (!container || !staff) return;
+  container.classList.remove("d-none");
+  container.innerHTML = `<strong>Selected:</strong> ${staff.name} <span class="text-muted">(${staff.department || "General"})</span>`;
+}
+
 async function saveKpi(data) {
   const payload = {
     title: data.name,
@@ -171,12 +259,18 @@ async function saveKpi(data) {
     department: "All Departments"
   };
 
+  if (!data.assignLater && pendingCreateKpiStaffId) {
+    payload.assignedTo = [pendingCreateKpiStaffId];
+  } else {
+    payload.assignedTo = [];
+  }
+
   if (data.milestones?.length) {
     payload.milestones = data.milestones;
   }
 
   try {
-    const response = await authFetch(`${CREATE_KPI_API}/kpis`, {
+    const response = await authFetch(CREATE_KPI_API, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -184,22 +278,21 @@ async function saveKpi(data) {
       body: JSON.stringify(payload)
     });
 
-    const result = await response.json();
+    const contentType = response.headers.get("content-type") || "";
+    const result = contentType.includes("application/json")
+      ? await response.json()
+      : { message: `Server returned an unexpected response (${response.status}).` };
 
     if (!response.ok) {
       alert(result.message || "Failed to create KPI.");
       return;
     }
 
-    const milestoneCount = Array.isArray(result.milestones) ? result.milestones.length : 0;
-    const milestoneNote =
-      milestoneCount > 0
-        ? ` ${milestoneCount} milestone${milestoneCount === 1 ? "" : "s"} on the timeline.`
-        : " A default project milestone spans the KPI timeline.";
-    alert(`KPI created successfully.${milestoneNote}`);
+    alert("KPI created successfully.");
     resetForm();
   } catch (error) {
-    alert("Cannot connect to server. Please make sure the backend is running.");
+    console.error("Create KPI request failed:", error);
+    alert(`Could not create KPI: ${error.message || "Unknown connection error"}`);
   }
 }
 
@@ -220,6 +313,12 @@ function resetForm() {
   document.getElementById("monthlyBtn").classList.remove("active");
 
   document.getElementById("assignLaterSwitch").checked = false;
+  pendingCreateKpiStaffId = "";
+  const selectedStaff = document.getElementById("createKpiSelectedStaff");
+  if (selectedStaff) {
+    selectedStaff.classList.add("d-none");
+    selectedStaff.innerHTML = "";
+  }
 
   document
     .querySelectorAll("#priorityGroup .priority-btn.active")

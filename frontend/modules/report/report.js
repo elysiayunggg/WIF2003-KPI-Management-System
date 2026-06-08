@@ -25,7 +25,7 @@ function reportFormatStatus(status) {
 
   if (value === "pending verification") return "Pending Verification";
   if (value === "approved") return "Completed";
-  if (value === "rejected") return "Pending Verification";
+  if (value === "rejected") return "Rejected";
 
   return value
     .split(" ")
@@ -61,7 +61,15 @@ function reportInitials(name) {
 function mapReportApiKpi(kpi) {
   const assignedUsers = Array.isArray(kpi.assignedTo) ? kpi.assignedTo : [];
   const firstStaff = assignedUsers[0];
-  const progress = kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0;
+  const verifiedProgress = kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0;
+  let formattedStatus = reportFormatStatus(kpi.status);
+  if (verifiedProgress <= 0 && formattedStatus === "In Progress") {
+    formattedStatus = "Not Started";
+  }
+  const rejectedSubmissionProgress = Number(kpi.lastSubmittedProgress);
+  const progress = formattedStatus === "Rejected" && Number.isFinite(rejectedSubmissionProgress)
+    ? rejectedSubmissionProgress
+    : verifiedProgress;
 
   return {
     id: kpi._id,
@@ -72,8 +80,10 @@ function mapReportApiKpi(kpi) {
     target: reportFormatTarget(kpi),
     staff: firstStaff?.name || "Unassigned",
     initials: reportInitials(firstStaff?.name),
+    isUnassigned: !firstStaff,
     progress,
-    status: reportFormatStatus(kpi.status),
+    progressLabel: formattedStatus === "Rejected" ? "submitted" : "verified",
+    status: formattedStatus,
     deadline: reportFormatDate(kpi.dueDate),
     rawDeadline: kpi.dueDate
   };
@@ -81,7 +91,7 @@ function mapReportApiKpi(kpi) {
 
 async function loadReportKpisFromApi() {
   try {
-    const response = await authFetch("http://127.0.0.1:5050/api/kpis");
+    const response = await authFetch(apiUrl("/kpis"));
     if (!response.ok) throw new Error("Failed to load report KPIs");
 
     const kpis = await response.json();
@@ -151,14 +161,16 @@ function renderReportTable() {
 
         <td>
           <div class="d-flex align-items-center gap-2">
-            <div class="report-avatar">${row.initials}</div>
-            <span class="fw-semibold">${row.staff}</span>
+            <div class="kpi-staff-display">
+              <div class="kpi-staff-avatar${row.isUnassigned ? " kpi-staff-avatar--unassigned" : ""}">${row.initials}</div>
+              <span class="kpi-staff-name">${row.staff}</span>
+            </div>
           </div>
         </td>
 
         <td>
           <div class="report-progress-wrapper">
-            <div class="report-progress-percent">${row.progress}%</div>
+            <div class="report-progress-percent" title="${row.progressLabel} progress">${row.progress}%</div>
             <div class="report-progress-bar">
               <div style="width: ${row.progress}%; background-color: ${progressColor};"></div>
             </div>
@@ -166,7 +178,7 @@ function renderReportTable() {
         </td>
 
         <td>
-          <span class="status-badge ${statusClass}">${row.status}</span>
+          <span class="kpi-status-chip ${getSharedStatusChipClass(row.status)}">${row.status}</span>
         </td>
 
         <td>${row.deadline}</td>
@@ -248,14 +260,18 @@ function parseReportDeadline(deadline) {
 function getReportStatusClass(status) {
   if (status === "Completed") return "status-completed";
   if (status === "Overdue") return "status-overdue";
+  if (status === "Rejected") return "status-overdue";
   if (status === "Pending Verification") return "status-pending";
+  if (status === "Not Started") return "status-not-started";
   return "status-progress";
 }
 
 function getReportProgressColor(status) {
   if (status === "Completed") return "#10b981";
   if (status === "Overdue") return "#ef4444";
+  if (status === "Rejected") return "#ef4444";
   if (status === "Pending Verification") return "#f59e0b";
+  if (status === "Not Started") return "#98a2b3";
   return "#3b82f6";
 }
 

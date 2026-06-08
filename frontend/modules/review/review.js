@@ -8,7 +8,7 @@ function getAuthHeaders() {
 async function loadReviewDataFromBackend(kpiId) {
   if (!kpiId || !/^[a-f\d]{24}$/i.test(String(kpiId))) return;
   try {
-    const res = await authFetch(`http://127.0.0.1:5050/api/kpis/${kpiId}/review-data`);
+    const res = await authFetch(apiUrl(`/kpis/${kpiId}/review-data`));
     if (!res.ok) return;
     backendData = await res.json();
   } catch {
@@ -49,7 +49,7 @@ function escapeHtml(str) {
 function enrichQueueRow(row) {
   if (!row) return null;
   const out = { ...row };
-  if (row.status === "approved" || row.status === "rejected") {
+  if (row.status === "approved" || row.status === "completed" || row.status === "rejected") {
     out.reviewedBy = row.reviewedBy || localStorage.getItem("userName") || "Unknown Reviewer";
     out.reviewedAt = row.reviewedAt || row.submissionTime;
   }
@@ -92,7 +92,7 @@ function getDisplayData() {
     return { ...kpiReviewData, contextMode: ctx.mode, queueRow: null };
   }
   let statusLabel = kpiReviewData.status;
-  if (sub.status === "approved") statusLabel = "Approved";
+  if (sub.status === "approved" || sub.status === "completed") statusLabel = "Completed";
   else if (sub.status === "rejected") statusLabel = "Rejected";
   else if (sub.status === "pending") statusLabel = "Pending Review";
 
@@ -171,11 +171,11 @@ function renderSubmissionDetails() {
   const reviewed =
     ctx.mode === "details" &&
     sub &&
-    (sub.status === "approved" || sub.status === "rejected");
+    (sub.status === "approved" || sub.status === "completed" || sub.status === "rejected");
 
   const secondStepDot = reviewed ? "bg-success" : "bg-warning";
   const secondStepText = reviewed
-    ? `${sub.status === "approved" ? "Approved" : "Rejected"} by ${sub.reviewedBy} (${sub.reviewedAt})`
+    ? `${sub.status === "approved" || sub.status === "completed" ? "Completed" : "Rejected"} by ${sub.reviewedBy} (${sub.reviewedAt})`
     : "Awaiting Review";
 
   const container = document.getElementById("submissionDetails");
@@ -337,7 +337,7 @@ async function saveReviewDecision() {
   }
 
   try {
-    const response = await authFetch(`http://127.0.0.1:5050/api/kpis/${kpiId}`, {
+    const response = await authFetch(apiUrl(`/kpis/${kpiId}`), {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -385,7 +385,7 @@ function renderReviewSidePanel() {
   const sub = ctx.submission;
 
   const resolvedStatus = backendData?.status?.toLowerCase() || sub?.status?.toLowerCase() || "";
-  const isDecided = resolvedStatus === "approved" || resolvedStatus === "rejected";
+  const isDecided = resolvedStatus === "approved" || resolvedStatus === "completed" || resolvedStatus === "rejected";
   const showDecision = ctx.mode === "details" && isDecided;
 
   const reviewedByName = backendData?.reviewedBy || sub?.reviewedBy || "—";
@@ -395,8 +395,8 @@ function renderReviewSidePanel() {
     verifyCard.classList.add("d-none");
     decisionCard.classList.remove("d-none");
 
-    const approved = resolvedStatus === "approved";
-    const verb = approved ? "Approved" : "Rejected";
+    const approved = resolvedStatus === "approved" || resolvedStatus === "completed";
+    const verb = approved ? "Completed" : "Rejected";
     const boxClass = approved
       ? "border border-success-subtle bg-success-subtle"
       : "border border-danger-subtle bg-danger-subtle";
@@ -425,11 +425,12 @@ async function downloadEvidenceFile(event, evidenceId, fileIndex, filename) {
   event.preventDefault();
   try {
     const res = await authFetch(
-      `http://127.0.0.1:5050/api/evidence/${evidenceId}/files/${fileIndex}?disposition=attachment`,
+      apiUrl(`/evidence/${evidenceId}/files/${fileIndex}?disposition=attachment`),
       {}
     );
     if (!res.ok) {
-      alert("Could not download file. Make sure you are logged in.");
+      const error = await res.json().catch(() => ({}));
+      alert(error.message || "Could not download file.");
       return;
     }
     const blob = await res.blob();

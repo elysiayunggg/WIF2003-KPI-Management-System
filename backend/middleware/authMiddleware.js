@@ -4,9 +4,15 @@ const User = require("../models/User");
 async function requireAuth(req, res, next) {
   try {
     const authHeader = req.headers.authorization || "";
-    const [scheme, token] = authHeader.split(" ");
+    const [scheme, headerToken] = authHeader.split(" ");
+    const allowsQueryToken = req.path === "/subscribe"
+      && req.baseUrl === "/api/notifications";
+    const queryToken = allowsQueryToken && typeof req.query.access_token === "string"
+      ? req.query.access_token
+      : "";
+    const token = scheme === "Bearer" && headerToken ? headerToken : queryToken;
 
-    if (scheme !== "Bearer" || !token) {
+    if (!token) {
       return res.status(401).json({ message: "Authentication token is required" });
     }
 

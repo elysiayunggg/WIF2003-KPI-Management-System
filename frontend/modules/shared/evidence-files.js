@@ -1,4 +1,4 @@
-const EVIDENCE_FILES_API_BASE = "http://127.0.0.1:5050";
+const EVIDENCE_FILES_API_BASE = apiOrigin();
 
 let evidenceFileActionsBound = false;
 

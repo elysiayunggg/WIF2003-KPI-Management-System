@@ -1,5 +1,5 @@
 let kpiDetailOutsideClickBound = false;
-const KPI_DETAIL_API_BASE = "http://127.0.0.1:5050/api";
+const KPI_DETAIL_API_BASE = apiUrl();
 
 function getKPIDetailRoot() {
     return document.querySelector(".kpi-detail-view");

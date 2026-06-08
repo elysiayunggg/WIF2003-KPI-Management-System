@@ -1,5 +1,4 @@
 let filteredKpiData = [];
-let searchInitialized = false;
 let kpiListCurrentPage = 1;
 const kpiListRowsPerPage = 5;
 
@@ -8,12 +7,50 @@ function kpiListFormatStatus(status) {
 
   if (value === "pending verification") return "Pending Verification";
   if (value === "approved") return "Completed";
-  if (value === "rejected") return "Pending Verification";
+  if (value === "rejected") return "Rejected";
 
   return value
     .split(" ")
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+}
+
+function kpiListGetStatusConfig(status) {
+  const configs = {
+    "NOT STARTED": {
+      label: "NOT STARTED",
+      style: "background:#eef1f5; color:#667085;"
+    },
+    "IN PROGRESS": {
+      label: "IN PROGRESS",
+      style: "background:#e8f1ff; color:#175cd3;"
+    },
+    "PENDING VERIFICATION": {
+      label: "PENDING VERIFICATION",
+      style: "background:#fff4e5; color:#e04f16;"
+    },
+    "COMPLETED": {
+      label: "COMPLETED",
+      style: "background:#e7f8ef; color:#067647;"
+    },
+    "REJECTED": {
+      label: "REJECTED",
+      style: "background:#feeceb; color:#b42318;"
+    },
+    "OVERDUE": {
+      label: "OVERDUE",
+      style: "background:#feeceb; color:#b42318;"
+    },
+    "UNASSIGNED": {
+      label: "UNASSIGNED",
+      style: "background:#eef1f5; color:#667085;"
+    }
+  };
+
+  return configs[status] || {
+    label: status,
+    style: "background:#eef1f5; color:#667085;"
+  };
 }
 
 function kpiListStatusKey(status) {
@@ -51,6 +88,10 @@ function mapApiKpiToListRow(kpi) {
   const assignedUsers = Array.isArray(kpi.assignedTo) ? kpi.assignedTo : [];
   const firstStaff = assignedUsers[0];
   const progress = kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0;
+  let status = kpiListFormatStatus(kpi.status);
+  if (progress <= 0 && status === "In Progress") {
+    status = "Not Started";
+  }
 
   return {
     id: kpi._id,
@@ -61,13 +102,14 @@ function mapApiKpiToListRow(kpi) {
     target: kpiListFormatTarget(kpi),
     staff: firstStaff?.name || null,
     progress,
-    status: kpiListFormatStatus(kpi.status),
-    deadline: kpiListFormatDate(kpi.dueDate)
+    status,
+    deadline: kpiListFormatDate(kpi.dueDate),
+    rawDeadline: kpi.dueDate
   };
 }
 
 async function loadKpiListFromApi() {
-  const response = await authFetch("http://127.0.0.1:5050/api/kpis");
+  const response = await authFetch(apiUrl("/kpis"));
 
   if (!response.ok) {
     throw new Error("Failed to load KPI list");
@@ -85,14 +127,71 @@ async function loadKpiListFromApi() {
   }
 
   window.kpiData = kpis.map(mapApiKpiToListRow);
-  filteredKpiData = [...window.kpiData];
+  applyKpiListFilters();
+}
+
+function populateKpiListStaffFilter() {
+  const select = document.getElementById("kpiListStaffFilter");
+  if (!select) return;
+  const selected = select.value;
+  const names = [...new Set(window.kpiData.map(kpi => kpi.staff || "Unassigned"))].sort();
+  select.innerHTML = '<option value="">All Members</option>' +
+    names.map(name => `<option value="${name}">${name}</option>`).join("");
+  select.value = selected;
+}
+
+function applyKpiListFilters() {
+  const keyword = document.getElementById("kpiListSearch")?.value.trim().toLowerCase() || "";
+  const status = document.getElementById("kpiListStatusFilter")?.value || "";
+  const staff = document.getElementById("kpiListStaffFilter")?.value || "";
+  const start = document.getElementById("kpiListStartDate")?.value || "";
+  const end = document.getElementById("kpiListEndDate")?.value || "";
+  const dateLabel = document.getElementById("kpiListDateLabel");
+  if (dateLabel) {
+    dateLabel.textContent = start || end
+      ? `${start || "Any"} - ${end || "Any"}`
+      : "Select Date Range";
+  }
+
+  filteredKpiData = (window.kpiData || []).filter(kpi => {
+    const effectiveStatus = kpi.staff ? kpi.status : "Unassigned";
+    const haystack = [kpi.kpi, kpi.description, kpi.department, kpi.staff || "Unassigned"]
+      .join(" ").toLowerCase();
+    const due = kpi.rawDeadline ? new Date(kpi.rawDeadline) : null;
+    return (!keyword || haystack.includes(keyword)) &&
+      (!status || effectiveStatus === status) &&
+      (!staff || (kpi.staff || "Unassigned") === staff) &&
+      (!start || (due && due >= new Date(`${start}T00:00:00`))) &&
+      (!end || (due && due <= new Date(`${end}T23:59:59`)));
+  });
+}
+
+function setupKpiListFilters() {
+  populateKpiListStaffFilter();
+  const ids = ["kpiListSearch", "kpiListStatusFilter", "kpiListStaffFilter", "kpiListStartDate", "kpiListEndDate"];
+  ids.forEach(id => {
+    document.getElementById(id)?.addEventListener("input", () => {
+      kpiListCurrentPage = 1;
+      applyKpiListFilters();
+      renderKpiListRowsOnly();
+    });
+  });
+  document.getElementById("clearKpiListFilters")?.addEventListener("click", () => {
+    ["kpiListStartDate", "kpiListEndDate"].forEach(id => {
+      const control = document.getElementById(id);
+      if (control) control.value = "";
+    });
+    kpiListCurrentPage = 1;
+    applyKpiListFilters();
+    renderKpiListRowsOnly();
+  });
 }
 
 function renderKpiListRow(kpi) {
   let effectiveStatus = kpi.staff ? kpi.status : "UNASSIGNED";
   effectiveStatus = kpiListStatusKey(effectiveStatus);
 
-  const statusConfig = getStatusConfig(effectiveStatus);
+  const statusConfig = kpiListGetStatusConfig(effectiveStatus);
   const progress = Number(kpi.progress) || 0;
   const progressColor = effectiveStatus === "COMPLETED" ? "bg-success" : "bg-primary";
 
@@ -115,7 +214,7 @@ function renderKpiListRow(kpi) {
     </div>
 
     <div class="col-2">
-      <span class="badge" style="${statusConfig.style}">
+      <span class="kpi-status-chip ${getSharedStatusChipClass(effectiveStatus)}">
         ${statusConfig.label}
       </span>
     </div>
@@ -180,6 +279,7 @@ async function initKpiListView() {
     return;
   }
 
+  setupKpiListFilters();
   container.innerHTML = "";
 
   const start = (kpiListCurrentPage - 1) * kpiListRowsPerPage;
@@ -196,31 +296,6 @@ async function initKpiListView() {
 
   updateListPagination();
 
-  if (!searchInitialized) {
-    initKpiListSearch();
-    searchInitialized = true;
-  }
-}
-
-function initKpiListSearch() {
-  const input = document.querySelector(".kpi-list-view input");
-  if (!input) return;
-
-  input.addEventListener("input", (e) => {
-    const keyword = e.target.value.toLowerCase();
-
-    if (!keyword) {
-      filteredKpiData = [...window.kpiData];
-    } else {
-      filteredKpiData = window.kpiData.filter(kpi =>
-        kpi.kpi.toLowerCase().includes(keyword) ||
-        (kpi.staff && kpi.staff.toLowerCase().includes(keyword))
-      );
-    }
-
-    kpiListCurrentPage = 1;
-    renderKpiListRowsOnly();
-  });
 }
 
 function renderKpiListRowsOnly() {
