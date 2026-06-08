@@ -14,7 +14,51 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h6 class="fw-bold mb-0">KPI List</h6>
-      <input type="text" class="form-control w-25" placeholder="Search KPIs...">
+    </div>
+
+    <div class="report-search-wrapper mb-2">
+      <i class="bi bi-search"></i>
+      <input type="text" class="form-control report-search-input" id="kpiListSearch"
+        placeholder="Search KPI name, department, or staff...">
+    </div>
+
+    <div class="kpi-filter-bar mb-4">
+      <div class="filter-item">
+        <label for="kpiListStatusFilter">STATUS:</label>
+        <select class="custom-filter-btn" id="kpiListStatusFilter">
+          <option value="">All Status</option>
+          <option value="Not Started">Not Started</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Pending Verification">Pending Verification</option>
+          <option value="Completed">Completed</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Overdue">Overdue</option>
+          <option value="Unassigned">Unassigned</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label for="kpiListStaffFilter">STAFF:</label>
+        <select class="custom-filter-btn" id="kpiListStaffFilter">
+          <option value="">All Members</option>
+        </select>
+      </div>
+      <div class="filter-item kpi-date-filter">
+        <label>DATE RANGE:</label>
+        <details class="kpi-date-range">
+          <summary class="custom-filter-btn">
+            <i class="bi bi-calendar-event"></i>
+            <span id="kpiListDateLabel">Select Date Range</span>
+            <i class="bi bi-chevron-down"></i>
+          </summary>
+          <div class="kpi-date-range__panel">
+            <label for="kpiListStartDate">From</label>
+            <input type="date" class="form-control" id="kpiListStartDate">
+            <label for="kpiListEndDate">To</label>
+            <input type="date" class="form-control" id="kpiListEndDate">
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="clearKpiListFilters">Clear dates</button>
+          </div>
+        </details>
+      </div>
     </div>
 
     <!-- Table Header -->

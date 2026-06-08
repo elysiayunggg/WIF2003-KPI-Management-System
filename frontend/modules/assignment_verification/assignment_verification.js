@@ -67,7 +67,8 @@ let assignmentFilters   = { sort: "earliest" };
 function mapVerificationStatus(status) {
   switch (status) {
     case "approved":
-      return "APPROVED";   
+    case "completed":
+      return "COMPLETED";
 
     case "pending":
       return "PENDING VERIFICATION";
@@ -79,12 +80,18 @@ function mapVerificationStatus(status) {
       return status.toUpperCase();
   }
 }
+
+function verificationStaffInitials(name) {
+  if (!name || name === "Assigned Staff") return "-";
+  return name.split(" ").map(part => part[0]).join("").slice(0, 3).toUpperCase();
+}
 function getVerificationActionLink(item) {
   switch (item.status) {
     case "pending":
     case "pending verification":
       return `<a href="#" class="av-action-link av-action-primary" onclick="openReviewSubmissionVerify(event, '${item.id}')">Go to verify</a>`;
     case "approved":
+    case "completed":
     case "rejected":
       return `<a href="#" class="av-action-link av-action-muted" onclick="openReviewSubmissionDetails(event, '${item.id}')">Review Details</a>`;
     default:
@@ -127,21 +134,22 @@ function createVerificationRow(item) {
   const tr = document.createElement("tr");
   const mappedStatus = mapVerificationStatus(item.status);
   const statusConfig = getStatusConfig(mappedStatus);
+  const statusClass = getSharedStatusChipClass(mappedStatus);
   tr.innerHTML = `
     <td>
       <span class="fw-semibold">${item.kpiName}</span>
       <div class="av-subtext">${item.department} | Priority ${item.priority}</div>
     </td>
     <td>
-      <div class="d-flex align-items-center gap-2 fw-semibold">
-        <i class="bi bi-person-fill"></i>
-        <span>${item.staff}</span>
+      <div class="kpi-staff-display">
+        <span class="kpi-staff-avatar">${verificationStaffInitials(item.staff)}</span>
+        <span class="kpi-staff-name">${item.staff}</span>
       </div>
     </td>
     <td class="fw-semibold">${item.submissionTime}</td> 
 
 <td>
-  <span class="badge status-badge" style="${statusConfig.style}">
+  <span class="kpi-status-chip ${statusClass}">
     ${statusConfig.label}
   </span>
 </td>
@@ -159,9 +167,9 @@ function createAssignmentRow(item) {
       <div class="av-subtext">${item.department} | Priority ${item.priority}</div>
     </td>
     <td>
-      <div class="d-flex align-items-center gap-2 fw-semibold">
-        <i class="bi bi-person-fill"></i>
-        <span>${item.recommendedStaff}</span>
+      <div class="kpi-staff-display">
+        <span class="kpi-staff-avatar kpi-staff-avatar--unassigned">-</span>
+        <span class="kpi-staff-name">${item.recommendedStaff}</span>
       </div>
     </td>
     <td class="fw-semibold">${item.deadline}</td>
@@ -363,7 +371,7 @@ function mapKpiToVerificationItem(kpi) {
 }
 
 async function loadVerificationQueueFromApi() {
-  const response = await authFetch("http://127.0.0.1:5050/api/kpis");
+  const response = await authFetch(apiUrl("/kpis"));
 
   if (!response.ok) {
     throw new Error("Failed to load verification queue");
@@ -371,7 +379,7 @@ async function loadVerificationQueueFromApi() {
 
   const kpis = await response.json();
   verificationQueueData = kpis
-    .filter(kpi => ["pending verification", "approved", "rejected"].includes(String(kpi.status || "").toLowerCase()))
+    .filter(kpi => ["pending verification", "completed", "rejected"].includes(String(kpi.status || "").toLowerCase()))
     .map(mapKpiToVerificationItem);
 
   window.verificationQueueData = verificationQueueData;
@@ -412,7 +420,7 @@ function mapKpiToAssignmentItem(kpi) {
 }
 
 async function loadAssignmentQueueFromApi() {
-  const response = await authFetch("http://127.0.0.1:5050/api/kpis");
+  const response = await authFetch(apiUrl("/kpis"));
 
   if (!response.ok) {
     throw new Error("Failed to load assignment queue");

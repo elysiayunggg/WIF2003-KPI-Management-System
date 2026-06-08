@@ -134,7 +134,7 @@ async function fetchNotifications() {
   try {
     // ?userId=<id> filters the results to only this user's notifications.
     // The backend GET /api/notifications handler reads req.query.userId.
-    const response = await fetch(NOTIF_API_BASE + "?userId=" + userId);
+    const response = await authFetch(NOTIF_API_BASE + "?userId=" + userId);
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -187,7 +187,7 @@ async function markAsRead(notificationId) {
   try {
     // Construct the URL to point to the specific notification ID
     // e.g., http://127.0.0.1:5050/api/notifications/66fce0...
-    const response = await fetch(NOTIF_API_BASE + "/" + notificationId + "/read", {
+    const response = await authFetch(NOTIF_API_BASE + "/" + notificationId + "/read", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json"
@@ -222,7 +222,7 @@ async function markAllAsRead() {
   try {
     // Construct the URL to point to the specific notification ID
     // e.g., http://127.0.0.1:5050/api/notifications/66fce0...
-    const response = await fetch(NOTIF_API_BASE + "/read-all" + "?userId=" + userId, {
+    const response = await authFetch(NOTIF_API_BASE + "/read-all" + "?userId=" + userId, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json"
@@ -259,7 +259,7 @@ async function deleteAllNotifications() {
   if(!userId) return;
 
   try {
-    const response = await fetch(NOTIF_API_BASE +  "?userId=" + userId, {
+    const response = await authFetch(NOTIF_API_BASE +  "?userId=" + userId, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
@@ -308,9 +308,13 @@ function getUnreadCount() {
 // The browser EventSource API handles reconnection automatically on drop.
 function subscribeToNotifications() {
   var userId = getLoggedInUserId();
+  var token = typeof getAuthToken === "function" ? getAuthToken() : null;
   if (!userId) return;
+  if (!token) return;
 
-  var source = new EventSource(NOTIF_API_BASE + "/subscribe?userId=" + userId);
+  var source = new EventSource(
+    NOTIF_API_BASE + "/subscribe?userId=" + userId + "&token=" + encodeURIComponent(token)
+  );
 
   source.onmessage = function (event) {
     try {

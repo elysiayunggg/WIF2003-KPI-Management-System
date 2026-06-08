@@ -8,6 +8,15 @@ function clearAuthSession() {
   });
 }
 
+const API_BASE_URL = "http://127.0.0.1:5050/api";
+
+function apiUrl(path) {
+  const normalizedPath = String(path || "");
+  return normalizedPath.startsWith("/")
+    ? `${API_BASE_URL}${normalizedPath}`
+    : `${API_BASE_URL}/${normalizedPath}`;
+}
+
 async function authFetch(url, options = {}) {
   const token = getAuthToken();
   const headers = new Headers(options.headers || {});
@@ -31,4 +40,5 @@ async function authFetch(url, options = {}) {
 
 window.getAuthToken = getAuthToken;
 window.clearAuthSession = clearAuthSession;
+window.apiUrl = apiUrl;
 window.authFetch = authFetch;

@@ -5,13 +5,15 @@ async function initStaffDashboardView() {
   updateStaffSummaryCards();
   updateStaffDeadlineAlert();
   initStaffCharts();
+  renderStaffDeadlineRiskChart("all");
 }
 let staffTrendChart;
 let staffBreakdownChart;
+let staffRiskChart;
 
 function initStaffCharts() {
   const lineCanvas = document.getElementById("staffPerformanceTrendsChart");
-  const trendData = getStaffTrendDataset("7");
+  const trendData = getStaffTrendDataset("all");
 
   if (lineCanvas) {
     if (staffTrendChart) staffTrendChart.destroy();
@@ -84,16 +86,18 @@ function initStaffCharts() {
     staffBreakdownChart = new Chart(doughnutCanvas.getContext("2d"), {
       type: "doughnut",
       data: {
-        labels: ["Completed", "In Progress", "Pending Review", "Overdue"],
+        labels: ["Completed", "In Progress", "Pending Review", "Overdue", "Not Started", "Rejected"],
         datasets: [
           {
             data: [
               statusCounts.completed,
               statusCounts.inProgress,
               statusCounts.awaitingReview,
-              statusCounts.overdue
+              statusCounts.overdue,
+              statusCounts.notStarted,
+              statusCounts.rejected
             ],
-            backgroundColor: ["#0056d2", "#10b981", "#f59e0b", "#ba1a1a"],
+            backgroundColor: ["#10b981", "#2563eb", "#f59e0b", "#dc2626", "#98a2b3", "#8b5cf6"],
             borderWidth: 0,
             hoverOffset: 4
           }
@@ -115,19 +119,113 @@ function initStaffCharts() {
 
 function selectTrend(value, label) {
   document.getElementById("selectedTrend").textContent = label;
-  updateTrendChart(value);
+  renderStaffDeadlineRiskChart(value);
   closeAllStaffDropdowns();
 }
 
-function updateTrendChart(value) {
-  if (!staffTrendChart) return;
+function getStaffRiskColor(status) {
+  if (status === "Completed") return "#10b981";
+  if (status === "Awaiting Review") return "#f59e0b";
+  if (status === "Rejected") return "#8b5cf6";
+  if (status === "Overdue") return "#dc2626";
+  if (status === "Not Started") return "#98a2b3";
+  return "#2563eb";
+}
 
-  const trendData = getStaffTrendDataset(value);
+function getStaffRiskLabel(progress, daysRemaining, status) {
+  if (status === "Completed") return "Completed";
+  if (status === "Awaiting Review") return "Awaiting review";
+  if (status === "Rejected") return "Evidence revision required";
+  if (daysRemaining < 0) return "Overdue";
+  if (daysRemaining <= 14 && progress < 50) return "High risk";
+  if (progress < 75) return "Monitor";
+  return "On track";
+}
 
-  staffTrendChart.data.labels = trendData.labels;
-  staffTrendChart.data.datasets[0].data = trendData.actualData;
-  staffTrendChart.data.datasets[1].data = trendData.targetData;
-  staffTrendChart.update();
+function renderStaffDeadlineRiskChart(rangeValue) {
+  const canvas = document.getElementById("staffDeadlineRiskChart");
+  if (!canvas) return;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let points = staffRows
+    .filter(row => row.rawDeadline)
+    .map(row => {
+      const due = new Date(row.rawDeadline);
+      due.setHours(0, 0, 0, 0);
+      const daysRemaining = Math.ceil((due - today) / 86400000);
+      return {
+        daysRemaining,
+        progress: row.progress,
+        kpi: row.kpi,
+        status: row.status,
+        deadline: row.deadline,
+        risk: getStaffRiskLabel(row.progress, daysRemaining, row.status)
+      };
+    })
+    .filter(point => Number.isFinite(point.daysRemaining));
+
+  if (rangeValue !== "all") {
+    points = points.filter(point =>
+      point.daysRemaining >= 0 && point.daysRemaining <= Number(rangeValue)
+    );
+  }
+
+  points.sort((a, b) => a.daysRemaining - b.daysRemaining);
+
+  if (staffRiskChart) staffRiskChart.destroy();
+  staffRiskChart = new Chart(canvas.getContext("2d"), {
+    type: "bar",
+    data: {
+      labels: points.map(point =>
+        point.kpi.length > 25 ? `${point.kpi.slice(0, 25)}...` : point.kpi
+      ),
+      datasets: [{
+        label: "Days remaining",
+        data: points.map(point => point.daysRemaining),
+        backgroundColor: points.map(point => getStaffRiskColor(point.status)),
+        borderRadius: 4,
+        borderSkipped: false,
+        barThickness: 16
+      }]
+    },
+    options: {
+      indexAxis: "y",
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: items => points[items[0]?.dataIndex]?.kpi || "KPI",
+            label: context => {
+              const point = points[context.dataIndex];
+              return [
+              `Days remaining: ${point.daysRemaining}`,
+              `Progress: ${point.progress}%`,
+              `Deadline: ${point.deadline}`,
+              `Status: ${point.status}`,
+              `Risk: ${point.risk}`
+            ]
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: "Days remaining until deadline" },
+          beginAtZero: false,
+          grid: {
+            color: context => context.tick.value === 0 ? "#dc2626" : "rgba(152, 162, 179, 0.18)",
+            lineWidth: context => context.tick.value === 0 ? 2 : 1
+          }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { autoSkip: false }
+        }
+      }
+    }
+  });
 }
 
     function goToStaffKPI(event) {
@@ -301,7 +399,10 @@ function formatStaffStatus(status) {
 
 function mapAssignedKpiToStaffRow(kpi) {
   const progress = kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0;
-  const status = formatStaffStatus(kpi.status);
+  let status = formatStaffStatus(kpi.status);
+  if (progress <= 0 && status === "In Progress") {
+    status = "Not Started";
+  }
 
   return {
     id: kpi._id,
@@ -331,7 +432,7 @@ async function loadAssignedStaffKpis() {
   }
 
   try {
-    const response = await authFetch("http://127.0.0.1:5050/api/kpis");
+    const response = await authFetch(apiUrl("/kpis"));
 
     if (!response.ok) {
       throw new Error("Failed to load assigned KPIs");
@@ -384,7 +485,9 @@ function getStaffStatusCounts() {
     completed: staffRows.filter(row => row.status === "Completed").length,
     inProgress: staffRows.filter(row => row.status === "In Progress").length,
     awaitingReview: staffRows.filter(row => row.status === "Awaiting Review").length,
-    overdue: staffRows.filter(row => row.status === "Overdue").length
+    overdue: staffRows.filter(row => row.status === "Overdue").length,
+    notStarted: staffRows.filter(row => row.status === "Not Started").length,
+    rejected: staffRows.filter(row => row.status === "Rejected").length
   };
 }
 
@@ -394,7 +497,9 @@ function updateStaffBreakdownLegend(counts) {
     counts.completed,
     counts.inProgress,
     counts.awaitingReview,
-    counts.overdue
+    counts.overdue,
+    counts.notStarted,
+    counts.rejected
   ].map(count => `${Math.round((count / total) * 100)}%`);
 
   document.querySelectorAll(".staff-breakdown-legend strong").forEach((item, index) => {
@@ -403,19 +508,21 @@ function updateStaffBreakdownLegend(counts) {
 }
 
 function getStaffTrendDataset(rangeValue) {
-  const days = Number(rangeValue || 7);
-  const today = new Date();
-  const limit = new Date(today);
-  limit.setDate(today.getDate() + days);
-
   let rows = staffRows
     .filter(row => row.rawDeadline)
     .map(row => ({ ...row, due: new Date(row.rawDeadline) }))
     .filter(row => !isNaN(row.due))
     .sort((a, b) => a.due - b.due);
 
-  const upcomingRows = rows.filter(row => row.due >= today && row.due <= limit);
-  rows = (upcomingRows.length ? upcomingRows : rows).slice(0, 7);
+  if (rangeValue !== "all") {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const limit = new Date(today);
+    limit.setDate(today.getDate() + Number(rangeValue));
+    rows = rows.filter(row => row.due >= today && row.due <= limit);
+  }
+
+  rows = rows.slice(0, 9);
 
   if (rows.length === 0) {
     return {
@@ -494,7 +601,7 @@ function renderStaffTaskTable() {
 
         <!-- STATUS -->
         <td>
-            <span class="status-badge ${statusClass}">${row.status}</span>
+            <span class="kpi-status-chip ${getSharedStatusChipClass(row.status)}">${row.status}</span>
         </td>
 
         <!-- DEADLINE -->

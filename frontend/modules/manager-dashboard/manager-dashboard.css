@@ -375,6 +375,11 @@
   box-shadow: 0 12px 40px rgba(42, 52, 57, 0.04);
 }
 
+.performance-summary-card {
+  display: flex;
+  flex-direction: column;
+}
+
 .performance-summary-title,
 .kpi-distribution-title {
   font-size: 14px;
@@ -434,6 +439,68 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor: help;
+  position: relative;
+}
+
+.performance-summary-card .performance-staff-list {
+  margin-top: 28px;
+  flex: 1;
+  justify-content: center;
+}
+
+.performance-staff-item:focus-visible {
+  outline: 2px solid #4e5e82;
+  outline-offset: 2px;
+}
+
+.performance-staff-item[data-tooltip]::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  z-index: 20;
+  min-width: 180px;
+  padding: 9px 11px;
+  border-radius: 5px;
+  background-color: #303030;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: left;
+  white-space: pre-line;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.performance-staff-item[data-tooltip]::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 3px);
+  z-index: 20;
+  border: 7px solid transparent;
+  border-top-color: #303030;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition: opacity 0.15s ease;
+}
+
+.performance-staff-item[data-tooltip]:hover::before,
+.performance-staff-item[data-tooltip]:hover::after,
+.performance-staff-item[data-tooltip]:focus-visible::before,
+.performance-staff-item[data-tooltip]:focus-visible::after {
+  opacity: 1;
+}
+
+.performance-staff-item[data-tooltip]:hover::before,
+.performance-staff-item[data-tooltip]:focus-visible::before {
+  transform: translate(-50%, 0);
 }
 
 .performance-staff-item h4 {
@@ -528,6 +595,41 @@
 
 .progress-dot {
   background-color: #0056d2;
+}
+
+.performance-staff-rate {
+  color: #059669;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.performance-staff-rate--low {
+  color: #dc2626;
+}
+
+.performance-method {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e4e7ec;
+  color: #667085;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.performance-method i {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.pending-dot {
+  background-color: #f59e0b;
+}
+
+.overdue-dot {
+  background-color: #ef4444;
 }
 
 
@@ -689,4 +791,20 @@ html[data-bs-theme="dark"] #page-content .kpi-trend-header h3 {
 
 html[data-bs-theme="dark"] #page-content .kpi-trend-legend {
   color: #adb5bd !important;
+}
+
+.kpi-efficiency-box small {
+  display: block;
+  margin-top: 5px;
+  color: #667085;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.rejected-dot {
+  background-color: #881337;
+}
+
+.not-started-dot {
+  background-color: #98a2b3;
 }

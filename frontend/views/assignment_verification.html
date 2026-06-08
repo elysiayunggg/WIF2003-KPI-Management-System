@@ -37,15 +37,8 @@
             <div class="d-flex gap-1" id="verificationStatusFilters">
               <button class="av-filter-pill av-filter-pill-active" data-status="all"      onclick="setVerificationStatus(this,'all')">All</button>
               <button class="av-filter-pill"                        data-status="pending"  onclick="setVerificationStatus(this,'pending')">Pending</button>
-              <button class="av-filter-pill"                        data-status="approved" onclick="setVerificationStatus(this,'approved')">Approved</button>
+              <button class="av-filter-pill"                        data-status="completed" onclick="setVerificationStatus(this,'completed')">Completed</button>
               <button class="av-filter-pill"                        data-status="rejected" onclick="setVerificationStatus(this,'rejected')">Rejected</button>
-            </div>
-          </div>
-          <div class="d-flex align-items-center gap-2">
-            <span class="av-filter-label">Submission time</span>
-            <div class="d-flex gap-1" id="verificationSortFilters">
-              <button class="av-filter-pill av-filter-pill-active" data-sort="latest"   onclick="setVerificationSort(this,'latest')">Latest first</button>
-              <button class="av-filter-pill"                        data-sort="earliest" onclick="setVerificationSort(this,'earliest')">Earliest first</button>
             </div>
           </div>
           <div class="d-flex align-items-center gap-2 ms-auto">
@@ -53,6 +46,13 @@
             <select class="form-select form-select-sm av-staff-select" id="verificationStaffFilter" onchange="setVerificationStaff(this.value)">
               <option value="all">All Staff</option>
             </select>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2 mt-2 pt-2 av-filter-second-row">
+          <span class="av-filter-label">Submission time</span>
+          <div class="d-flex gap-1" id="verificationSortFilters">
+            <button class="av-filter-pill av-filter-pill-active" data-sort="latest"   onclick="setVerificationSort(this,'latest')">Latest first</button>
+            <button class="av-filter-pill"                        data-sort="earliest" onclick="setVerificationSort(this,'earliest')">Earliest first</button>
           </div>
         </div>
       </div>

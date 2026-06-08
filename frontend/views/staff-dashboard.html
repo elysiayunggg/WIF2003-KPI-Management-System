@@ -87,36 +87,32 @@
 <!-- STAFF CHARTS ROW -->
 <div class="staff-charts-row mt-4 mb-4">
 
-  <!-- PERFORMANCE TRENDS -->
+  <!-- DEADLINE RISK MATRIX -->
   <div class="staff-chart-card staff-performance-card">
     <div class="staff-chart-header">
 
       <div class="d-flex align-items-center gap-2">
-        <h3>Performance Trends</h3>
+        <h3>Deadline Timeline</h3>
 
         <div class="dropdown-wrapper trend-filter-wrapper">
           <button class="custom-filter-btn staff-trend-btn" onclick="toggleStaffDropdown(event, 'trendDropdown')">
-            <span id="selectedTrend">Last 7 Days</span>
+            <span id="selectedTrend">All KPIs</span>
             <i class="bi bi-chevron-down dropdown-icon"></i>
           </button>
 
           <div class="custom-dropdown" id="trendDropdown">
-            <button onclick="selectTrend('7', 'Last 7 Days')">Last 7 Days</button>
-            <button onclick="selectTrend('30', 'Last 30 Days')">Last 30 Days</button>
-            <button onclick="selectTrend('90', 'Last 90 Days')">Last 90 Days</button>
+            <button onclick="selectTrend('all', 'All KPIs')">All KPIs</button>
+            <button onclick="selectTrend('30', 'Due in 30 Days')">Due in 30 Days</button>
+            <button onclick="selectTrend('90', 'Due in 90 Days')">Due in 90 Days</button>
           </div>
         </div>
       </div>
 
-      <div class="staff-chart-legend">
-        <span><span class="legend-dot actual-dot"></span> Actual</span>
-        <span><span class="legend-dot target-dot"></span> Target</span>
-      </div>
-
     </div>
 
-    <div class="staff-line-chart-wrapper">
-      <canvas id="staffPerformanceTrendsChart"></canvas>
+    <p class="staff-risk-subtitle">See which KPI deadlines are closest. Red bars are overdue; shorter bars need attention sooner.</p>
+    <div class="staff-risk-chart-wrapper">
+      <canvas id="staffDeadlineRiskChart"></canvas>
     </div>
   </div>
 
@@ -147,6 +143,16 @@
       <div>
         <span><span class="legend-dot overdue-dot"></span> Overdue</span>
         <strong>4%</strong>
+      </div>
+
+      <div>
+        <span><span class="legend-dot not-started-dot"></span> Not Started</span>
+        <strong>0%</strong>
+      </div>
+
+      <div>
+        <span><span class="legend-dot rejected-dot"></span> Rejected</span>
+        <strong>0%</strong>
       </div>
     </div>
   </div>

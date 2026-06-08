@@ -201,33 +201,27 @@
   <div class="performance-summary-card">
     <h3 class="performance-summary-title">PERFORMANCE SUMMARY</h3>
 
-    <div class="performance-score-block">
-      <p class="performance-label">AVERAGE KPI SCORE</p>
-
-      <div class="performance-score-row">
-        <h2 class="performance-score" id="managerAverageScore">0%</h2>
-        <span class="performance-change">
-          <i class="bi bi-arrow-up"></i> +2.4%
-        </span>
-      </div>
-    </div>
-
     <div class="performance-staff-list">
-      <div class="performance-staff-item">
+      <div class="performance-staff-item" id="managerTopStaffItem" tabindex="0">
         <div>
           <p class="performance-label mb-1">TOP PERFORMING STAFF</p>
           <h4 id="managerTopStaff">-</h4>
         </div>
-        <i class="bi bi-trophy-fill performance-icon"></i>
+        <strong class="performance-staff-rate" id="managerTopStaffRate">-</strong>
       </div>
 
-      <div class="performance-staff-item">
+      <div class="performance-staff-item" id="managerLowestStaffItem" tabindex="0">
         <div>
           <p class="performance-label mb-1">LOWEST PERFORMANCE</p>
           <h4 id="managerLowestStaff">-</h4>
         </div>
-        <i class="bi bi-exclamation-lg performance-icon text-danger"></i>
+        <strong class="performance-staff-rate performance-staff-rate--low" id="managerLowestStaffRate">-</strong>
       </div>
+    </div>
+
+    <div class="performance-method">
+      <i class="bi bi-info-circle"></i>
+      <span>Ranked by completed KPIs among finalized outcomes. Minimum 2 finalized KPIs.</span>
     </div>
   </div>
 
@@ -243,7 +237,8 @@
       <div class="kpi-distribution-side">
         <div class="kpi-efficiency-box">
           <h2 id="overallEfficiency">89%</h2>
-          <p>OVERALL EFFICIENCY</p>
+          <p id="overallEfficiencyLabel">OVERALL KPI COMPLETION</p>
+          <small id="overallEfficiencyDetail">0 of 0 KPIs completed</small>
         </div>
 
         <div class="kpi-legend" id="kpiPieLegend"></div>
@@ -262,10 +257,10 @@
 
       <div class="kpi-trend-legend">
         <div>
-          <span class="legend-box actual"></span> ACTUAL
+          <span class="legend-box actual"></span> COMPLETED KPIs
         </div>
         <div>
-          <span class="legend-box target"></span> TARGET
+          <span class="legend-box target"></span> TOTAL KPIs
         </div>
       </div>
     </div>
