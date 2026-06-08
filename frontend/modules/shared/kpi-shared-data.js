@@ -1,4 +1,4 @@
-const KPI_SHARED_API_BASE = "http://127.0.0.1:5050/api";
+const KPI_SHARED_API_BASE = apiUrl();
 
 function getKpiSharedAuthHeaders() {
     const token = localStorage.getItem("token");

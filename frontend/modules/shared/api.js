@@ -1,3 +1,18 @@
+const API_ORIGIN = window.API_ORIGIN || "http://127.0.0.1:5050";
+const API_BASE = `${API_ORIGIN}/api`;
+
+function apiUrl(path = "") {
+  const normalizedPath = String(path || "");
+  if (/^https?:\/\//i.test(normalizedPath)) return normalizedPath;
+  return `${API_BASE}${normalizedPath.startsWith("/") ? normalizedPath : `/${normalizedPath}`}`;
+}
+
+function apiOrigin(path = "") {
+  const normalizedPath = String(path || "");
+  if (/^https?:\/\//i.test(normalizedPath)) return normalizedPath;
+  return `${API_ORIGIN}${normalizedPath.startsWith("/") ? normalizedPath : `/${normalizedPath}`}`;
+}
+
 function getAuthToken() {
   return localStorage.getItem("token");
 }
@@ -42,3 +57,7 @@ window.getAuthToken = getAuthToken;
 window.clearAuthSession = clearAuthSession;
 window.apiUrl = apiUrl;
 window.authFetch = authFetch;
+window.API_ORIGIN = API_ORIGIN;
+window.API_BASE = API_BASE;
+window.apiUrl = apiUrl;
+window.apiOrigin = apiOrigin;

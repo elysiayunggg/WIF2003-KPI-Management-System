@@ -109,7 +109,7 @@ async function loadProgressAssignedKpis() {
             return;
         }
 
-        const response = await authFetch(`http://127.0.0.1:5050/api/kpis/assigned/${userId}`, {
+        const response = await authFetch(apiUrl(`/kpis/assigned/${userId}`), {
             cache: "no-store"
         });
         if (!response.ok) throw new Error("Failed to load assigned KPI progress");

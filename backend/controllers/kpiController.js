@@ -75,10 +75,24 @@ exports.getKpis = async (req, res) => {
       ? {}
       : { assignedTo: req.user?.id };
 
-    const kpis = await Kpi.find(filter)
-      .populate("createdBy", "name email role")
-      .populate("assignedTo", "name email role")
-      .sort({ createdAt: -1 });
+    const [kpis, rejectedEvidence] = await Promise.all([
+      Kpi.find(filter)
+        .populate("createdBy", "name email role")
+        .populate("assignedTo", "name email role")
+        .sort({ dueDate: 1, createdAt: -1 }),
+      Evidence.find({ status: "rejected" })
+        .select("kpiId progress createdAt")
+        .sort({ createdAt: -1 })
+        .lean()
+    ]);
+
+    const latestRejectedProgress = new Map();
+    rejectedEvidence.forEach((evidence) => {
+      const kpiId = String(evidence.kpiId);
+      if (!latestRejectedProgress.has(kpiId)) {
+        latestRejectedProgress.set(kpiId, Number(evidence.progress) || 0);
+      }
+    });
 
     const rows = kpis.map((kpi) => {
       const payload = kpi.toObject();
@@ -88,6 +102,7 @@ exports.getKpis = async (req, res) => {
         dueDate: kpi.dueDate,
         progressPercent
       });
+      payload.lastSubmittedProgress = latestRejectedProgress.get(String(kpi._id)) ?? null;
       return payload;
     });
 
@@ -299,9 +314,9 @@ exports.getKpiReviewData = async (req, res) => {
 
     const statusMap = {
       "pending verification": "Pending Review",
-      "approved": "Approved",
+      "approved": "Completed",
       "rejected": "Rejected",
-      "completed": "Approved",
+      "completed": "Completed",
       "in progress": "In Progress",
       "not started": "Not Started",
       "overdue": "Overdue"
@@ -548,13 +563,32 @@ exports.updateKpi = async (req, res) => {
       }
     });
 
-    const previousKpi = await Kpi.findById(req.params.id).select("assignedTo createdBy dueDate");
+    const reviewDecision = updates.status === "approved" || updates.status === "rejected"
+      ? updates.status
+      : null;
 
-    if (!previousKpi) {
+    const existingKpi = await Kpi.findById(req.params.id).select("assignedTo createdBy dueDate currentValue targetValue");
+
+    if (!existingKpi) {
       return res.status(404).json({ message: "KPI not found" });
     }
 
-    const kpi = await Kpi.findByIdAndUpdate(req.params.id, updates, {
+    let pendingEvidence = null;
+    if (reviewDecision) {
+      pendingEvidence = await Evidence.findOne({
+        kpiId: existingKpi._id,
+        status: "pending"
+      }).sort({ createdAt: -1 });
+    }
+
+    const previousKpi = Array.isArray(updates.assignedTo) ? existingKpi : null;
+
+    const finalUpdates = {
+      ...updates,
+      ...(reviewDecision === "approved" ? { status: "completed" } : {})
+    };
+
+    const kpi = await Kpi.findByIdAndUpdate(req.params.id, finalUpdates, {
       returnDocument: "after",
       runValidators: true
     });
@@ -607,14 +641,11 @@ exports.updateKpi = async (req, res) => {
     }
 
     // Keep evidence review records aligned with manager decision on KPI.
-    if (updates.status === "approved" || updates.status === "rejected") {
-      const latestEvidence = await Evidence.findOne({
-        kpiId: kpi._id,
-        status: "pending"
-      }).sort({ createdAt: -1 });
+    if (reviewDecision) {
+      const latestEvidence = pendingEvidence;
 
       if (latestEvidence) {
-        latestEvidence.status = updates.status;
+        latestEvidence.status = reviewDecision;
         if (typeof updates.reviewComments === "string") {
           latestEvidence.reviewerComments = updates.reviewComments.trim();
         }
@@ -628,8 +659,8 @@ exports.updateKpi = async (req, res) => {
       // Notify every staff member assigned to this KPI about the decision.
       try {
         const staffIds = Array.isArray(kpi.assignedTo) ? kpi.assignedTo : [];
-        const verb = updates.status === "approved" ? "approved" : "rejected";
-        const titleText = updates.status === "approved"
+        const verb = reviewDecision === "approved" ? "approved" : "rejected";
+        const titleText = reviewDecision === "approved"
           ? "KPI Evidence Approved"
           : "KPI Evidence Rejected";
         const comment = typeof updates.reviewComments === "string"
@@ -645,7 +676,7 @@ exports.updateKpi = async (req, res) => {
             userId: staffId,
             title: titleText,
             message: messageText,
-            type: updates.status === "approved" ? "approved" : "rejected",
+            type: reviewDecision === "approved" ? "approved" : "rejected",
             relatedKpiId: kpi._id,
             relatedEvidenceId: latestEvidence?._id
           });
@@ -704,6 +735,17 @@ exports.patchKpiProgress = async (req, res) => {
       }
       if (requesterRole !== "manager" && reviewOnlyStatuses.includes(normalizedStatus)) {
         return res.status(403).json({ message: "Only managers can set approved/rejected statuses" });
+      }
+      if (normalizedStatus === "pending verification") {
+        const effectiveProgress = progress === undefined
+          ? computeProgressPercent(kpi)
+          : Number(progress);
+
+        if (!Number.isFinite(effectiveProgress) || effectiveProgress !== 100) {
+          return res.status(400).json({
+            message: "Pending verification is only available when KPI progress reaches 100%"
+          });
+        }
       }
       kpi.status = normalizedStatus;
     }

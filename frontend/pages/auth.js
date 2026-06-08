@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:5050/api/auth";
+const AUTH_API_BASE = apiUrl("/auth");
 
 /** Work / standard email: local@domain.tld (practical check, not full RFC 5322) */
 const EMAIL_MAX_LEN = 254;
@@ -96,7 +96,7 @@ if (registerForm) {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/register`, {
+      const response = await fetch(`${AUTH_API_BASE}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -146,7 +146,7 @@ if (loginForm) {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/login`, {
+      const response = await fetch(`${AUTH_API_BASE}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -201,7 +201,7 @@ if (forgotPasswordForm) {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/forgot-password`, {
+      const response = await fetch(`${AUTH_API_BASE}/forgot-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

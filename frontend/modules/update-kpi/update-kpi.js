@@ -1,5 +1,5 @@
 
-const UPDATE_KPI_API = "http://127.0.0.1:5050/api";
+const UPDATE_KPI_API = apiUrl();
 
 let updateKpiOriginalMilestoneIds = [];
 let updateKpiTimelineBounds = { timelineStart: null, timelineEnd: null };

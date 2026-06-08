@@ -79,10 +79,7 @@ async function refreshKpiProgressFromEvidence(kpiId) {
   const kpi = await Kpi.findById(kpiId);
   if (!kpi) return null;
 
-  const evidenceRows = await Evidence.find({
-    kpiId,
-    status: { $ne: "rejected" }
-  }).select("progress");
+  const evidenceRows = await Evidence.find({ kpiId }).select("progress");
   const totalPct = Math.min(
     100,
     evidenceRows.reduce((sum, row) => sum + (Number(row.progress) || 0), 0)

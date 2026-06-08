@@ -2,7 +2,7 @@ const Notification = require("../models/Notification");
 const { addClient, removeClient } = require("../sse/sseClients");
 const mongoose = require("mongoose");
 
-// GET /api/notifications?userId=<id>
+// GET /api/notifications
 // Returns all notifications for one user, newest first.
 // Called by notification-data.js on page load.
 exports.getNotifications = async (req, res) => {
@@ -57,7 +57,7 @@ exports.markOneAsRead = async (req, res) => {
   }
 };
 
-// PUT /api/notifications/read-all?userId=<id>
+// PUT /api/notifications/read-all
 // Marks every notification belonging to this user as read in one operation.
 exports.markAllAsRead = async (req, res) => {
   try {
@@ -82,7 +82,7 @@ exports.markAllAsRead = async (req, res) => {
   }
 };
 
-// GET /api/notifications/subscribe?userId=<id>
+// GET /api/notifications/subscribe
 // Opens a persistent SSE stream for the given user.
 // The browser EventSource API reconnects automatically if the connection drops.
 exports.subscribeNotifications = (req, res) => {
@@ -101,7 +101,7 @@ exports.subscribeNotifications = (req, res) => {
   });
 };
 
-// DELETE /api/notifications?userId=<id>
+// DELETE /api/notifications
 // Permanently deletes all notifications for this user.
 exports.deleteAllNotifications = async (req, res) => {
   try {

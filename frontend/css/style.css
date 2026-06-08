@@ -237,6 +237,38 @@ p { font-size: 13px; }
   transition: opacity 0.15s ease-in-out;
 }
 
+/* Enabled form fields should read as interactive, not disabled. */
+html:not([data-bs-theme="dark"]) #page-content input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]):not(:disabled):not([readonly]),
+html:not([data-bs-theme="dark"]) #page-content textarea:not(:disabled):not([readonly]),
+html:not([data-bs-theme="dark"]) #page-content select:not(:disabled),
+html:not([data-bs-theme="dark"]) #page-content .form-control:not(:disabled):not([readonly]),
+html:not([data-bs-theme="dark"]) #page-content .form-select:not(:disabled) {
+  background-color: #ffffff !important;
+  border-color: #d7dee5 !important;
+}
+
+html:not([data-bs-theme="dark"]) #page-content input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]):not(:disabled):not([readonly]):focus,
+html:not([data-bs-theme="dark"]) #page-content textarea:not(:disabled):not([readonly]):focus,
+html:not([data-bs-theme="dark"]) #page-content select:not(:disabled):focus,
+html:not([data-bs-theme="dark"]) #page-content .form-control:not(:disabled):not([readonly]):focus,
+html:not([data-bs-theme="dark"]) #page-content .form-select:not(:disabled):focus {
+  border-color: #8292ae !important;
+  box-shadow: 0 0 0 3px rgba(78, 94, 130, 0.1);
+}
+
+html:not([data-bs-theme="dark"]) #page-content input:disabled,
+html:not([data-bs-theme="dark"]) #page-content input[readonly],
+html:not([data-bs-theme="dark"]) #page-content textarea:disabled,
+html:not([data-bs-theme="dark"]) #page-content textarea[readonly],
+html:not([data-bs-theme="dark"]) #page-content select:disabled,
+html:not([data-bs-theme="dark"]) #page-content .form-control:disabled,
+html:not([data-bs-theme="dark"]) #page-content .form-control[readonly],
+html:not([data-bs-theme="dark"]) #page-content .form-select:disabled {
+  background-color: #eef1f4 !important;
+  color: #667085;
+  cursor: not-allowed;
+}
+
 /* Submission Card Styles */
 .submission-card {
   transition: all 0.2s ease;
@@ -720,4 +752,282 @@ html[data-bs-theme="dark"] #page-content .btn-outline-secondary:hover {
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+/* Shared KPI table staff identity */
+.kpi-staff-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.kpi-staff-avatar {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #d3e4fe;
+  color: #005bc4;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.kpi-staff-avatar--unassigned {
+  background-color: #eef1f5;
+  color: #667085;
+}
+
+.kpi-staff-name {
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2a3439;
+  overflow-wrap: anywhere;
+}
+
+/* Shared KPI table status chips */
+.kpi-status-chip {
+  display: inline-block;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.kpi-status-chip--not-started,
+.kpi-status-chip--unassigned {
+  background-color: #f2f4f7;
+  border-color: #e4e7ec;
+  color: #667085;
+}
+
+.kpi-status-chip--in-progress {
+  background-color: #eff6ff;
+  border-color: #dbeafe;
+  color: #2563eb;
+}
+
+.kpi-status-chip--pending {
+  background-color: #fff7ed;
+  border-color: #fed7aa;
+  color: #ea580c;
+}
+
+.kpi-status-chip--completed {
+  background-color: #ecfdf5;
+  border-color: #d1fae5;
+  color: #059669;
+}
+
+.kpi-status-chip--danger {
+  background-color: #fef2f2;
+  border-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* Shared compact KPI filters */
+.kpi-filter-bar {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 10px 14px;
+  background: #f4f7f9;
+  border-radius: 8px;
+}
+
+.kpi-filter-bar .filter-item {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 18px;
+  border-right: 1px solid #d9e1e7;
+}
+
+.kpi-filter-bar .filter-item:first-child {
+  padding-left: 0;
+}
+
+.kpi-filter-bar .filter-item:last-child {
+  border-right: 0;
+}
+
+.kpi-filter-bar .filter-item > label {
+  margin: 0;
+  color: #46515c;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.kpi-filter-bar .custom-filter-btn {
+  width: 168px;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid #edf0f2;
+  border-radius: 8px;
+  background: #fff;
+  color: #26313b;
+  font-size: 13px;
+}
+
+.kpi-date-filter {
+  position: relative;
+}
+
+.kpi-date-range {
+  position: relative;
+}
+
+.kpi-date-range summary {
+  width: 210px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.kpi-date-range summary::-webkit-details-marker {
+  display: none;
+}
+
+.kpi-date-range__panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  width: 280px;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid #dfe5ea;
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(16, 24, 40, 0.14);
+}
+
+.kpi-date-range__panel label {
+  display: block;
+  margin: 0 0 5px;
+  color: #52606d;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.kpi-date-range__panel .form-control {
+  margin-bottom: 12px;
+  background: #fff;
+}
+
+@media (max-width: 900px) {
+  .kpi-filter-bar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .kpi-filter-bar .filter-item {
+    flex: 1 1 260px;
+    padding: 0;
+    border-right: 0;
+  }
+
+  .kpi-filter-bar .custom-filter-btn,
+  .kpi-date-range,
+  .kpi-date-range summary {
+    width: 100% !important;
+  }
+}
+
+/* Shared in-app messages */
+.app-message-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2000;
+  width: min(380px, calc(100vw - 32px));
+  display: grid;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.app-message {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) 32px;
+  gap: 12px;
+  align-items: start;
+  padding: 14px 12px 14px 16px;
+  background: #fff;
+  border: 1px solid #dfe3e8;
+  border-left: 4px solid #4169a1;
+  border-radius: 6px;
+  box-shadow: 0 10px 28px rgba(16, 24, 40, 0.16);
+  color: #17212b;
+  pointer-events: auto;
+  animation: app-message-enter 180ms ease-out;
+}
+
+.app-message--success { border-left-color: #159a68; }
+.app-message--warning { border-left-color: #d97706; }
+.app-message--error { border-left-color: #dc3545; }
+.app-message--info { border-left-color: #2563eb; }
+
+.app-message--success .app-message__icon { color: #159a68; }
+.app-message--warning .app-message__icon { color: #d97706; }
+.app-message--error .app-message__icon { color: #dc3545; }
+.app-message--info .app-message__icon { color: #2563eb; }
+
+.app-message__icon {
+  margin-top: 2px;
+  font-size: 18px;
+}
+
+.app-message__content strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 14px;
+}
+
+.app-message__content p {
+  margin: 0;
+  color: #52606d;
+  font-size: 13px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.app-message__close {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #667085;
+}
+
+.app-message--leaving {
+  opacity: 0;
+  transform: translateX(12px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+@keyframes app-message-enter {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 575px) {
+  .app-message-container {
+    top: 12px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+  }
 }

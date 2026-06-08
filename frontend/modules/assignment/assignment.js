@@ -68,7 +68,7 @@ function filterAndRenderStaff(query) {
 }
 
 async function loadStaffFromApi() {
-  const response = await authFetch("http://127.0.0.1:5050/api/auth/users?role=staff");
+  const response = await authFetch(apiUrl("/auth/users?role=staff"));
 
   if (!response.ok) {
     throw new Error("Failed to load staff");
@@ -87,16 +87,21 @@ async function loadSelectedKpiTitle() {
   const kpiId = sessionStorage.getItem("assignmentKpiId");
   const titleSpan = document.querySelector(".page-subtitle .fw-semibold");
 
-  if (!kpiId || !titleSpan) return;
+  if (!kpiId || !titleSpan) return false;
 
   try {
-    const response = await authFetch(`http://127.0.0.1:5050/api/kpis/${kpiId}`);
-    if (!response.ok) return;
+    const response = await authFetch(apiUrl(`/kpis/${kpiId}`));
+    if (!response.ok) {
+      sessionStorage.removeItem("assignmentKpiId");
+      return false;
+    }
 
     const kpi = await response.json();
     titleSpan.textContent = kpi.title;
+    return true;
   } catch (error) {
     console.error(error);
+    return false;
   }
 }
 
@@ -115,14 +120,14 @@ async function updateAssignment() {
   }
 
   try {
-    const response = await authFetch(`http://127.0.0.1:5050/api/kpis/${kpiId}`, {
+    const response = await authFetch(apiUrl(`/kpis/${kpiId}`), {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
         assignedTo: [selectedCard.dataset.staffId],
-        status: "in progress"
+        status: "not started"
       })
     });
 
@@ -168,7 +173,14 @@ async function initAssignmentView() {
   const staffList = document.getElementById("staffList");
   const stakeholderList = document.getElementById("stakeholderList");
 
-  await loadSelectedKpiTitle();
+  const hasValidKpi = await loadSelectedKpiTitle();
+
+  if (!hasValidKpi) {
+    const updateBtn = Array.from(document.querySelectorAll(".highLightButton"))
+      .find(btn => btn.textContent.trim() === "Update Assignment");
+    if (updateBtn) updateBtn.disabled = true;
+    alert("This KPI no longer exists. Please return to KPI Management and select it again.");
+  }
 
   try {
     await loadStaffFromApi();

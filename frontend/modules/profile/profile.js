@@ -1,4 +1,4 @@
-const PROFILE_API = "http://127.0.0.1:5050/api/profile";
+const PROFILE_API = apiUrl("/profile");
 
 const DEPARTMENTS = [
   "Software Development",
@@ -435,7 +435,7 @@ function checkAndShowWeeklyDigest() {
   setTimeout(async () => {
     let statsLine = "";
     try {
-      const res = await authFetch("http://127.0.0.1:5050/api/kpis");
+      const res = await authFetch(apiUrl("/kpis"));
       if (res.ok) {
         const json    = await res.json();
         const kpis    = Array.isArray(json) ? json : (json.kpis || []);
