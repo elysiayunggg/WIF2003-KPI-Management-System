@@ -72,7 +72,7 @@ function renderSidebar(role) {
           <i class="bi bi-list-ul"></i> ${t('navViewKpiList')}
         </a>
         <a href="#" class="nav-link ms-3" onclick="changePage(event, 'Archived KPIs')">
-          <i class="bi bi-archive"></i> Archived KPIs
+          <i class="bi bi-archive"></i> ${t('navArchivedKpis')}
         </a>
       </div>
 

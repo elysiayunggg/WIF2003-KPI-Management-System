@@ -4,13 +4,13 @@
             <div>
                 <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'Staff Dashboard')">Staff Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Progress')">KPI Progress</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">KPI Detail</li>
+                        <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'Staff Dashboard')" data-i18n="kpiDetail_breadcrumbDashboard">Staff Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Progress')" data-i18n="kpiDetail_breadcrumbProgress">KPI Progress</a></li>
+                        <li class="breadcrumb-item active" aria-current="page" data-i18n="kpiDetail_breadcrumbCurrent">KPI Detail</li>
                     </ol>
                 </nav>
 
-                <h1 class="page-title mb-0" id="kpi-detail-page-heading">KPI Detail</h1>
+                <h1 class="page-title mb-0" id="kpi-detail-page-heading" data-i18n="kpiDetail_pageTitle">KPI Detail</h1>
             </div>
             <div class="d-flex align-items-center flex-wrap gap-2">
                 <div class="position-relative kpi-status-dropdown">
@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 <!-- <button class="btn kpi-btn-secondary"><span class="material-symbols-outlined">file_download</span>Export CSV</button> -->
-                <button type="button" class="btn kpi-btn-primary" id="kpi-detail-export-pdf-btn" aria-label="Print KPI detail page"><span class="material-symbols-outlined">description</span>Export PDF</button>
+                <button type="button" class="btn kpi-btn-primary" id="kpi-detail-export-pdf-btn" aria-label="Print KPI detail page"><span class="material-symbols-outlined">description</span><span data-i18n="kpiDetail_exportPdf">Export PDF</span></button>
             </div>
         </header>
 
@@ -40,11 +40,11 @@
                     <p class="kpi-subtext" id="kpi-detail-description">—</p>
                     <div class="d-flex justify-content-between align-items-end mt-4">
                         <div>
-                            <div class="kpi-label">Current Progress</div>
+                            <div class="kpi-label" data-i18n="kpiDetail_labelCurrentProgress">Current Progress</div>
                             <div class="kpi-progress-value" id="kpi-detail-progress-pct">0%</div>
                         </div>
                         <div class="text-end">
-                            <div class="kpi-label">Target</div>
+                            <div class="kpi-label" data-i18n="kpiDetail_labelTarget">Target</div>
                             <div class="kpi-target-value" id="kpi-detail-target">—</div>
                         </div>
                     </div>
@@ -56,11 +56,11 @@
             <div class="col-12 col-xl-4">
                 <aside class="kpi-card h-100">
                     <div class="mb-4">
-                        <div class="kpi-label">Deadline</div>
+                        <div class="kpi-label" data-i18n="kpiDetail_labelDeadline">Deadline</div>
                         <div class="kpi-meta-line" id="kpi-detail-deadline"><span class="material-symbols-outlined me-1">calendar_today</span>—</div>
                     </div>
                     <div class="mb-4">
-                        <div class="kpi-label">Primary Owner</div>
+                        <div class="kpi-label" data-i18n="kpiDetail_labelPrimaryOwner">Primary Owner</div>
                         <div class="d-flex align-items-center gap-2 mt-2">
                             <div class="kpi-avatar-lg d-flex align-items-center justify-content-center bg-secondary text-white fw-semibold" id="kpi-detail-owner-initials" style="width:40px;height:40px;border-radius:50%;font-size:0.85rem;">—</div>
                             <div>
@@ -70,7 +70,7 @@
                         </div>
                     </div>
                     <div>
-                        <div class="kpi-label">Department</div>
+                        <div class="kpi-label" data-i18n="kpiDetail_labelDepartment">Department</div>
                         <div class="kpi-meta-line mt-2" id="kpi-detail-department">—</div>
                     </div>
                 </aside>
@@ -137,15 +137,15 @@
             <div class="col-12 col-xl-8">
                 <section class="kpi-card kpi-evidence-card mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2 class="kpi-section-title mb-0">My Evidence</h2>
+                        <h2 class="kpi-section-title mb-0" data-i18n="kpiDetail_myEvidenceTitle">My Evidence</h2>
                         <button class="btn kpi-btn-primary" onclick="changePage(event, 'Submit Evidence')">
-                            <span class="material-symbols-outlined">add_circle</span>Add Evidence
+                            <span class="material-symbols-outlined">add_circle</span><span data-i18n="kpiDetail_addEvidenceBtn">Add Evidence</span>
                         </button>
                     </div>
                     <div class="table-responsive kpi-evidence-table-wrap">
                         <table class="table align-middle kpi-table mb-0">
                             <thead>
-                                <tr><th style="width: 32%;">File Name</th><th>Date Time</th><th>Progress</th><th>Status</th><th class="text-end">Actions</th></tr>
+                                <tr><th style="width: 32%;" data-i18n="kpiDetail_thFileName">File Name</th><th data-i18n="kpiDetail_thDateUploaded">Date Time</th><th>Progress</th><th data-i18n="kpiDetail_thStatus">Status</th><th class="text-end" data-i18n="kpiDetail_thActions">Actions</th></tr>
                             </thead>
                             <tbody id="kpi-detail-my-evidence-body">
                             </tbody>
@@ -154,11 +154,11 @@
                 </section>
 
                 <section class="kpi-card kpi-evidence-card">
-                    <h2 class="kpi-section-title">Team Evidence</h2>
+                    <h2 class="kpi-section-title" data-i18n="kpiDetail_teamEvidenceTitle">Team Evidence</h2>
                     <div class="table-responsive kpi-evidence-table-wrap">
                         <table class="table align-middle kpi-table mb-0">
                             <thead>
-                                <tr><th style="width: 32%;">File Name</th><th>Date Time</th><th>Progress</th><th>Status</th><th class="text-end">Actions</th></tr>
+                                <tr><th style="width: 32%;" data-i18n="kpiDetail_thSubmitter">File Name</th><th data-i18n="kpiDetail_thDocument">Date Time</th><th>Progress</th><th data-i18n="kpiDetail_thStatus">Status</th><th class="text-end" data-i18n="kpiDetail_thActions">Actions</th></tr>
                             </thead>
                             <tbody id="kpi-detail-team-evidence-body">
                             </tbody>
@@ -169,7 +169,7 @@
 
             <div class="col-12 col-xl-4">
                 <aside class="kpi-card">
-                    <h2 class="kpi-section-title">Activity Timeline</h2>
+                    <h2 class="kpi-section-title" data-i18n="kpiDetail_activityTimelineTitle">Activity Timeline</h2>
                     <div class="kpi-timeline" id="kpi-detail-timeline">
                     </div>
                     <!-- <button class="btn w-100 mt-3 kpi-btn-outline">View Full History</button> -->

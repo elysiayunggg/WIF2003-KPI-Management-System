@@ -2,27 +2,27 @@
 
   <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
     <ol class="breadcrumb mb-0">
-      <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Management')">KPI Management</a></li>
-      <li class="breadcrumb-item active" aria-current="page">KPI List</li>
+      <li class="breadcrumb-item"><a href="#" onclick="changePage(event, 'KPI Management')" data-i18n="kpiList_breadcrumbParent">KPI Management</a></li>
+      <li class="breadcrumb-item active" aria-current="page" data-i18n="kpiList_breadcrumbCurrent">KPI List</li>
     </ol>
   </nav>
 
-  <h1 class="page-title mb-3">KPI List</h1>
+  <h1 class="page-title mb-3" data-i18n="kpiList_pageTitle">KPI List</h1>
 
   <div class="card border-0 shadow-sm p-3">
 
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h6 class="fw-bold mb-0">KPI List</h6>
-      <input type="text" class="form-control w-25" placeholder="Search KPIs...">
+      <h6 class="fw-bold mb-0" data-i18n="kpiList_cardTitle">KPI List</h6>
+      <input type="text" class="form-control w-25" placeholder="Search KPIs..." data-i18n-placeholder="kpiList_searchPlaceholder">
     </div>
 
     <!-- Table Header -->
     <div class="row text-muted small fw-bold mb-2 px-2 kpi-list-header">
-      <div class="col-4">KPI NAME</div>
-      <div class="col-4">TARGET PROGRESS</div>
-      <div class="col-2">STATUS</div>
-      <div class="col-2 text-end">DETAILS</div>
+      <div class="col-4" data-i18n="kpiList_colKpiName">KPI NAME</div>
+      <div class="col-4" data-i18n="kpiList_colTargetProgress">TARGET PROGRESS</div>
+      <div class="col-2" data-i18n="kpiList_colStatus">STATUS</div>
+      <div class="col-2 text-end" data-i18n="kpiList_colDetails">DETAILS</div>
     </div>
 
     <!-- KPI LIST -->
@@ -33,9 +33,9 @@
       <small id="listSummary" class="text-muted"></small>
 
       <div>
-        <button id="listPrev" class="btn btn-sm btn-light">Previous</button>
+        <button id="listPrev" class="btn btn-sm btn-light" data-i18n="kpiList_paginationPrev">Previous</button>
         <span id="listPages"></span>
-        <button id="listNext" class="btn btn-sm btn-light">Next</button>
+        <button id="listNext" class="btn btn-sm btn-light" data-i18n="kpiList_paginationNext">Next</button>
       </div>
     </div>
 

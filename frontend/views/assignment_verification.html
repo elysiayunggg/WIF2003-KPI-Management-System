@@ -3,14 +3,14 @@
   <!-- Breadcrumb -->
   <nav aria-label="breadcrumb" class="app-breadcrumb mb-3">
     <ol class="breadcrumb mb-0">
-      <li class="breadcrumb-item active" aria-current="page">KPI Assignment &amp; Verification</li>
+      <li class="breadcrumb-item active" aria-current="page" data-i18n="assignVerif_breadcrumbCurrent">KPI Assignment &amp; Verification</li>
     </ol>
   </nav>
 
   <!-- Title -->
   <div class="mb-4">
-    <h1 class="page-title">Assignment Verification</h1>
-    <p class="page-subtitle mt-2">Review and verify staff assignments and KPI verification requests.</p>
+    <h1 class="page-title" data-i18n="assignVerif_pageTitle">Assignment Verification</h1>
+    <p class="page-subtitle mt-2" data-i18n="assignVerif_pageSubtitle">Review and verify staff assignments and KPI verification requests.</p>
   </div>
 
   <!-- Verification Queue Section -->
@@ -19,12 +19,12 @@
 
       <!-- Header row: title + search side by side -->
       <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
-        <h5 class="fw-bold mb-0">Verification Queue</h5>
+        <h5 class="fw-bold mb-0" data-i18n="assignVerif_verifQueueTitle">Verification Queue</h5>
         <div class="d-flex align-items-center gap-2">
           <div class="position-relative" style="width: 260px;">
             <i class="bi bi-search av-search-icon"></i>
             <input type="text" class="form-control av-search-input" placeholder="Search KPIs..."
-              id="verificationSearch" onkeyup="filterVerificationTable()" />
+              id="verificationSearch" onkeyup="filterVerificationTable()" data-i18n-placeholder="assignVerif_verifSearchPlaceholder" />
           </div>
         </div>
       </div>
@@ -62,11 +62,11 @@
         <table class="table table-hover align-middle" id="verificationTable">
           <thead class="table-light">
             <tr>
-              <th scope="col" style="width: 30%;">KPI Name</th>
-              <th scope="col" style="width: 20%;">Responsible Staff</th>
-              <th scope="col" style="width: 19%;">Submission Time</th>
-              <th scope="col" style="width: 19%;">Status</th>
-              <th scope="col" style="width: 12%;">Actions</th>
+              <th scope="col" style="width: 30%;" data-i18n="assignVerif_verifColKpiName">KPI Name</th>
+              <th scope="col" style="width: 20%;" data-i18n="assignVerif_verifColStaff">Responsible Staff</th>
+              <th scope="col" style="width: 19%;" data-i18n="assignVerif_verifColSubmission">Submission Time</th>
+              <th scope="col" style="width: 19%;" data-i18n="assignVerif_verifColStatus">Status</th>
+              <th scope="col" style="width: 12%;" data-i18n="assignVerif_verifColActions">Actions</th>
             </tr>
           </thead>
           <tbody id="verificationTableBody">
@@ -80,14 +80,14 @@
         <span class="text-muted small" id="verificationCount">Showing 0 of 0</span>
         <div class="d-flex align-items-center gap-1">
           <button class="btn btn-sm page-btn" id="verificationPrev" onclick="navigateVerificationPage('prev')"
-            disabled>
+            disabled data-i18n="assignVerif_paginationPrev">
             Previous
           </button>
           <div class="d-flex gap-1" id="verificationPageBtns">
             <!-- Page number buttons injected by renderPageButtons() -->
           </div>
           <button class="btn btn-sm page-btn" id="verificationNext" onclick="navigateVerificationPage('next')"
-            disabled>
+            disabled data-i18n="assignVerif_paginationNext">
             Next
           </button>
         </div>
@@ -102,12 +102,12 @@
 
       <!-- Header row: title + search side by side -->
       <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
-        <h5 class="fw-bold mb-0">Assignment Queue</h5>
+        <h5 class="fw-bold mb-0" data-i18n="assignVerif_assignQueueTitle">Assignment Queue</h5>
         <div class="d-flex align-items-center gap-2">
           <div class="position-relative" style="width: 260px;">
             <i class="bi bi-search av-search-icon"></i>
             <input type="text" class="form-control av-search-input" placeholder="Search KPIs..."
-              id="assignmentSearch" onkeyup="filterAssignmentTable()" />
+              id="assignmentSearch" onkeyup="filterAssignmentTable()" data-i18n-placeholder="assignVerif_assignSearchPlaceholder" />
           </div>
         </div>
       </div>
@@ -128,10 +128,10 @@
         <table class="table table-hover align-middle" id="assignmentTable">
           <thead class="table-light">
             <tr>
-              <th scope="col" style="width: 30%;">KPI Name</th>
-              <th scope="col" style="width: 39%;">Recommended Staff (Lowest Load)</th>
-              <th scope="col" style="width: 19%;">Deadline</th>
-              <th scope="col" style="width: 12%;">Actions</th>
+              <th scope="col" style="width: 30%;" data-i18n="assignVerif_assignColKpiName">KPI Name</th>
+              <th scope="col" style="width: 39%;" data-i18n="assignVerif_assignColRecommended">Recommended Staff (Lowest Load)</th>
+              <th scope="col" style="width: 19%;" data-i18n="assignVerif_assignColDeadline">Deadline</th>
+              <th scope="col" style="width: 12%;" data-i18n="assignVerif_assignColActions">Actions</th>
             </tr>
           </thead>
           <tbody id="assignmentTableBody">
@@ -146,14 +146,14 @@
 
   <div class="d-flex align-items-center gap-1 justify-content-end">
     <button class="btn btn-sm page-btn" id="assignmentPrev"
-      onclick="navigateAssignmentPage('prev')" disabled>
+      onclick="navigateAssignmentPage('prev')" disabled data-i18n="assignVerif_paginationPrev">
       Previous
     </button>
 
     <div class="d-flex gap-1" id="assignmentPageBtns"></div>
 
     <button class="btn btn-sm page-btn" id="assignmentNext"
-      onclick="navigateAssignmentPage('next')" disabled>
+      onclick="navigateAssignmentPage('next')" disabled data-i18n="assignVerif_paginationNext">
       Next
     </button>
   </div>
