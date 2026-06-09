@@ -1,4 +1,4 @@
-const SUBMIT_EVIDENCE_API_BASE = apiOrigin();
+const SUBMIT_EVIDENCE_API = apiUrl("/evidence");
 const ALLOWED_EVIDENCE_FILE_EXTENSIONS = [".pdf", ".docx", ".xlsx", ".csv", ".png", ".jpg", ".jpeg"];
 const ALLOWED_EVIDENCE_FILE_TYPES = new Set([
     "application/pdf",
@@ -159,7 +159,7 @@ async function loadSelectedEvidenceForEdit(kpiId) {
 
     try {
         const response = await authFetch(
-            `${SUBMIT_EVIDENCE_API_BASE}/api/evidence?kpiId=${encodeURIComponent(kpiId)}`,
+            `${SUBMIT_EVIDENCE_API}?kpiId=${encodeURIComponent(kpiId)}`,
             {}
         );
         if (!response.ok) return null;
@@ -436,8 +436,8 @@ async function submitEvidenceProgress(root) {
     try {
         const response = await authFetch(
             isEditMode
-                ? `${SUBMIT_EVIDENCE_API_BASE}/api/evidence/${selectedEvidenceId}`
-                : `${SUBMIT_EVIDENCE_API_BASE}/api/evidence`,
+                ? `${SUBMIT_EVIDENCE_API}/${selectedEvidenceId}`
+                : SUBMIT_EVIDENCE_API,
             {
                 method: isEditMode ? "PATCH" : "POST",
                 body: formData

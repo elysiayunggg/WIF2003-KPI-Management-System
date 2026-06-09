@@ -11,6 +11,7 @@ function apiUrl(path = "") {
 function apiOrigin(path = "") {
   const normalizedPath = String(path || "");
   if (/^https?:\/\//i.test(normalizedPath)) return normalizedPath;
+  if (!normalizedPath) return API_ORIGIN;
   return `${API_ORIGIN}${normalizedPath.startsWith("/") ? normalizedPath : `/${normalizedPath}`}`;
 }
 

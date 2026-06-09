@@ -1,5 +1,3 @@
-const EVIDENCE_FILES_API_BASE = apiOrigin();
-
 let evidenceFileActionsBound = false;
 
 function escapeEvidenceFileHtml(value) {
@@ -13,7 +11,9 @@ function escapeEvidenceFileHtml(value) {
 
 function evidenceFileApiUrl(evidenceId, fileIndex, download) {
     const disposition = download ? "attachment" : "inline";
-    return `${EVIDENCE_FILES_API_BASE}/api/evidence/${encodeURIComponent(evidenceId)}/files/${encodeURIComponent(fileIndex)}?disposition=${disposition}`;
+    return apiUrl(
+        `/evidence/${encodeURIComponent(evidenceId)}/files/${encodeURIComponent(fileIndex)}?disposition=${disposition}`
+    );
 }
 
 async function openEvidenceFile(evidenceId, fileIndex, options = {}) {
