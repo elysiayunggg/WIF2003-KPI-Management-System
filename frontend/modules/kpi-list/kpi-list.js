@@ -87,7 +87,11 @@ function kpiListCurrentUserId() {
 function mapApiKpiToListRow(kpi) {
   const assignedUsers = Array.isArray(kpi.assignedTo) ? kpi.assignedTo : [];
   const firstStaff = assignedUsers[0];
-  const progress = kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0;
+  const progress = kpi.progressPercent != null && Number.isFinite(Number(kpi.progressPercent))
+    ? Math.min(100, Math.max(0, Math.round(Number(kpi.progressPercent))))
+    : kpi.targetValue
+      ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100)
+      : Math.min(100, Math.max(0, Number(kpi.currentValue) || 0));
   let status = kpiListFormatStatus(kpi.status);
   if (progress <= 0 && status === "In Progress") {
     status = "Not Started";
@@ -193,7 +197,11 @@ function renderKpiListRow(kpi) {
 
   const statusConfig = kpiListGetStatusConfig(effectiveStatus);
   const progress = Number(kpi.progress) || 0;
-  const progressColor = effectiveStatus === "COMPLETED" ? "bg-success" : "bg-primary";
+  const progressColor =
+    effectiveStatus === "COMPLETED" ? "bg-success" :
+    effectiveStatus === "PENDING VERIFICATION" ? "bg-warning" :
+    effectiveStatus === "OVERDUE" || effectiveStatus === "REJECTED" ? "bg-danger" :
+    "bg-primary";
 
   const row = document.createElement("div");
   row.className = "row align-items-center py-2 border-bottom px-2";
@@ -238,6 +246,8 @@ function viewKpiListDetail(id) {
   if (index >= 0) {
     window.selectedKpiDetailIndex = index;
   }
+
+  sessionStorage.setItem("selectedKpiId", String(id));
 
   if (typeof changePage === "function") {
     sessionStorage.setItem("kpiDetailSource", "kpi-list");

@@ -4,6 +4,7 @@ const API_BASE = `${API_ORIGIN}/api`;
 function apiUrl(path = "") {
   const normalizedPath = String(path || "");
   if (/^https?:\/\//i.test(normalizedPath)) return normalizedPath;
+  if (!normalizedPath) return API_BASE;
   return `${API_BASE}${normalizedPath.startsWith("/") ? normalizedPath : `/${normalizedPath}`}`;
 }
 
@@ -21,15 +22,6 @@ function clearAuthSession() {
   ["token", "user", "userName", "userEmail", "role", "activePage"].forEach(key => {
     localStorage.removeItem(key);
   });
-}
-
-const API_BASE_URL = "http://127.0.0.1:5050/api";
-
-function apiUrl(path) {
-  const normalizedPath = String(path || "");
-  return normalizedPath.startsWith("/")
-    ? `${API_BASE_URL}${normalizedPath}`
-    : `${API_BASE_URL}/${normalizedPath}`;
 }
 
 async function authFetch(url, options = {}) {
@@ -55,7 +47,6 @@ async function authFetch(url, options = {}) {
 
 window.getAuthToken = getAuthToken;
 window.clearAuthSession = clearAuthSession;
-window.apiUrl = apiUrl;
 window.authFetch = authFetch;
 window.API_ORIGIN = API_ORIGIN;
 window.API_BASE = API_BASE;

@@ -1,5 +1,8 @@
 function computeProgressPercent(kpi) {
-  if (!kpi || !kpi.targetValue) return 0;
+  if (!kpi) return 0;
+  if (!kpi.targetValue) {
+    return Math.min(100, Math.max(0, Number(kpi.currentValue) || 0));
+  }
   return Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100);
 }
 
@@ -19,8 +22,8 @@ function resolveKpiWorkflowStatus({ status, dueDate, progressPercent }) {
   const pct = Number(progressPercent) || 0;
 
   if (raw === "approved" || raw === "completed") return "completed";
-  if (raw === "rejected" && pct >= 100) return "rejected";
-  if (pct >= 100) return "pending verification";
+  if (raw === "rejected") return "rejected";
+  if (pct >= 100 || raw === "pending verification") return "pending verification";
   if (isPastDue(dueDate)) return "overdue";
   if (raw === "not started" || pct <= 0) return "not started";
   return "in progress";

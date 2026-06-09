@@ -97,6 +97,7 @@ exports.getKpis = async (req, res) => {
     const rows = kpis.map((kpi) => {
       const payload = kpi.toObject();
       const progressPercent = computeProgressPercent(kpi);
+      payload.progressPercent = progressPercent;
       payload.status = resolveKpiWorkflowStatus({
         status: kpi.status,
         dueDate: kpi.dueDate,

@@ -61,7 +61,11 @@ function reportInitials(name) {
 function mapReportApiKpi(kpi) {
   const assignedUsers = Array.isArray(kpi.assignedTo) ? kpi.assignedTo : [];
   const firstStaff = assignedUsers[0];
-  const verifiedProgress = kpi.targetValue ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100) : 0;
+  const verifiedProgress = kpi.progressPercent != null && Number.isFinite(Number(kpi.progressPercent))
+    ? Math.min(100, Math.max(0, Math.round(Number(kpi.progressPercent))))
+    : kpi.targetValue
+      ? Math.round(((kpi.currentValue || 0) / kpi.targetValue) * 100)
+      : Math.min(100, Math.max(0, Number(kpi.currentValue) || 0));
   let formattedStatus = reportFormatStatus(kpi.status);
   if (verifiedProgress <= 0 && formattedStatus === "In Progress") {
     formattedStatus = "Not Started";
@@ -666,6 +670,8 @@ function viewReportKpi(id) {
   if (index >= 0) {
     window.selectedKpiDetailIndex = index;
   }
+
+  sessionStorage.setItem("selectedKpiId", String(id));
 
   if (typeof changePage === "function") {
     sessionStorage.setItem("kpiDetailSource", "report");
