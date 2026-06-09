@@ -2,6 +2,8 @@ const express = require("express");
 const {
   register,
   login,
+  googleLogin,
+  googleCallback,
   forgotPassword,
   getCurrentUser,
   logout,
@@ -13,6 +15,8 @@ const router = express.Router();
 
 router.post("/register", register);
 router.post("/login", login);
+router.get("/google", googleLogin);
+router.get("/google/callback", googleCallback);
 router.post("/forgot-password", forgotPassword);
 router.get("/me", protect, getCurrentUser);
 router.post("/logout", protect, logout);

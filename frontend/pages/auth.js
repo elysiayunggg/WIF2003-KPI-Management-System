@@ -1,5 +1,41 @@
 const AUTH_API_BASE = apiUrl("/auth");
 
+function saveAuthSession(token, user) {
+  localStorage.setItem("token", token);
+  localStorage.setItem("user", JSON.stringify(user));
+  localStorage.setItem("userName", user.name);
+  localStorage.setItem("userEmail", user.email);
+  localStorage.setItem("role", user.role);
+  localStorage.setItem("activePage", "Dashboard");
+}
+
+function handleGoogleOAuthCallback() {
+  const params = new URLSearchParams(window.location.search);
+  const oauthToken = params.get("oauthToken");
+  const oauthUser = params.get("oauthUser");
+  const oauthError = params.get("oauthError");
+
+  if (oauthError) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+    alert("Google login failed. Please try again.");
+    return;
+  }
+
+  if (!oauthToken || !oauthUser) return;
+
+  try {
+    const user = JSON.parse(oauthUser);
+    saveAuthSession(oauthToken, user);
+    window.history.replaceState({}, document.title, window.location.pathname);
+    window.location.href = "shell.html";
+  } catch (error) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+    alert("Google login failed. Please try again.");
+  }
+}
+
+handleGoogleOAuthCallback();
+
 /** Work / standard email: local@domain.tld (practical check, not full RFC 5322) */
 const EMAIL_MAX_LEN = 254;
 function isValidEmailFormat(email) {
@@ -49,9 +85,9 @@ function updateRule(id, isValid) {
   const rule = document.getElementById(id);
   if (!rule) return;
 
-  const text = rule.textContent.replace(/^✓ |^✕ /, "");
+  const text = rule.dataset.ruleLabel || rule.textContent.replace(/^[✓✕]\s+/, "").trim();
   rule.classList.toggle("valid", isValid);
-  rule.textContent = (isValid ? "✓ " : "✕ ") + text;
+  rule.textContent = `${isValid ? "✓" : "✕"} ${text}`;
 }
 
 function isStrongPassword(password) {
@@ -157,13 +193,7 @@ if (loginForm) {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("userName", data.user.name);
-        localStorage.setItem("userEmail", data.user.email);
-        localStorage.setItem("role", data.user.role);
-        localStorage.setItem("token", data.token || "");
-        localStorage.setItem("activePage", "Dashboard");
+        saveAuthSession(data.token, data.user);
         window.location.href = "shell.html";
       } else if (loginError) {
         loginError.classList.remove("d-none");
@@ -181,6 +211,15 @@ if (loginForm) {
         }
       }
     }
+  });
+}
+
+const googleLoginBtn = document.getElementById("googleLoginBtn");
+
+if (googleLoginBtn) {
+  googleLoginBtn.addEventListener("click", () => {
+    const role = document.getElementById("role")?.value || "staff";
+    window.location.href = `${AUTH_API_BASE}/google?role=${encodeURIComponent(role)}`;
   });
 }
 
