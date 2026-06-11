@@ -1,5 +1,12 @@
 let kpiDetailOutsideClickBound = false;
+let kpiDetailStatusActionBound = false;
 const KPI_DETAIL_API_BASE = apiUrl();
+
+function getSelectedKpiDetailId(row) {
+    const target = row || getSelectedKpiDetailRow();
+    if (!target) return "";
+    return String(target.id || target._id || "").trim();
+}
 
 function getKPIDetailRoot() {
     return document.querySelector(".kpi-detail-view");
@@ -924,12 +931,12 @@ function updateKPIDetailStatus(root, label, statusClass) {
 
 async function saveKPIDetailStatus(root, apiStatus) {
     const row = getSelectedKpiDetailRow();
-    if (!row?.id) {
-        alert("Unable to update KPI status because no KPI was selected.");
-        return null;
+    const kpiId = getSelectedKpiDetailId(row);
+    if (!kpiId) {
+        throw new Error("Unable to update KPI status because no KPI was selected.");
     }
 
-    const response = await authFetch(`${KPI_DETAIL_API_BASE}/kpis/${row.id}/progress`, {
+    const response = await authFetch(`${KPI_DETAIL_API_BASE}/kpis/${encodeURIComponent(kpiId)}/progress`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json"
@@ -937,7 +944,7 @@ async function saveKPIDetailStatus(root, apiStatus) {
         body: JSON.stringify({ status: apiStatus })
     });
 
-    const result = await response.json();
+    const result = await response.json().catch(() => ({}));
     if (!response.ok) {
         throw new Error(result.message || "Failed to update KPI status");
     }
@@ -945,6 +952,52 @@ async function saveKPIDetailStatus(root, apiStatus) {
     const updatedKpi = result.kpi || {};
     applyApiKpiToSharedRow(row, updatedKpi);
     return updatedKpi;
+}
+
+function refreshKpiDetailProgressDisplay(root, row) {
+    if (!root || !row) return;
+
+    const progress = Math.min(100, Math.max(0, Number(row.progress) || 0));
+    const progPct = root.querySelector("#kpi-detail-progress-pct");
+    if (progPct) progPct.textContent = `${progress}%`;
+
+    const bar = root.querySelector("#kpi-detail-progress-bar");
+    if (bar) bar.style.width = `${progress}%`;
+
+    const targetEl = root.querySelector("#kpi-detail-target");
+    if (targetEl) targetEl.textContent = row.target || "—";
+}
+
+async function handleKpiDetailStatusUpdated(root, updatedKpi, fallbackStatus) {
+    const row = getSelectedKpiDetailRow();
+    const progress = row?.progress ?? computeKpiProgressPercentFromApi(updatedKpi);
+    const effectiveStatus = row?.apiStatus || updatedKpi?.status || fallbackStatus;
+    const ui = mapKpiRowStatusToDetailUI(effectiveStatus, progress);
+
+    updateKPIDetailStatus(root, ui.label, ui.cls);
+    if (row) refreshKpiDetailProgressDisplay(root, row);
+
+    try {
+        if (typeof refreshKpiProgressAcrossViews === "function") {
+            await refreshKpiProgressAcrossViews();
+        }
+    } catch (refreshError) {
+        console.error("Failed to refresh KPI progress data:", refreshError);
+    }
+
+    showKPIDetailFeedback(root, `Status updated to ${ui.label}.`, "success");
+}
+
+function configureKpiDetailStatusOptions(root) {
+    if (!root) return;
+
+    const isManager = isKPIDetailManager();
+    root.querySelectorAll("#status-dropdown-menu [data-api-status]").forEach((option) => {
+        const apiStatus = String(option.getAttribute("data-api-status") || "").toLowerCase();
+        const blockedForStaff = !isManager && (apiStatus === "approved" || apiStatus === "rejected");
+        option.hidden = blockedForStaff;
+        option.disabled = blockedForStaff;
+    });
 }
 
 function computeKpiProgressPercentFromApi(kpi) {
@@ -957,13 +1010,33 @@ function computeKpiProgressPercentFromApi(kpi) {
     return Math.min(100, Math.max(0, currentValue));
 }
 
+function resolveKpiDetailRowStatus(rawStatus, dueDate, progressPercent) {
+    if (typeof resolveProgressWorkflowStatus === "function") {
+        return resolveProgressWorkflowStatus(rawStatus, dueDate, progressPercent);
+    }
+    return rawStatus;
+}
+
+function formatKpiDetailRowDisplayStatus(effectiveStatus) {
+    if (typeof progressFormatStatus === "function") {
+        return progressFormatStatus(effectiveStatus);
+    }
+    return mapKpiRowStatusToDetailUI(effectiveStatus, 0).label;
+}
+
 function applyApiKpiToSharedRow(row, updatedKpi) {
     if (!row || !updatedKpi) return;
 
     if (typeof updatedKpi.status === "string" && updatedKpi.status.trim()) {
-        row.apiStatus = updatedKpi.status;
         row.progress = computeKpiProgressPercentFromApi(updatedKpi);
-        row.status = mapKpiRowStatusToDetailUI(updatedKpi.status, row.progress).label;
+        const dueDate = updatedKpi.dueDate || row.rawDeadline || row.deadline;
+        const effectiveStatus = resolveKpiDetailRowStatus(
+            updatedKpi.status,
+            dueDate,
+            row.progress
+        );
+        row.apiStatus = effectiveStatus;
+        row.status = formatKpiDetailRowDisplayStatus(effectiveStatus);
     }
     if (typeof updatedKpi.currentValue === "number") {
         row.currentValue = updatedKpi.currentValue;
@@ -1135,32 +1208,6 @@ function bindKPIDetailEvents(root) {
         exportPdfBtn.addEventListener("click", () => printKPIDetailPage(root));
     }
 
-    const statusBtn = root.querySelector("#status-dropdown-btn");
-    if (statusBtn) {
-        statusBtn.addEventListener("click", (e) => toggleKPIDetailStatusDropdown(root, e));
-    }
-
-    root.querySelectorAll("[data-status-label]").forEach((option) => {
-        option.addEventListener("click", async () => {
-            const apiStatus = option.getAttribute("data-api-status");
-            if (!apiStatus) return;
-
-            const menu = root.querySelector("#status-dropdown-menu");
-            if (menu) menu.classList.remove("is-open");
-
-            try {
-                const updatedKpi = await saveKPIDetailStatus(root, apiStatus);
-                const ui = mapKpiRowStatusToDetailUI(
-                    updatedKpi?.status || apiStatus,
-                    computeKpiProgressPercentFromApi(updatedKpi)
-                );
-                updateKPIDetailStatus(root, ui.label, ui.cls);
-            } catch (error) {
-                alert(error.message || "Failed to update KPI status.");
-            }
-        });
-    });
-
     const milestoneAddBtn = root.querySelector("#milestone-add-btn");
     if (milestoneAddBtn) {
         milestoneAddBtn.addEventListener("click", () => openMilestoneModal(root, null));
@@ -1261,6 +1308,45 @@ function ensureKPIDetailOutsideClickHandler() {
     kpiDetailOutsideClickBound = true;
 }
 
+function ensureKPIDetailStatusActionHandler() {
+    if (kpiDetailStatusActionBound) return;
+
+    document.addEventListener("click", async (event) => {
+        const root = getKPIDetailRoot();
+        if (!root) return;
+
+        const statusBtn = event.target.closest("#status-dropdown-btn");
+        if (statusBtn && root.contains(statusBtn)) {
+            toggleKPIDetailStatusDropdown(root, event);
+            return;
+        }
+
+        const statusOption = event.target.closest("#status-dropdown-menu [data-api-status]");
+        if (!statusOption || !root.contains(statusOption) || statusOption.disabled) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const apiStatus = statusOption.getAttribute("data-api-status");
+        if (!apiStatus) return;
+
+        closeKPIDetailStatusDropdown(root);
+
+        try {
+            const updatedKpi = await saveKPIDetailStatus(root, apiStatus);
+            await handleKpiDetailStatusUpdated(root, updatedKpi, apiStatus);
+        } catch (error) {
+            showKPIDetailFeedback(
+                root,
+                error.message || "Failed to update KPI status.",
+                "danger"
+            );
+        }
+    });
+
+    kpiDetailStatusActionBound = true;
+}
+
 function applyKpiDetailBreadcrumb(root) {
     const ol = root.querySelector(".app-breadcrumb ol.breadcrumb");
     if (!ol) return;
@@ -1305,6 +1391,9 @@ async function initKPIDetailView() {
         }
     }
 
+    configureKpiDetailStatusOptions(root);
+    ensureKPIDetailStatusActionHandler();
+    ensureKPIDetailOutsideClickHandler();
     populateKpiDetailFromSharedData(root);
 
     const scrollTarget = sessionStorage.getItem("kpiDetailScrollTo");
@@ -1333,5 +1422,4 @@ async function initKPIDetailView() {
     root.dataset.kpiDetailEventsBound = "1";
 
     bindKPIDetailEvents(root);
-    ensureKPIDetailOutsideClickHandler();
 }

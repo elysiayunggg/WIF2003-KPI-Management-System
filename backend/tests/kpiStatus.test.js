@@ -43,12 +43,12 @@ describe("KPI status utilities", () => {
 describe("resolveKpiWorkflowStatus", () => {
   const futureDueDate = "2026-12-31T00:00:00.000Z";
 
-  test("returns not started when progress is zero even if the stored status says in progress", () => {
+  test("honors explicitly set in progress status even when progress is zero", () => {
     expect(resolveKpiWorkflowStatus({
       status: "in progress",
       dueDate: futureDueDate,
       progressPercent: 0
-    })).toBe("not started");
+    })).toBe("in progress");
   });
 
     test("maps approved and completed KPIs to completed", () => {
@@ -92,6 +92,20 @@ describe("resolveKpiWorkflowStatus", () => {
         status: "in progress",
         dueDate: "2026-06-01T00:00:00.000Z",
         progressPercent: 70
+      })).toBe("overdue");
+    });
+
+    test("honors explicitly set overdue status before the deadline", () => {
+      expect(resolveKpiWorkflowStatus({
+        status: "overdue",
+        dueDate: futureDueDate,
+        progressPercent: 0
+      })).toBe("overdue");
+
+      expect(resolveKpiWorkflowStatus({
+        status: "overdue",
+        dueDate: futureDueDate,
+        progressPercent: 45
       })).toBe("overdue");
     });
 

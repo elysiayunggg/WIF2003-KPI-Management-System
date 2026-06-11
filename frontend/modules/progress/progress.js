@@ -37,13 +37,19 @@ function resolveProgressWorkflowStatus(rawStatus, dueDate, progressPercent) {
     const isApproved = status === "approved" || status === "completed";
 
     if (isApproved) return status;
-    if (pct >= 100) return "pending verification";
+    if (pct >= 100 || status === "pending verification") return "pending verification";
+
+    let pastDue = false;
     if (dueDate) {
         const due = new Date(dueDate);
-        if (!Number.isNaN(due.getTime()) && due < new Date()) return "overdue";
+        pastDue = !Number.isNaN(due.getTime()) && due < new Date();
     }
+    if (pastDue || status === "overdue") return "overdue";
+
     if (status === "rejected") return "in progress";
+    if (status === "in progress") return "in progress";
     if (status === "not started") return "not started";
+    if (pct <= 0) return "not started";
     return "in progress";
 }
 
