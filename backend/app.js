@@ -33,6 +33,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api/notifications", notificationRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/frontend", express.static(path.join(__dirname, "../frontend")));
 app.use(express.static(path.join(__dirname, "../frontend")));
 app.use("/api/auth", authRoutes);
 app.use("/api/kpis", kpiRoutes);
