@@ -20,6 +20,13 @@
 ## Current Backend APIs
 
 - `/api/auth`
+  - `POST /api/auth/register`
+  - `POST /api/auth/login`
+  - `GET /api/auth/google`
+  - `GET /api/auth/google/callback`
+  - `GET /api/auth/me`
+  - `POST /api/auth/logout`
+  - `GET /api/auth/users`
 - `/api/kpis`
 - `/api/evidence`
 
@@ -80,12 +87,16 @@ The final `backend/.env` file should use this format:
 PORT=5050
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=trackifysecretkey
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
+GOOGLE_CALLBACK_URL=http://127.0.0.1:5050/api/auth/google/callback
+FRONTEND_URL=http://127.0.0.1:5500/frontend/pages
 ```
 
 Important:
 
 - Do not push `backend/.env` to GitHub.
-- Do not expose the MongoDB username, password, or connection string publicly.
+- Do not expose the MongoDB username, password, connection string, Google client ID, or Google client secret publicly.
 - The group leader should share the real `MONGO_URI` privately.
 
 ### 4. Install backend dependencies
